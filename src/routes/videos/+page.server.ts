@@ -4,7 +4,7 @@ import { supabase } from '$lib/supabase';
 const VIDEO_CATEGORY_IDS = [4, 5, 6]; // 설교, 찬양, 예배실황
 
 function getYoutubeId(url: string): string | null {
-	const match = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/);
+	const match = url.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([^&?/]+)/);
 	return match ? match[1] : null;
 }
 
@@ -40,7 +40,7 @@ export const load: PageServerLoad = async () => {
 			date: new Date(post.created_at).toLocaleDateString('ko-KR', {
 				year: 'numeric', month: '2-digit', day: '2-digit'
 			}),
-			thumbnail: youtubeId ? `https://img.youtube.com/vi/${youtubeId}/hqdefault.jpg` : '',
+			thumbnail: youtubeId ? `https://img.youtube.com/vi/${youtubeId}/maxresdefault.jpg` : '',
 			youtubeUrl,
 		};
 	});

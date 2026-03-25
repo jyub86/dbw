@@ -31,24 +31,24 @@
     <title>영상 - 부평동부교회</title>
 </svelte:head>
 
-<div class="bg-gray-50 py-20 md:py-32 border-b border-gray-200">
+<div class="bg-gray-50 py-12 md:py-32 border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-        <h1 class="text-4xl md:text-6xl font-black text-gray-900 mb-8 tracking-tight">
+        <h1 class="text-3xl md:text-6xl font-black text-gray-900 mb-4 md:mb-8 tracking-tight">
             영상
         </h1>
-        <p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+        <p class="text-base md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
             부평동부교회의 생생한 예배 실황과 은혜로운 설교, 찬양을 영상으로 만나보세요.
         </p>
     </div>
 </div>
 
-<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-20">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 md:py-20">
     <!-- 카테고리 + 검색 -->
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-16">
-        <div class="flex flex-wrap items-center gap-3">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 md:mb-16">
+        <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-1 px-0.5 w-full md:w-auto shrink-0">
             <button
                 type="button"
-                class="px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {selectedCategoryId === null
+                class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {selectedCategoryId === null
                     ? 'bg-primary-900 text-white shadow-lg scale-105'
                     : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
                 onclick={() => selectCategory(null)}
@@ -58,7 +58,7 @@
             {#each data.categories as category}
                 <button
                     type="button"
-                    class="px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {selectedCategoryId === category.id
+                    class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {selectedCategoryId === category.id
                         ? 'bg-primary-900 text-white shadow-lg scale-105'
                         : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
                     onclick={() => selectCategory(category.id)}
@@ -101,18 +101,21 @@
                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                 onerror={(e) => {
                                     const img = e.currentTarget as HTMLImageElement;
-                                    if (img.src.includes('hqdefault')) {
+                                    if (img.src.includes('maxresdefault')) {
+                                        img.src = img.src.replace('maxresdefault', 'hqdefault');
+                                    } else if (img.src.includes('hqdefault')) {
                                         img.src = img.src.replace('hqdefault', 'mqdefault');
                                     } else if (img.src.includes('mqdefault')) {
                                         img.src = img.src.replace('mqdefault', 'default');
                                     } else {
                                         img.style.display = 'none';
-                                        img.parentElement?.querySelector('.thumb-fallback')?.classList.remove('hidden');
+                                        const fallback = img.parentElement?.querySelector('.thumb-fallback') as HTMLElement;
+                                        if (fallback) fallback.style.display = 'flex';
                                     }
                                 }}
                             />
                         {/if}
-                        <div class="thumb-fallback {video.thumbnail ? 'hidden' : ''} w-full h-full bg-gray-200 flex items-center justify-center absolute inset-0">
+                        <div class="thumb-fallback w-full h-full bg-gray-200 flex items-center justify-center absolute inset-0" style={video.thumbnail ? 'display:none' : ''}>
                             <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                         <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -121,13 +124,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-8">
-                        <div class="flex items-center text-sm font-bold text-primary-500 mb-4 tracking-wide">
+                    <div class="p-5 md:p-8">
+                        <div class="flex items-center text-sm font-bold text-primary-500 mb-3 md:mb-4 tracking-wide">
                             {video.category}
                             <span class="mx-3 text-gray-300">&bull;</span>
                             <span class="text-gray-500">{video.date}</span>
                         </div>
-                        <h3 class="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-primary-600 transition-colors leading-snug">
+                        <h3 class="text-base md:text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-primary-600 transition-colors leading-snug">
                             {video.title}
                         </h3>
                     </div>

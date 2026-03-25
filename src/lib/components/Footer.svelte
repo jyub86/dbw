@@ -1,4 +1,4 @@
-<footer class="bg-gray-50 border-t border-gray-100 pt-20 pb-12 mt-20">
+<footer class="bg-gray-50 border-t border-gray-100 pt-10 pb-8 mt-10 md:pt-20 md:pb-12 md:mt-20">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div class="flex flex-col md:flex-row md:justify-between gap-10">
             <!-- Logo & Info -->

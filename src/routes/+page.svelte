@@ -44,7 +44,6 @@
     let dragged = false;
 
     function onPointerDown(e: MouseEvent | TouchEvent) {
-        e.preventDefault();
         dragStartX = 'touches' in e ? e.touches[0].clientX : e.clientX;
         dragged = false;
 
@@ -83,7 +82,7 @@
 </svelte:head>
 
 <!-- 1. Hero Section - Banner Slideshow -->
-<section aria-label="배너 슬라이드쇼" class="relative w-full aspect-video bg-gray-900 overflow-hidden -mt-24">
+<section aria-label="배너 슬라이드쇼" class="relative w-full aspect-video bg-gray-900 overflow-hidden md:-mt-24">
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <div
         aria-label="슬라이드 드래그 영역"
@@ -127,26 +126,26 @@
 </section>
 
 <!-- 2. 교회 소개 (Quick Links for About) -->
-<section class="py-24 bg-white">
+<section class="py-12 md:py-24 bg-white">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div class="text-center mb-16">
+        <div class="text-center mb-10 md:mb-16">
             <h2
-                class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight"
+                class="text-2xl md:text-4xl font-bold text-gray-900 tracking-tight"
             >
                 교회 소개
             </h2>
-            <p class="mt-4 text-xl text-gray-500">
+            <p class="mt-3 text-base md:text-xl text-gray-500">
                 부평동부교회를 안내해 드립니다
             </p>
         </div>
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div class="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-6">
             {#each [{ name: "비전", icon: "M13 10V3L4 14h7v7l9-11h-7z", href: "/about?tab=vision" }, { name: "연혁", icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", href: "/about?tab=history" }, { name: "담임목사", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z", href: "/about?tab=pastor" }, { name: "섬기는 사람들", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z", href: "/about?tab=people" }, { name: "예배 안내", icon: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253", href: "/about?tab=worship" }, { name: "오시는 길", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z", href: "/about?tab=map" }] as item}
                 <a
                     href={item.href}
-                    class="flex flex-col items-center p-8 bg-gray-50 rounded-2xl hover:bg-primary-50 hover:border-primary-200 border border-gray-100 transition-all hover:-translate-y-1"
+                    class="flex flex-col items-center p-4 sm:p-6 md:p-8 bg-gray-50 rounded-2xl hover:bg-primary-50 hover:border-primary-200 border border-gray-100 transition-all hover:-translate-y-1"
                 >
                     <svg
-                        class="w-10 h-10 text-primary-500 mb-4"
+                        class="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-primary-500 mb-2 md:mb-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -157,7 +156,7 @@
                             d={item.icon}
                         /></svg
                     >
-                    <span class="text-lg font-bold text-gray-900"
+                    <span class="text-xs sm:text-sm md:text-lg font-bold text-gray-900 text-center"
                         >{item.name}</span
                     >
                 </a>
@@ -167,25 +166,25 @@
 </section>
 
 <!-- 3. 영상 (설교, 실황, 찬양) -->
-<section class="py-24 bg-background">
+<section class="py-12 md:py-24 bg-background">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div class="flex justify-between items-end mb-12">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-12">
             <div>
                 <h2
-                    class="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight"
+                    class="text-2xl md:text-4xl font-bold text-gray-900 tracking-tight"
                 >
                     은혜의 영상
                 </h2>
-                <p class="mt-4 text-xl text-gray-500">
+                <p class="mt-2 md:mt-4 text-base md:text-xl text-gray-500">
                     예배 실황, 설교, 찬양 다시보기
                 </p>
             </div>
             <a
                 href="/videos"
-                class="text-lg font-bold text-primary-600 hover:text-primary-700 transition-colors flex items-center"
+                class="mt-3 md:mt-0 self-start md:self-auto text-base md:text-lg font-bold text-primary-600 hover:text-primary-700 transition-colors flex items-center"
             >
                 영상 전체보기 <svg
-                    class="ml-2 w-5 h-5"
+                    class="ml-1.5 w-4 h-4 md:ml-2 md:w-5 md:h-5"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -212,7 +211,24 @@
                             src={video.thumbnail}
                             alt={video.title}
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onerror={(e) => {
+                                const img = e.currentTarget as HTMLImageElement;
+                                if (img.src.includes('maxresdefault')) {
+                                    img.src = img.src.replace('maxresdefault', 'hqdefault');
+                                } else if (img.src.includes('hqdefault')) {
+                                    img.src = img.src.replace('hqdefault', 'mqdefault');
+                                } else if (img.src.includes('mqdefault')) {
+                                    img.src = img.src.replace('mqdefault', 'default');
+                                } else {
+                                    img.style.display = 'none';
+                                    const fallback = img.parentElement?.querySelector('.thumb-fallback') as HTMLElement;
+                                    if (fallback) fallback.style.display = 'flex';
+                                }
+                            }}
                         />
+                        <div class="thumb-fallback w-full h-full bg-gray-200 flex items-center justify-center absolute inset-0" style="display:none">
+                            <svg class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </div>
                         <div
                             class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                         >
@@ -228,7 +244,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-8">
+                    <div class="p-5 md:p-8">
                         <div
                             class="flex items-center text-sm font-bold text-primary-500 mb-3 tracking-wide"
                         >
@@ -237,7 +253,7 @@
                             <span class="text-gray-500">{video.date}</span>
                         </div>
                         <h3
-                            class="text-2xl font-bold text-gray-900 leading-snug group-hover:text-primary-600 transition-colors"
+                            class="text-lg md:text-2xl font-bold text-gray-900 leading-snug group-hover:text-primary-600 transition-colors"
                         >
                             {video.title}
                         </h3>
@@ -249,7 +265,7 @@
 </section>
 
 <!-- 4 & 5. 게시판 섹션 (교회 소식 & 일반 게시판) -->
-<section class="py-24 bg-white">
+<section class="py-12 md:py-24 bg-white">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <!-- 교회 소식 -->
@@ -257,7 +273,7 @@
                 <div
                     class="flex justify-between items-center mb-8 border-b-2 border-gray-900 pb-4"
                 >
-                    <h2 class="text-3xl font-bold text-gray-900">교회 소식</h2>
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">교회 소식</h2>
                     <a
                         href="/news"
                         class="text-lg font-bold text-gray-500 hover:text-primary-600 transition-colors"
@@ -279,12 +295,12 @@
                                         >{news.category}</span
                                     >
                                     <span
-                                        class="text-xl font-medium text-gray-800 truncate group-hover:text-primary-600 transition-colors"
+                                        class="text-sm md:text-xl font-medium text-gray-800 truncate group-hover:text-primary-600 transition-colors"
                                         >{news.title}</span
                                     >
                                 </div>
                                 <span
-                                    class="shrink-0 text-base text-gray-400 font-medium ml-4"
+                                    class="shrink-0 text-xs md:text-base text-gray-400 font-medium ml-2 md:ml-4"
                                     >{news.date}</span
                                 >
                             </a>
@@ -298,7 +314,7 @@
                 <div
                     class="flex justify-between items-center mb-8 border-b-2 border-gray-900 pb-4"
                 >
-                    <h2 class="text-3xl font-bold text-gray-900">
+                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">
                         일반 게시판
                     </h2>
                     <a
@@ -318,18 +334,18 @@
                                     class="flex items-center gap-4 overflow-hidden"
                                 >
                                     <span
-                                        class="text-xl font-medium text-gray-800 truncate group-hover:text-primary-600 transition-colors"
+                                        class="text-sm md:text-xl font-medium text-gray-800 truncate group-hover:text-primary-600 transition-colors"
                                         >{post.title}</span
                                     >
                                 </div>
                                 <div
-                                    class="shrink-0 flex items-center gap-4 ml-4"
+                                    class="shrink-0 flex items-center gap-2 md:gap-4 ml-2 md:ml-4"
                                 >
-                                    <span class="text-base text-gray-500"
+                                    <span class="hidden sm:block text-sm md:text-base text-gray-500"
                                         >{post.author}</span
                                     >
                                     <span
-                                        class="text-base text-gray-400 font-medium"
+                                        class="text-xs md:text-base text-gray-400 font-medium"
                                         >{post.date}</span
                                     >
                                 </div>
@@ -343,7 +359,7 @@
 </section>
 
 <!-- Social Links -->
-<section class="py-16 bg-gray-50">
+<section class="py-10 md:py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
             <a

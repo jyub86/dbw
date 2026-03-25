@@ -5,13 +5,20 @@
 @layer base {
   html {
     scrollbar-gutter: stable;
+    overflow-x: hidden;
   }
   body {
     @apply font-sans antialiased text-gray-800 bg-background;
+    overflow-x: hidden;
   }
 }
 
 @layer utilities {
   .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+}
+
+/* iOS Safe Area 지원 */
+footer {
+  padding-bottom: max(2rem, env(safe-area-inset-bottom));
 }

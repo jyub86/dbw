@@ -142,18 +142,18 @@
 
 <!-- Header Section -->
 <div
-    class="bg-gradient-to-b from-primary-50 to-white py-24 md:py-36 border-b border-gray-100"
+    class="bg-gradient-to-b from-primary-50 to-white py-14 md:py-36 border-b border-gray-100"
 >
     <div
         class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center animate-fade-in-up"
     >
         <h1
-            class="text-4xl md:text-6xl font-black text-gray-900 mb-8 tracking-tight font-serif drop-shadow-sm"
+            class="text-3xl md:text-6xl font-black text-gray-900 mb-4 md:mb-8 tracking-tight font-serif drop-shadow-sm"
         >
             교회 소개
         </h1>
         <p
-            class="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed"
+            class="text-base md:text-2xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed"
         >
             하나님의 사랑으로 세상을 품고,<br class="hidden md:block" />
             말씀과 기도로
@@ -164,15 +164,27 @@
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16 md:py-24">
-    <!-- Sub Navigation -->
+<div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 md:py-24">
+    <!-- Sub Navigation - Mobile: Select dropdown -->
+    <div class="md:hidden mb-8">
+        <select
+            bind:value={activeTab}
+            class="w-full px-4 py-3.5 rounded-2xl border-2 border-gray-200 bg-white font-bold text-gray-800 text-base focus:outline-none focus:border-primary-500 transition-colors"
+        >
+            {#each subMenus as menu}
+                <option value={menu.id}>{menu.name}</option>
+            {/each}
+        </select>
+    </div>
+
+    <!-- Sub Navigation - Desktop: Tab buttons -->
     <div
-        class="flex overflow-x-auto no-scrollbar border-b-2 border-gray-100 mb-20 justify-center"
+        class="hidden md:flex border-b-2 border-gray-100 mb-20 justify-center"
     >
         {#each subMenus as menu}
             <button
                 type="button"
-                class="whitespace-nowrap py-4 px-5 sm:px-8 md:px-12 border-b-4 font-bold text-base sm:text-xl md:text-2xl transition-all duration-300 {activeTab ===
+                class="whitespace-nowrap py-4 px-8 lg:px-12 border-b-4 font-bold text-lg lg:text-xl transition-all duration-300 {activeTab ===
                 menu.id
                     ? 'border-primary-600 text-primary-700'
                     : 'border-transparent text-gray-400 hover:text-gray-800 hover:border-gray-300'}"
@@ -187,12 +199,12 @@
     <div class="max-w-6xl mx-auto min-h-[60vh]">
         {#if activeTab === "vision"}
             <div
-                class="animate-fade-in-up space-y-32"
+                class="animate-fade-in-up space-y-16 md:space-y-32"
                 in:fade={{ duration: 400 }}
             >
                 <!-- 표어 섹션 -->
                 <div
-                    class="text-center bg-white rounded-[3rem] p-16 md:p-24 shadow-xl shadow-primary-900/5 relative overflow-hidden border border-primary-50"
+                    class="text-center bg-white rounded-4xl md:rounded-[3rem] p-8 md:p-24 shadow-xl shadow-primary-900/5 relative overflow-hidden border border-primary-50"
                 >
                     <div
                         class="absolute inset-0 bg-gradient-to-br from-primary-50/50 via-white to-white opacity-80"
@@ -203,20 +215,20 @@
                             >영구 표어</span
                         >
                         <h2
-                            class="text-4xl md:text-6xl lg:text-7xl font-black text-gray-900 mb-16 font-serif leading-tight"
+                            class="text-3xl md:text-5xl lg:text-7xl font-black text-gray-900 mb-8 md:mb-16 font-serif leading-tight"
                         >
                             하나님나라 이루어가는 <br />신앙공동체
                         </h2>
 
                         <div
-                            class="max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-3xl mb-12 shadow-md border border-gray-100 transform hover:-translate-y-1 transition-transform duration-500"
+                            class="max-w-4xl mx-auto bg-white p-6 md:p-12 rounded-3xl mb-8 md:mb-12 shadow-md border border-gray-100 transform hover:-translate-y-1 transition-transform duration-500"
                         >
                             <span
-                                class="text-primary-600 font-bold mb-4 block tracking-wider"
+                                class="text-primary-600 font-bold mb-3 block tracking-wider text-sm md:text-base"
                                 >2026년 주제 표어</span
                             >
                             <p
-                                class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-relaxed"
+                                class="text-xl md:text-4xl font-bold text-gray-900 mb-4 md:mb-6 leading-relaxed"
                             >
                                 "소그룹과 함께 마음을 같이하는 교회"
                             </p>
@@ -285,7 +297,7 @@
                     <div class="grid grid-cols-1 gap-10">
                         {#each coreMinistries as min, index}
                             <div
-                                class="bg-white rounded-[2.5rem] p-10 md:p-16 shadow-lg shadow-gray-200/50 border border-gray-100 hover:shadow-xl hover:border-primary-100 transition-all duration-300 group flex flex-col md:flex-row gap-8 md:gap-16 items-start"
+                                class="bg-white rounded-[2.5rem] p-6 md:p-16 shadow-lg shadow-gray-200/50 border border-gray-100 hover:shadow-xl hover:border-primary-100 transition-all duration-300 group flex flex-col md:flex-row gap-6 md:gap-16 items-start"
                             >
                                 <!-- 아이콘 및 제목 영역 -->
                                 <div class="w-full md:w-1/3 shrink-0">
@@ -299,7 +311,7 @@
                                         >{min.subtitle}</span
                                     >
                                     <h4
-                                        class="text-4xl font-black text-gray-900 flex items-center gap-4 mb-4"
+                                        class="text-2xl md:text-4xl font-black text-gray-900 flex items-center gap-4 mb-4"
                                     >
                                         {min.title}
                                         <span
@@ -308,7 +320,7 @@
                                         >
                                     </h4>
                                     <p
-                                        class="text-xl text-gray-700 font-bold leading-relaxed break-keep"
+                                        class="text-base md:text-xl text-gray-700 font-bold leading-relaxed break-keep"
                                     >
                                         "{min.desc}"
                                     </p>
@@ -325,7 +337,7 @@
                                                     class="mt-2.5 w-2 h-2 rounded-full bg-primary-400 shrink-0"
                                                 ></div>
                                                 <p
-                                                    class="text-xl text-gray-600 leading-relaxed break-keep font-medium"
+                                                    class="text-base md:text-xl text-gray-600 leading-relaxed break-keep font-medium"
                                                 >
                                                     {detail}
                                                 </p>
@@ -358,7 +370,7 @@
                     </p>
                 </div>
 
-                <div class="max-w-4xl mx-auto ml-4 md:ml-auto">
+                <div class="max-w-4xl mx-auto">
                     {#each historyData as period}
                         <div class="mb-20">
                             <!-- 연대 제목 -->
@@ -423,7 +435,7 @@
                     <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-white/5 rounded-full"></div>
                     <div class="absolute right-24 top-8 w-32 h-32 bg-primary-600/30 rounded-full blur-2xl"></div>
 
-                    <div class="relative z-10 flex flex-col md:flex-row items-center gap-10 md:gap-16 p-10 md:p-16 lg:p-20">
+                    <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-16 p-8 md:p-16 lg:p-20">
                         <!-- 사진 -->
                         <div class="shrink-0">
                             <div class="w-48 h-48 md:w-64 md:h-64 rounded-4xl overflow-hidden shadow-2xl ring-4 ring-white/20">
@@ -440,7 +452,7 @@
                             <span class="inline-block py-1.5 px-5 rounded-full bg-white/15 text-primary-100 font-bold tracking-widest text-sm mb-5">
                                 제 4대 담임목사
                             </span>
-                            <h2 class="text-5xl md:text-7xl font-black text-white font-serif mb-4 tracking-tight">
+                            <h2 class="text-4xl md:text-7xl font-black text-white font-serif mb-4 tracking-tight">
                                 강길수
                             </h2>
                             <p class="text-xl md:text-2xl text-primary-200 font-medium mb-8">
@@ -469,7 +481,7 @@
                 </div>
 
                 <!-- 본문 인사말 -->
-                <div class="bg-white rounded-[3rem] p-10 md:p-16 lg:p-20 shadow-xl border border-gray-100 mb-16 relative overflow-hidden">
+                <div class="bg-white rounded-[2.5rem] p-6 md:p-16 lg:p-20 shadow-xl border border-gray-100 mb-16 relative overflow-hidden">
                     <div class="absolute -right-20 -bottom-20 w-72 h-72 bg-primary-50/60 rounded-full blur-3xl pointer-events-none"></div>
 
                     <div class="relative z-10 space-y-0 divide-y divide-gray-100">
@@ -567,7 +579,7 @@
                 >
                     {#each peopleData as person}
                         <div
-                            class="text-center group bg-white p-8 md:p-12 rounded-[2.5rem] border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-500"
+                            class="text-center group bg-white p-6 md:p-12 rounded-[2.5rem] border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-500"
                         >
                             <div
                                 class="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full bg-gray-50 mb-6 md:mb-8 flex items-center justify-center text-gray-300 border-4 border-white shadow-md group-hover:bg-primary-50 group-hover:text-primary-400 group-hover:scale-105 transition-all duration-500 overflow-hidden relative"
@@ -628,7 +640,7 @@
 
                 <!-- 온라인 예배 안내 -->
                 <div
-                    class="bg-primary-50 rounded-[2.5rem] p-10 md:p-12 mb-16 border border-primary-100 shadow-sm relative overflow-hidden"
+                    class="bg-primary-50 rounded-[2.5rem] p-6 md:p-12 mb-12 md:mb-16 border border-primary-100 shadow-sm relative overflow-hidden"
                 >
                     <div
                         class="absolute right-0 top-0 opacity-10 pointer-events-none transform translate-x-1/4 -translate-y-1/4"
@@ -687,17 +699,51 @@
                     </div>
                 </div>
 
-                <!-- 예배 시간표 (Placeholder 디자인) -->
-                <div
-                    class="bg-white rounded-[3rem] p-8 md:p-12 shadow-sm border border-gray-100 overflow-hidden"
-                >
-                    <h3
-                        class="text-2xl font-bold text-gray-900 mb-8 border-b-2 border-primary-100 pb-4 inline-block"
-                    >
+                <!-- 예배 시간표 -->
+                <div class="bg-white rounded-[3rem] p-6 md:p-12 shadow-sm border border-gray-100">
+                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 md:mb-8 border-b-2 border-primary-100 pb-4 inline-block">
                         정규 예배 시간안내
                     </h3>
 
-                    <div class="overflow-x-auto">
+                    <!-- 모바일: 리스트 레이아웃 -->
+                    <div class="md:hidden space-y-5">
+                        {#each [
+                            { label: '주일', bg: 'bg-primary-50', items: [
+                                { name: '1부', time: '09:00', place: '글로리홀' },
+                                { name: '2부', time: '11:00', place: '글로리홀' },
+                                { name: '오후', time: '14:30', place: '글로리홀' },
+                                { name: '새가족', time: '11:00', place: '바나바홀' },
+                                { name: '영아부', time: '11:00', place: '본관 1층' },
+                                { name: '유치부', time: '11:00', place: '본관 1층' },
+                                { name: '유초등부', time: '11:00', place: '본관 1층' },
+                                { name: '중고등부', time: '11:00', place: '다니엘관' },
+                                { name: '청년부', time: '14:00', place: '다니엘관' },
+                            ]},
+                            { label: '주중', bg: 'bg-gray-50', items: [
+                                { name: '수요예배 (WBA)', time: '20:00', place: '글로리홀' },
+                                { name: '금요기도회', time: '21:00', place: '글로리홀' },
+                                { name: '새벽기도회', time: '05:00', place: '글로리홀' },
+                            ]},
+                        ] as group}
+                            <div class="rounded-2xl overflow-hidden border border-gray-100">
+                                <div class="px-4 py-2.5 {group.bg} font-bold text-primary-800 text-sm">
+                                    {group.label}
+                                </div>
+                                <div class="divide-y divide-gray-100">
+                                    {#each group.items as item}
+                                        <div class="flex items-center px-4 py-3 gap-3">
+                                            <span class="w-24 shrink-0 text-sm font-medium text-gray-800">{item.name}</span>
+                                            <span class="text-sm font-medium text-gray-500 w-14 shrink-0">{item.time}</span>
+                                            <span class="text-sm font-medium text-primary-700">{item.place}</span>
+                                        </div>
+                                    {/each}
+                                </div>
+                            </div>
+                        {/each}
+                    </div>
+
+                    <!-- 데스크탑: 테이블 레이아웃 -->
+                    <div class="hidden md:block overflow-x-auto">
                         <table class="w-full border-collapse min-w-140 text-center">
                             <thead>
                                 <tr class="bg-primary-800 text-white">
@@ -708,7 +754,6 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200 text-gray-800 text-base">
-                                <!-- 주일 예배 그룹 -->
                                 <tr class="hover:bg-primary-50/40 transition-colors">
                                     <td rowspan="9" class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-primary-50/60">주일</td>
                                     <td class="py-4 px-6 border-l border-gray-200">1부</td>
@@ -748,8 +793,6 @@
                                     <td class="py-4 px-6 border-l border-gray-200">청년부</td>
                                     <td class="py-4 px-6 font-medium border-l border-gray-200">14:00</td>
                                 </tr>
-
-                                <!-- 주중 예배 그룹 -->
                                 <tr class="hover:bg-gray-50 transition-colors border-t-2 border-gray-300">
                                     <td rowspan="3" class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-gray-50">주중</td>
                                     <td class="py-4 px-6 border-l border-gray-200">수요예배 (WBA)</td>
@@ -800,7 +843,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
                     <div
-                        class="p-12 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                        class="p-6 md:p-12 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
                     >
                         <h3
                             class="text-2xl font-black text-gray-900 mb-10 flex items-center gap-4"
@@ -823,7 +866,7 @@
                             </span>
                             대중교통 이용안내
                         </h3>
-                        <ul class="text-xl text-gray-700 space-y-8">
+                        <ul class="text-base md:text-xl text-gray-700 space-y-8">
                             <li class="flex flex-col gap-4">
                                 <div class="flex items-center">
                                     <span
@@ -892,7 +935,7 @@
                     </div>
 
                     <div
-                        class="p-12 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                        class="p-6 md:p-12 bg-white rounded-[2.5rem] border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
                     >
                         <h3
                             class="text-2xl font-black text-gray-900 mb-10 flex items-center gap-4"

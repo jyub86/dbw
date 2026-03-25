@@ -80,10 +80,10 @@
 	<div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
 		<div class="flex items-center justify-between">
 			<!-- Logo (Left) -->
-			<div class="w-1/4 flex justify-start z-50">
+			<div class="flex-1 md:w-1/4 flex justify-start z-50">
 				<a
 					href="/"
-					class="text-2xl md:text-3xl font-black tracking-tighter transition-colors {scrolled ||
+					class="whitespace-nowrap text-xl md:text-3xl font-black tracking-tighter transition-colors {scrolled ||
 					navOpen ||
 					$page.url.pathname !== '/'
 						? 'text-gray-900'
@@ -94,7 +94,7 @@
 			</div>
 
 			<!-- Desktop Nav (Center) -->
-			<nav class="hidden md:flex w-2/4 justify-center space-x-12">
+			<nav class="hidden md:flex md:w-2/4 justify-center space-x-12">
 				{#each menus as menu}
 					<a
 						href={menu.href}
@@ -121,7 +121,7 @@
 			</nav>
 
 			<!-- Right Actions / Mobile Toggle -->
-			<div class="w-1/4 flex justify-end z-50">
+			<div class="w-auto md:w-1/4 flex justify-end z-50">
 				<div class="hidden md:flex items-center">
 						{#if isLoggedIn}
 						<div class="relative profile-dropdown">
@@ -166,10 +166,7 @@
 				<button
 					type="button"
 					onclick={toggleNav}
-					class="md:hidden inline-flex items-center justify-center p-2 rounded-full transition-colors focus:outline-none
-					{scrolled || navOpen || $page.url.pathname !== '/'
-						? 'text-gray-900 hover:bg-gray-100'
-						: 'text-white hover:bg-white/20'}"
+					class="md:hidden inline-flex items-center justify-center p-2 rounded-full text-gray-900 hover:bg-gray-100 transition-colors focus:outline-none"
 				>
 					<span class="sr-only">Open menu</span>
 					<div
@@ -178,27 +175,15 @@
 							: ''}"
 					>
 						<span
-							class="w-full h-0.5 transform transition-all duration-300 {scrolled ||
-							navOpen ||
-							$page.url.pathname !== '/'
-								? 'bg-gray-900'
-								: 'bg-white'} {navOpen
+							class="w-full h-0.5 bg-gray-900 transform transition-all duration-300 {navOpen
 								? 'rotate-45 translate-y-2.5'
 								: ''}"
 						></span>
 						<span
-							class="w-full h-0.5 transition-all duration-300 {scrolled ||
-							navOpen ||
-							$page.url.pathname !== '/'
-								? 'bg-gray-900'
-								: 'bg-white'} {navOpen ? 'opacity-0' : ''}"
+							class="w-full h-0.5 bg-gray-900 transition-all duration-300 {navOpen ? 'opacity-0' : ''}"
 						></span>
 						<span
-							class="w-full h-0.5 transform transition-all duration-300 {scrolled ||
-							navOpen ||
-							$page.url.pathname !== '/'
-								? 'bg-gray-900'
-								: 'bg-white'} {navOpen
+							class="w-full h-0.5 bg-gray-900 transform transition-all duration-300 {navOpen
 								? '-rotate-45 -translate-y-2'
 								: ''}"
 						></span>
@@ -210,7 +195,7 @@
 
 	<!-- Premium Mobile Menu Fullscreen Overlay -->
 	<div
-		class="fixed inset-0 bg-white z-40 transition-all duration-500 ease-in-out md:hidden flex flex-col justify-center px-8 {navOpen
+		class="fixed inset-0 bg-white z-40 transition-all duration-500 ease-in-out md:hidden flex flex-col justify-center px-8 overflow-y-auto {navOpen
 			? 'opacity-100 visible'
 			: 'opacity-0 invisible'}"
 	>
@@ -219,7 +204,7 @@
 				<a
 					href={menu.href}
 					onclick={toggleNav}
-					class="text-4xl font-black text-gray-900 hover:text-primary-600 transition-colors transform {navOpen
+					class="text-3xl sm:text-4xl font-black text-gray-900 hover:text-primary-600 transition-colors transform {navOpen
 						? 'translate-y-0 opacity-100'
 						: 'translate-y-8 opacity-0'}"
 					style="transition-delay: {i * 100 + 100}ms;"
@@ -235,18 +220,12 @@
 			style="transition-delay: 500ms;"
 		>
 			{#if isLoggedIn}
-				<a href="/profile" onclick={toggleNav} class="inline-flex items-center gap-3 px-8 py-3.5 rounded-full border-2 border-gray-200 hover:border-gray-400 transition-colors">
-					<div class="w-9 h-9 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center shrink-0">
-						{#if profilePicture}
-							<img src={profilePicture} alt="프로필" class="w-full h-full object-cover" />
-						{:else}
-							<svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-								<path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-							</svg>
-						{/if}
-					</div>
-					<span class="font-bold text-gray-900">내 프로필</span>
-				</a>
+				<button
+					onclick={async () => { await logout(); toggleNav(); }}
+					class="inline-block px-10 py-3.5 rounded-full font-bold text-base border-2 border-red-200 text-red-500 hover:bg-red-50 transition-colors"
+				>
+					로그아웃
+				</button>
 			{:else}
 				<a
 					href="/login"
