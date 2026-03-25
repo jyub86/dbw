@@ -81,15 +81,8 @@
 		<div class="flex items-center justify-between">
 			<!-- Logo (Left) -->
 			<div class="flex-1 md:w-1/4 flex justify-start z-50">
-				<a
-					href="/"
-					class="whitespace-nowrap text-xl md:text-3xl font-black tracking-tighter transition-colors {scrolled ||
-					navOpen ||
-					$page.url.pathname !== '/'
-						? 'text-gray-900'
-						: 'text-gray-900 md:text-white'}"
-				>
-					부평동부교회
+				<a href="/" class="flex items-center">
+					<img src="/logo.png" alt="부평동부교회" class="h-10 md:h-12 w-auto" />
 				</a>
 			</div>
 
