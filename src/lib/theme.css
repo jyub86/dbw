@@ -1,0 +1,23 @@
+/* ============================================================
+   Theme — 모든 디자인 토큰을 여기서 관리합니다
+   ============================================================ */
+@theme {
+  /* --- Typography --- */
+  --font-sans: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
+  /* --- Brand Colors --- */
+  --color-primary-50:  #fdf8f6;
+  --color-primary-100: #f5ece4;
+  --color-primary-200: #ead6c4;
+  --color-primary-300: #d9b99a;
+  --color-primary-400: #c99b74;
+  --color-primary-500: #d4ba9e;   /* 메인 브랜드 컬러 */
+  --color-primary-600: #b8946b;
+  --color-primary-700: #9a7550;
+  --color-primary-800: #7a5b3c;
+  --color-primary-900: #4a3c31;   /* 가장 진한 브랜드 컬러 */
+
+  /* --- Surface / Background --- */
+  --color-surface:     #ffffff;
+  --color-background:  #fbfbfb;
+}
