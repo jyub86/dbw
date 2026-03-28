@@ -37,7 +37,7 @@
     const MAX_URLS = 10;
     const MAX_PDFS = 5;
     const MANAGER_LEVEL = 50;
-    const CHURCH_NEWS_CATEGORY_ID = 2;
+    const PDF_ALLOWED_CATEGORY_IDS = [2, 12]; // 교회소식, 구역공과
 
     onMount(async () => {
         const { data: { session } } = await supabaseBrowser.auth.getSession();
@@ -230,7 +230,7 @@
 
         // PDF 업로드 (교회소식 전용)
         const attachments: { name: string; url: string }[] = [];
-        if (categoryId === CHURCH_NEWS_CATEGORY_ID && pdfItems.length > 0) {
+        if (PDF_ALLOWED_CATEGORY_IDS.includes(categoryId) && pdfItems.length > 0) {
             for (let i = 0; i < pdfItems.length; i++) {
                 submitLabel = `PDF 업로드 중... (${i + 1}/${pdfItems.length})`;
                 const { file, name } = pdfItems[i];
@@ -425,7 +425,7 @@
         </div>
 
         <!-- PDF 첨부 (교회소식 카테고리 전용) -->
-        {#if categoryId === CHURCH_NEWS_CATEGORY_ID}
+        {#if PDF_ALLOWED_CATEGORY_IDS.includes(categoryId)}
             <div>
                 <div class="flex items-center justify-between mb-3">
                     <label class="text-sm font-bold text-gray-700">

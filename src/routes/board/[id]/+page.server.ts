@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	const { data, error: err } = await supabase
 		.from('posts')
 		.select(`
-			id, title, content, media_urls, created_at, category_id,
+			id, title, content, media_urls, created_at, category_id, user_id,
 			categories(name),
 			custom_users!posts_user_id_fkey(name, profile_picture)
 		`)
@@ -21,10 +21,11 @@ export const load: PageServerLoad = async ({ params }) => {
 			id: data.id,
 			title: data.title,
 			content: data.content,
-			media_urls: data.media_urls ?? [],
+			media_urls: (data.media_urls as string[]) ?? [],
 			category: (data.categories as { name: string })?.name ?? '',
 			author: (data.custom_users as { name: string; profile_picture: string | null } | null)?.name ?? '알 수 없음',
 			authorProfile: (data.custom_users as { name: string; profile_picture: string | null } | null)?.profile_picture ?? null,
+			user_id: data.user_id as string,
 			date: new Date(data.created_at).toLocaleDateString('ko-KR', {
 				year: 'numeric', month: '2-digit', day: '2-digit'
 			}),

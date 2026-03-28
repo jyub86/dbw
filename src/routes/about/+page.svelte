@@ -14,6 +14,18 @@
         { name: "오시는 길", id: "map" },
     ];
     let activeTab = $state("vision");
+    let selectedPeopleFilter = $state("전체");
+
+    const peopleFilters = ["전체", "시무장로", "원로장로", "은퇴장로", "목사", "전도사", "직원"];
+
+    function matchesFilter(role: string, filter: string) {
+        if (filter === "전체") return true;
+        if (filter === "목사") return role.includes("목사");
+        if (filter === "전도사") return role.includes("전도사");
+        if (filter === "직원") return role === "시무간사" || role === "교회관리";
+        if (filter === "은퇴장로") return role.includes("은퇴");
+        return role === filter;
+    }
 
     // URL 쿼리 파라미터에서 tab 값을 읽어와 활성 탭으로 설정
     $effect(() => {
@@ -89,50 +101,43 @@
     const historyData = $derived(data.historyData);
 
     const peopleData = [
-        {
-            name: "강길수",
-            role: "담임목사",
-            duty: "",
-            phone: "032-515-1401",
-        },
-        {
-            name: "이동호",
-            role: "부목사",
-            duty: "행정 / 청년부",
-            phone: "032-503-9211",
-        },
-        {
-            name: "김현겸",
-            role: "부목사",
-            duty: "사랑공동체 / 3040 / 중고등부 / 찬양단",
-            phone: "032-503-9214",
-        },
-        {
-            name: "임효빈",
-            role: "부목사",
-            duty: "화평공동체 / 유초등부 / 전도폭발 / 지역전도",
-            phone: "032-513-7975",
-        },
-        {
-            name: "한성숙",
-            role: "전임전도사",
-            duty: "교구",
-            phone: "032-503-9212",
-        },
-        { name: "유선아", role: "교육전도사", duty: "유치부", phone: "" },
-        { name: "최사라", role: "교육전도사", duty: "영아부", phone: "" },
-        {
-            name: "이명애",
-            role: "시무간사",
-            duty: "교회재정 / 사무",
-            phone: "032-515-1401",
-        },
-        {
-            name: "구제만",
-            role: "교회관리",
-            duty: "교회관리",
-            phone: "032-522-7318",
-        },
+        // 시무장로
+        { name: "유석환", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yusukhwan.jpg" },
+        { name: "김광호", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimkwangho.jpg" },
+        { name: "임원규", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/imwonkyu.jpg" },
+        { name: "유진열", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yujinyul.jpg" },
+        { name: "최병원", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/choibyungwon.jpg" },
+        { name: "윤동성", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yundongsung.jpg" },
+        { name: "박준수", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkjunsu.jpg" },
+        { name: "강병환", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kangbyunghwan.jpg" },
+        { name: "정훈", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/junghoon.jpg" },
+        { name: "김상엽", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimsangyup.jpg" },
+        // 원로장로
+        { name: "고성기", role: "원로장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/gosunggi.jpg" },
+        // 은퇴장로
+        { name: "김주희", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimjuhee.jpg" },
+        { name: "유철형", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yucheolhyung.jpg" },
+        { name: "하은태", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/haeuntae.jpg" },
+        { name: "송덕헌", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/songdukhun.jpg" },
+        { name: "박진수", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkjinsu.jpg" },
+        { name: "이영오", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leeyoungoh.jpg" },
+        { name: "김봉선", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimbongsun.jpg" },
+        // 은퇴협동장로
+        { name: "박용학", role: "은퇴협동장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkyonghak.jpg" },
+        // 휴직장로
+        { name: "김요진", role: "휴직장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimyojin.jpg" },
+        // 목사
+        { name: "강길수", role: "담임목사", duty: "", phone: "032-515-1401", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kanggilsu.jpeg" },
+        { name: "이동호", role: "부목사", duty: "행정 / 청년부", phone: "032-503-9211", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leedongho.jpg" },
+        { name: "김현겸", role: "부목사", duty: "사랑공동체 / 3040 / 중고등부 / 찬양단", phone: "032-503-9214", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimhyungyum.jpg" },
+        { name: "임효빈", role: "부목사", duty: "화평공동체 / 유초등부 / 전도폭발 / 지역전도", phone: "032-513-7975", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/limhyubin.jpg" },
+        // 전도사
+        { name: "한성숙", role: "전임전도사", duty: "교구", phone: "032-503-9212", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/hansungsuk.jpg" },
+        { name: "유선아", role: "교육전도사", duty: "유치부", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yousuna.jpg" },
+        { name: "최사라", role: "교육전도사", duty: "영아부", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/choisara.jpg" },
+        // 직원
+        { name: "이명애", role: "시무간사", duty: "교회재정 / 사무", phone: "032-515-1401", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leemyungae.jpg" },
+        { name: "구제만", role: "교회관리", duty: "교회관리", phone: "032-522-7318", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kujeaman.jpg" },
     ];
 </script>
 
@@ -440,7 +445,7 @@
                         <div class="shrink-0">
                             <div class="w-48 h-48 md:w-64 md:h-64 rounded-4xl overflow-hidden shadow-2xl ring-4 ring-white/20">
                                 <img
-                                    src="https://images.unsplash.com/photo-1544256718-3baf24032d84?w=800"
+                                    src="https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kanggilsu.jpeg"
                                     alt="강길수 담임목사"
                                     class="w-full h-full object-cover"
                                 />
@@ -574,24 +579,39 @@
                     </p>
                 </div>
 
+                <!-- 필터 -->
+                <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-1 px-0.5 mb-12">
+                    {#each peopleFilters as filter}
+                        <button
+                            type="button"
+                            class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base font-bold transition-all duration-300 shadow-sm {selectedPeopleFilter === filter ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
+                            onclick={() => selectedPeopleFilter = filter}
+                        >{filter}</button>
+                    {/each}
+                </div>
+
                 <div
                     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
                 >
-                    {#each peopleData as person}
+                    {#each peopleData.filter(p => matchesFilter(p.role, selectedPeopleFilter)) as person}
                         <div
                             class="text-center group bg-white p-6 md:p-12 rounded-[2.5rem] border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-500"
                         >
                             <div
-                                class="w-32 h-32 md:w-40 md:h-40 mx-auto rounded-full bg-gray-50 mb-6 md:mb-8 flex items-center justify-center text-gray-300 border-4 border-white shadow-md group-hover:bg-primary-50 group-hover:text-primary-400 group-hover:scale-105 transition-all duration-500 overflow-hidden relative"
+                                class="w-32 h-40 md:w-40 md:h-52 mx-auto rounded-2xl bg-gray-50 mb-6 md:mb-8 flex items-center justify-center text-gray-300 border-4 border-white shadow-md group-hover:scale-105 transition-all duration-500 overflow-hidden relative"
                             >
-                                <svg
-                                    class="w-12 h-12 md:w-16 md:h-16"
-                                    fill="currentColor"
-                                    viewBox="0 0 24 24"
-                                    ><path
-                                        d="M12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
-                                    /></svg
-                                >
+                                {#if person.image}
+                                    <img src={person.image} alt={person.name} class="w-full h-full object-cover" />
+                                {:else}
+                                    <svg
+                                        class="w-12 h-12 md:w-16 md:h-16"
+                                        fill="currentColor"
+                                        viewBox="0 0 24 24"
+                                        ><path
+                                            d="M12 12c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
+                                        /></svg
+                                    >
+                                {/if}
                             </div>
 
                             <h3

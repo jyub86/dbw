@@ -5,7 +5,7 @@ import { error } from '@sveltejs/kit';
 export const load: PageServerLoad = async ({ params }) => {
 	const { data, error: err } = await supabase
 		.from('posts')
-		.select('id, title, content, media_urls, attachments, created_at, category_id, categories(name)')
+		.select('id, title, content, media_urls, attachments, created_at, category_id, user_id, categories(name)')
 		.eq('id', params.id)
 		.eq('active', true)
 		.single();
@@ -21,6 +21,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			media_urls: (data.media_urls as string[]) ?? [],
 			attachments: (data.attachments as { name: string; url: string }[]) ?? [],
 			category: (data.categories as { name: string })?.name ?? '',
+			user_id: data.user_id as string,
 			date: new Date(data.created_at).toLocaleDateString('ko-KR', {
 				year: 'numeric',
 				month: '2-digit',
