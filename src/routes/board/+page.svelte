@@ -1,8 +1,22 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
+    import { onMount } from 'svelte';
+    import { supabaseBrowser } from '$lib/supabase-browser';
 
     let { data } = $props();
+
+    let isLoggedIn = $state(false);
+
+    onMount(() => {
+        supabaseBrowser.auth.getSession().then(({ data: { session } }) => {
+            isLoggedIn = !!session;
+        });
+        const { data: { subscription } } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
+            isLoggedIn = !!session;
+        });
+        return () => subscription.unsubscribe();
+    });
 
     let searchInput = $state(data.search);
 
@@ -52,7 +66,7 @@
 
 <div class="w-full max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-12 md:py-20">
 
-    <!-- 카테고리 + 검색 -->
+    <!-- 카테고리 + 검색 + 글쓰기 -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 md:mb-12">
         <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-1 px-0.5 w-full md:w-auto shrink-0">
             <button
@@ -68,20 +82,30 @@
                 >{cat.name}</button>
             {/each}
         </div>
-        <div class="relative w-full md:w-72 shrink-0">
-            <form onsubmit={submitSearch}>
-                <input
-                    type="text"
-                    bind:value={searchInput}
-                    placeholder="게시물 검색..."
-                    class="w-full pl-6 pr-14 py-3 rounded-full border-2 border-gray-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-base"
-                />
-                <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600">
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                    </svg>
-                </button>
-            </form>
+        <div class="flex items-center gap-3 w-full md:w-auto">
+            <div class="relative grow md:w-72 shrink-0">
+                <form onsubmit={submitSearch}>
+                    <input
+                        type="text"
+                        bind:value={searchInput}
+                        placeholder="게시물 검색..."
+                        class="w-full pl-6 pr-14 py-3 rounded-full border-2 border-gray-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-base"
+                    />
+                    <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </button>
+                </form>
+            </div>
+            {#if isLoggedIn}
+                <a
+                    href="/board/write"
+                    class="shrink-0 px-6 py-3 bg-primary-900 text-white font-bold rounded-full hover:bg-primary-800 transition-colors text-base whitespace-nowrap"
+                >
+                    글쓰기
+                </a>
+            {/if}
         </div>
     </div>
 
