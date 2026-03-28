@@ -3,6 +3,7 @@
     import { page } from '$app/stores';
 
     let { data } = $props();
+
     let searchInput = $state(data.search);
 
     function buildUrl(params: Record<string, string | null>) {
@@ -11,11 +12,11 @@
             if (v === null) p.delete(k);
             else p.set(k, v);
         }
-        return `/news?${p.toString()}`;
+        return `/archive?${p.toString()}`;
     }
 
-    function selectCategory(label: string | null) {
-        goto(buildUrl({ category: label, page: '1' }));
+    function selectCategory(id: number | null) {
+        goto(buildUrl({ category: id !== null ? String(id) : null, page: '1' }));
     }
 
     function submitSearch(e: Event) {
@@ -34,38 +35,41 @@
         for (let i = start; i <= end; i++) range.push(i);
         return range;
     });
+
+    function getCategoryName(id: number) {
+        return data.categories.find((c) => c.id === id)?.name ?? '기타';
+    }
 </script>
 
 <svelte:head>
-    <title>교회 소식 - 부평동부교회</title>
+    <title>이전 자료 - 부평동부교회</title>
 </svelte:head>
 
 <div class="bg-gray-50 py-12 md:py-32 border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-        <h1 class="text-3xl md:text-6xl font-black text-gray-900 mb-4 md:mb-8 tracking-tight">
-            교회 소식
-        </h1>
+        <h1 class="text-3xl md:text-6xl font-black text-gray-900 mb-4 md:mb-8 tracking-tight">이전 자료</h1>
         <p class="text-base md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            부평동부교회의 다양한 소식과 자료를 확인하실 수 있습니다.
+            이전 홈페이지의 교우동정, 교회소식, 구역공과, 선교소식 자료입니다.
         </p>
     </div>
 </div>
 
 <div class="w-full max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-12 md:py-20">
+
     <!-- 카테고리 + 검색 -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 md:mb-12">
         <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-1 px-0.5 w-full md:w-auto shrink-0">
             <button
                 type="button"
-                class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {data.categoryParam === null ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
+                class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {data.categoryId === null ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
                 onclick={() => selectCategory(null)}
             >전체</button>
-            {#each data.filterCategories as label}
+            {#each data.categories as cat}
                 <button
                     type="button"
-                    class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {data.categoryParam === label ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
-                    onclick={() => selectCategory(label)}
-                >{label}</button>
+                    class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {data.categoryId === cat.id ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
+                    onclick={() => selectCategory(cat.id)}
+                >{cat.name}</button>
             {/each}
         </div>
         <div class="relative w-full md:w-72 shrink-0">
@@ -73,7 +77,7 @@
                 <input
                     type="text"
                     bind:value={searchInput}
-                    placeholder="게시물 검색..."
+                    placeholder="자료 검색..."
                     class="w-full pl-6 pr-14 py-3 rounded-full border-2 border-gray-200 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors text-base"
                 />
                 <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-primary-600">
@@ -85,33 +89,44 @@
         </div>
     </div>
 
-    {#if data.news.length === 0}
-        <div class="text-center py-20 text-gray-400 text-xl">게시물이 없습니다.</div>
+    <!-- 목록 -->
+    {#if data.posts.length === 0}
+        <div class="text-center py-20 text-gray-400 text-xl">자료가 없습니다.</div>
     {:else}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="w-full bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden text-lg">
+            <div class="hidden md:grid grid-cols-12 gap-6 p-6 md:p-8 bg-gray-50 border-b border-gray-200 font-bold text-gray-700 text-center">
+                <div class="col-span-1">번호</div>
+                <div class="col-span-2">분류</div>
+                <div class="col-span-6 text-left pl-4">제목</div>
+                <div class="col-span-3">작성일</div>
+            </div>
+
             <div class="divide-y divide-gray-100">
-                {#each data.news as item}
-                    <a
-                        href={`/news/${item.id}`}
-                        class="block hover:bg-gray-50 transition-colors p-6 md:p-8"
-                    >
-                        <div class="flex flex-col md:flex-row gap-2 md:gap-4 md:items-center justify-between">
-                            <div class="flex items-center gap-3 md:gap-6 overflow-hidden">
-                                <span class="shrink-0 px-3 py-1.5 md:px-4 md:py-2 bg-primary-50 text-primary-700 text-xs md:text-base font-bold rounded-lg border border-primary-100 w-20 md:w-24 text-center">
-                                    {item.category}
-                                </span>
-                                <h3 class="text-base md:text-2xl font-semibold text-gray-900 transition-colors line-clamp-1">
-                                    {item.title}
-                                </h3>
-                                {#if item.isNew}
-                                    <span class="hidden md:inline-flex items-center px-2.5 py-1 rounded text-xs font-black bg-red-100 text-red-600 uppercase tracking-widest">New</span>
-                                {/if}
+                {#each data.posts as post, index}
+                    <a href={`/archive/${post.id}`} class="block hover:bg-gray-50 transition-colors">
+                        <div class="flex flex-col md:grid md:grid-cols-12 gap-4 md:gap-6 p-6 md:p-8 items-center text-center">
+                            <div class="hidden md:block col-span-1 text-gray-400 font-medium">
+                                {data.totalCount - ((data.page - 1) * 20 + index)}
                             </div>
-                            <div class="flex items-center gap-2 text-sm md:text-base text-gray-500 font-medium md:ml-auto md:shrink-0">
-                                <svg class="w-4 h-4 md:w-5 md:h-5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                {item.date}
+                            <div class="hidden md:flex col-span-2 justify-center">
+                                <span class="px-2 py-1 bg-primary-50 text-primary-700 text-xs font-bold rounded-lg border border-primary-100 truncate max-w-full">
+                                    {getCategoryName(post.category_id)}
+                                </span>
+                            </div>
+                            <div class="col-span-6 text-left w-full pl-0 md:pl-4">
+                                <div class="flex items-center gap-3">
+                                    <span class="md:hidden px-2 py-1 bg-primary-50 text-primary-700 text-xs font-bold rounded">
+                                        {getCategoryName(post.category_id)}
+                                    </span>
+                                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 truncate">
+                                        {post.title}
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="col-span-3 md:contents flex items-center justify-between w-full mt-3 md:mt-0 text-base md:text-lg text-gray-500 font-medium border-t border-gray-100 md:border-0 pt-3 md:pt-0">
+                                <div class="md:col-span-3 flex items-center justify-center">
+                                    {post.date}
+                                </div>
                             </div>
                         </div>
                     </a>

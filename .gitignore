@@ -27,3 +27,6 @@ vite.config.ts.timestamp-*
 
 # Claude
 .claude
+
+# Backup
+/cafe24_backup
