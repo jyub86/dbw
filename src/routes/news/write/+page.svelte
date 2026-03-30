@@ -37,7 +37,7 @@
     const MAX_URLS = 10;
     const MAX_PDFS = 5;
     const MANAGER_LEVEL = 50;
-    const PDF_ALLOWED_CATEGORY_IDS = [2, 12]; // 교회소식, 구역공과
+    const PDF_ALLOWED_CATEGORY_IDS = [2, 12]; // 교회소식, 교육자료
 
     onMount(async () => {
         const { data: { session } } = await supabaseBrowser.auth.getSession();

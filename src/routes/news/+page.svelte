@@ -55,13 +55,13 @@
     <title>교회 소식 - 부평동부교회</title>
 </svelte:head>
 
-<div class="bg-gray-50 py-12 md:py-32 border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center">
-        <h1 class="text-3xl md:text-6xl font-black text-gray-900 mb-4 md:mb-8 tracking-tight">
+<div class="bg-gradient-to-b from-primary-50 to-white py-10 md:py-20 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center animate-fade-in-up">
+        <h1 class="text-3xl md:text-6xl font-black text-gray-900 mb-4 md:mb-8 tracking-tight font-serif drop-shadow-sm">
             교회 소식
         </h1>
-        <p class="text-base md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            부평동부교회의 다양한 소식과 자료를 확인하실 수 있습니다.
+        <p class="text-base md:text-2xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
+            다양한 소식과 자료를 확인하실 수 있습니다.
         </p>
     </div>
 </div>
@@ -69,16 +69,27 @@
 <div class="w-full max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-12 md:py-20">
     <!-- 카테고리 + 검색 -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 md:mb-12">
-        <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-1 px-0.5 w-full md:w-auto shrink-0">
+        <!-- 모바일: select -->
+        <select
+            class="md:hidden w-full px-4 py-3.5 rounded-2xl border-2 border-gray-200 bg-white font-bold text-gray-800 text-base focus:outline-none focus:border-primary-500 transition-colors"
+            onchange={(e) => selectCategory((e.target as HTMLSelectElement).value === '' ? null : (e.target as HTMLSelectElement).value)}
+        >
+            <option value="" selected={data.categoryParam === null}>전체</option>
+            {#each data.filterCategories as label}
+                <option value={label} selected={data.categoryParam === label}>{label}</option>
+            {/each}
+        </select>
+        <!-- 데스크톱: 버튼 -->
+        <div class="hidden md:flex items-center gap-3 py-1 px-0.5 shrink-0">
             <button
                 type="button"
-                class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {data.categoryParam === null ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
+                class="whitespace-nowrap px-6 py-3 rounded-full text-lg font-bold transition-all duration-300 shadow-sm {data.categoryParam === null ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
                 onclick={() => selectCategory(null)}
             >전체</button>
             {#each data.filterCategories as label}
                 <button
                     type="button"
-                    class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base md:text-lg font-bold transition-all duration-300 shadow-sm {data.categoryParam === label ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
+                    class="whitespace-nowrap px-6 py-3 rounded-full text-lg font-bold transition-all duration-300 shadow-sm {data.categoryParam === label ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
                     onclick={() => selectCategory(label)}
                 >{label}</button>
             {/each}

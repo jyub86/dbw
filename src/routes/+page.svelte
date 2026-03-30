@@ -165,8 +165,55 @@
     </div>
 </section>
 
+<!-- Social Links -->
+<section class="py-10 md:py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
+            <a
+                href="https://www.youtube.com/@dbchurch"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-bold text-lg rounded-2xl transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-lg w-full sm:w-auto justify-center"
+            >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+                Youtube
+            </a>
+            <a
+                href={appLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white font-bold text-lg rounded-2xl transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-lg w-full sm:w-auto justify-center"
+            >
+                {#if isApplePlatform}
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.39.07 2.35.74 3.18.76 1.22-.21 2.38-.91 3.69-.82 1.57.12 2.75.76 3.51 1.92-3.22 1.93-2.46 6.16.62 7.5-.64 1.64-1.48 3.26-3 3.52zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                    </svg>
+                {:else}
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3.18 23.76c.3.17.64.24.99.2l12.23-12.24L13.23 8.6 3.18 23.76zm17.29-11.53c.52-.3.83-.84.83-1.44s-.31-1.14-.83-1.44l-2.43-1.4-3.12 3.12 3.12 3.12 2.43-1.4zM.42 1.04C.16 1.36 0 1.8 0 2.33v19.34c0 .53.16.97.42 1.29l.07.07 10.83-10.84v-.25L.49.97.42 1.04zm12.81 11.5L3 22.77l.07.07c.3.17.64.24.99.2l12.23-12.24-3.06-3.06z"/>
+                    </svg>
+                {/if}
+                App 설치
+            </a>
+            <a
+                href="https://www.instagram.com/bpdbchurch"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="flex items-center gap-3 px-8 py-4 bg-linear-to-r from-purple-500 via-pink-500 to-orange-400 hover:opacity-90 text-white font-bold text-lg rounded-2xl transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-lg w-full sm:w-auto justify-center"
+            >
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+                Instagram
+            </a>
+        </div>
+    </div>
+</section>
+
 <!-- 3. 영상 (설교, 실황, 찬양) -->
-<section class="py-12 md:py-24 bg-background">
+<section class="py-12 md:py-12 bg-background">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-8 md:mb-12">
             <div>
@@ -265,7 +312,7 @@
 </section>
 
 <!-- 4 & 5. 게시판 섹션 (교회 소식 & 일반 게시판) -->
-<section class="py-12 md:py-24 bg-white">
+<section class="py-12 md:py-12 bg-white">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <!-- 교회 소식 -->
@@ -354,53 +401,6 @@
                     {/each}
                 </ul>
             </div>
-        </div>
-    </div>
-</section>
-
-<!-- Social Links -->
-<section class="py-10 md:py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-            <a
-                href="https://www.youtube.com/@dbchurch"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center gap-3 px-8 py-4 bg-red-600 hover:bg-red-700 text-white font-bold text-lg rounded-2xl transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-lg w-full sm:w-auto justify-center"
-            >
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                </svg>
-                Youtube
-            </a>
-            <a
-                href={appLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center gap-3 px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white font-bold text-lg rounded-2xl transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-lg w-full sm:w-auto justify-center"
-            >
-                {#if isApplePlatform}
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.7 9.05 7.4c1.39.07 2.35.74 3.18.76 1.22-.21 2.38-.91 3.69-.82 1.57.12 2.75.76 3.51 1.92-3.22 1.93-2.46 6.16.62 7.5-.64 1.64-1.48 3.26-3 3.52zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                    </svg>
-                {:else}
-                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M3.18 23.76c.3.17.64.24.99.2l12.23-12.24L13.23 8.6 3.18 23.76zm17.29-11.53c.52-.3.83-.84.83-1.44s-.31-1.14-.83-1.44l-2.43-1.4-3.12 3.12 3.12 3.12 2.43-1.4zM.42 1.04C.16 1.36 0 1.8 0 2.33v19.34c0 .53.16.97.42 1.29l.07.07 10.83-10.84v-.25L.49.97.42 1.04zm12.81 11.5L3 22.77l.07.07c.3.17.64.24.99.2l12.23-12.24-3.06-3.06z"/>
-                    </svg>
-                {/if}
-                App 설치
-            </a>
-            <a
-                href="https://www.instagram.com/bpdbchurch"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="flex items-center gap-3 px-8 py-4 bg-linear-to-r from-purple-500 via-pink-500 to-orange-400 hover:opacity-90 text-white font-bold text-lg rounded-2xl transition-all hover:-translate-y-0.5 shadow-sm hover:shadow-lg w-full sm:w-auto justify-center"
-            >
-                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                </svg>
-                Instagram
-            </a>
         </div>
     </div>
 </section>

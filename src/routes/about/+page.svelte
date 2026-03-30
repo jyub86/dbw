@@ -16,13 +16,22 @@
     let activeTab = $state("vision");
     let selectedPeopleFilter = $state("전체");
 
-    const peopleFilters = ["전체", "시무장로", "원로장로", "은퇴장로", "목사", "전도사", "직원"];
+    const peopleFilters = [
+        "전체",
+        "시무장로",
+        "원로장로",
+        "은퇴장로",
+        "목사",
+        "전도사",
+        "직원",
+    ];
 
     function matchesFilter(role: string, filter: string) {
         if (filter === "전체") return true;
         if (filter === "목사") return role.includes("목사");
         if (filter === "전도사") return role.includes("전도사");
-        if (filter === "직원") return role === "시무간사" || role === "교회관리";
+        if (filter === "직원")
+            return role === "시무간사" || role === "교회관리";
         if (filter === "은퇴장로") return role.includes("은퇴");
         return role === filter;
     }
@@ -102,42 +111,216 @@
 
     const peopleData = [
         // 시무장로
-        { name: "유석환", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yusukhwan.jpg" },
-        { name: "김광호", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimkwangho.jpg" },
-        { name: "임원규", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/imwonkyu.jpg" },
-        { name: "유진열", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yujinyul.jpg" },
-        { name: "최병원", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/choibyungwon.jpg" },
-        { name: "윤동성", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yundongsung.jpg" },
-        { name: "박준수", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkjunsu.jpg" },
-        { name: "강병환", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kangbyunghwan.jpg" },
-        { name: "정훈", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/junghoon.jpg" },
-        { name: "김상엽", role: "시무장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimsangyup.jpg" },
+        {
+            name: "유석환",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yusukhwan.jpg",
+        },
+        {
+            name: "김광호",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimkwangho.jpg",
+        },
+        {
+            name: "임원규",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/imwonkyu.jpg",
+        },
+        {
+            name: "유진열",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yujinyul.jpg",
+        },
+        {
+            name: "최병원",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/choibyungwon.jpg",
+        },
+        {
+            name: "윤동성",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yundongsung.jpg",
+        },
+        {
+            name: "박준수",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkjunsu.jpg",
+        },
+        {
+            name: "강병환",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kangbyunghwan.jpg",
+        },
+        {
+            name: "정훈",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/junghoon.jpg",
+        },
+        {
+            name: "김상엽",
+            role: "시무장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimsangyup.jpg",
+        },
         // 원로장로
-        { name: "고성기", role: "원로장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/gosunggi.jpg" },
+        {
+            name: "고성기",
+            role: "원로장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/gosunggi.jpg",
+        },
         // 은퇴장로
-        { name: "김주희", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimjuhee.jpg" },
-        { name: "유철형", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yucheolhyung.jpg" },
-        { name: "하은태", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/haeuntae.jpg" },
-        { name: "송덕헌", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/songdukhun.jpg" },
-        { name: "박진수", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkjinsu.jpg" },
-        { name: "이영오", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leeyoungoh.jpg" },
-        { name: "김봉선", role: "은퇴장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimbongsun.jpg" },
+        {
+            name: "김주희",
+            role: "은퇴장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimjuhee.jpg",
+        },
+        {
+            name: "유철형",
+            role: "은퇴장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yucheolhyung.jpg",
+        },
+        {
+            name: "하은태",
+            role: "은퇴장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/haeuntae.jpg",
+        },
+        {
+            name: "송덕헌",
+            role: "은퇴장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/songdukhun.jpg",
+        },
+        {
+            name: "박진수",
+            role: "은퇴장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkjinsu.jpg",
+        },
+        {
+            name: "이영오",
+            role: "은퇴장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leeyoungoh.jpg",
+        },
+        {
+            name: "김봉선",
+            role: "은퇴장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimbongsun.jpg",
+        },
         // 은퇴협동장로
-        { name: "박용학", role: "은퇴협동장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkyonghak.jpg" },
+        {
+            name: "박용학",
+            role: "은퇴협동장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/parkyonghak.jpg",
+        },
         // 휴직장로
-        { name: "김요진", role: "휴직장로", duty: "", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimyojin.jpg" },
+        {
+            name: "김요진",
+            role: "휴직장로",
+            duty: "",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimyojin.jpg",
+        },
         // 목사
-        { name: "강길수", role: "담임목사", duty: "", phone: "032-515-1401", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kanggilsu.jpeg" },
-        { name: "이동호", role: "부목사", duty: "행정 / 청년부", phone: "032-503-9211", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leedongho.jpg" },
-        { name: "김현겸", role: "부목사", duty: "사랑공동체 / 3040 / 중고등부 / 찬양단", phone: "032-503-9214", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimhyungyum.jpg" },
-        { name: "임효빈", role: "부목사", duty: "화평공동체 / 유초등부 / 전도폭발 / 지역전도", phone: "032-513-7975", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/limhyubin.jpg" },
+        {
+            name: "강길수",
+            role: "담임목사",
+            duty: "",
+            phone: "032-515-1401",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kanggilsu.jpeg",
+        },
+        {
+            name: "이동호",
+            role: "부목사",
+            duty: "행정 / 청년부",
+            phone: "032-503-9211",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leedongho.jpg",
+        },
+        {
+            name: "김현겸",
+            role: "부목사",
+            duty: "사랑공동체 / 3040 / 중고등부 / 찬양단",
+            phone: "032-503-9214",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimhyungyum.jpg",
+        },
+        {
+            name: "임효빈",
+            role: "부목사",
+            duty: "화평공동체 / 유초등부 / 전도폭발 / 지역전도",
+            phone: "032-513-7975",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/limhyubin.jpg",
+        },
         // 전도사
-        { name: "한성숙", role: "전임전도사", duty: "교구", phone: "032-503-9212", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/hansungsuk.jpg" },
-        { name: "유선아", role: "교육전도사", duty: "유치부", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yousuna.jpg" },
-        { name: "최사라", role: "교육전도사", duty: "영아부", phone: "", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/choisara.jpg" },
+        {
+            name: "한성숙",
+            role: "전임전도사",
+            duty: "교구",
+            phone: "032-503-9212",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/hansungsuk.jpg",
+        },
+        {
+            name: "유선아",
+            role: "교육전도사",
+            duty: "유치부",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yousuna.jpg",
+        },
+        {
+            name: "최사라",
+            role: "교육전도사",
+            duty: "영아부",
+            phone: "",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/choisara.jpg",
+        },
         // 직원
-        { name: "이명애", role: "시무간사", duty: "교회재정 / 사무", phone: "032-515-1401", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leemyungae.jpg" },
-        { name: "구제만", role: "교회관리", duty: "교회관리", phone: "032-522-7318", image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kujeaman.jpg" },
+        {
+            name: "이명애",
+            role: "시무간사",
+            duty: "교회재정 / 사무",
+            phone: "032-515-1401",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/leemyungae.jpg",
+        },
+        {
+            name: "구제만",
+            role: "교회관리",
+            duty: "교회관리",
+            phone: "032-522-7318",
+            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kujeaman.jpg",
+        },
     ];
 </script>
 
@@ -147,7 +330,7 @@
 
 <!-- Header Section -->
 <div
-    class="bg-gradient-to-b from-primary-50 to-white py-14 md:py-36 border-b border-gray-100"
+    class="bg-gradient-to-b from-primary-50 to-white py-5 md:py-15 border-b border-gray-100"
 >
     <div
         class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center animate-fade-in-up"
@@ -169,7 +352,7 @@
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 md:py-24">
+<div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 md:py-5">
     <!-- Sub Navigation - Mobile: Select dropdown -->
     <div class="md:hidden mb-8">
         <select
@@ -183,9 +366,7 @@
     </div>
 
     <!-- Sub Navigation - Desktop: Tab buttons -->
-    <div
-        class="hidden md:flex border-b-2 border-gray-100 mb-20 justify-center"
-    >
+    <div class="hidden md:flex border-b-2 border-gray-100 mb-20 justify-center">
         {#each subMenus as menu}
             <button
                 type="button"
@@ -432,18 +613,29 @@
 
         {#if activeTab === "pastor"}
             <div class="animate-fade-in-up" in:fade={{ duration: 400 }}>
-
                 <!-- 헤더 배너 -->
-                <div class="relative bg-linear-to-br from-primary-900 via-primary-800 to-primary-700 rounded-[3rem] overflow-hidden mb-16 shadow-2xl">
+                <div
+                    class="relative bg-linear-to-br from-primary-900 via-primary-800 to-primary-700 rounded-[3rem] overflow-hidden mb-16 shadow-2xl"
+                >
                     <!-- 장식 원형 -->
-                    <div class="absolute -left-24 -top-24 w-80 h-80 bg-white/5 rounded-full"></div>
-                    <div class="absolute -right-16 -bottom-16 w-64 h-64 bg-white/5 rounded-full"></div>
-                    <div class="absolute right-24 top-8 w-32 h-32 bg-primary-600/30 rounded-full blur-2xl"></div>
+                    <div
+                        class="absolute -left-24 -top-24 w-80 h-80 bg-white/5 rounded-full"
+                    ></div>
+                    <div
+                        class="absolute -right-16 -bottom-16 w-64 h-64 bg-white/5 rounded-full"
+                    ></div>
+                    <div
+                        class="absolute right-24 top-8 w-32 h-32 bg-primary-600/30 rounded-full blur-2xl"
+                    ></div>
 
-                    <div class="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-16 p-8 md:p-16 lg:p-20">
+                    <div
+                        class="relative z-10 flex flex-col md:flex-row items-center gap-8 md:gap-16 p-8 md:p-16 lg:p-20"
+                    >
                         <!-- 사진 -->
                         <div class="shrink-0">
-                            <div class="w-48 h-48 md:w-64 md:h-64 rounded-4xl overflow-hidden shadow-2xl ring-4 ring-white/20">
+                            <div
+                                class="w-48 h-48 md:w-64 md:h-64 rounded-4xl overflow-hidden shadow-2xl ring-4 ring-white/20"
+                            >
                                 <img
                                     src="https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kanggilsu.jpeg"
                                     alt="강길수 담임목사"
@@ -454,123 +646,284 @@
 
                         <!-- 이름/직책 -->
                         <div class="text-center md:text-left">
-                            <span class="inline-block py-1.5 px-5 rounded-full bg-white/15 text-primary-100 font-bold tracking-widest text-sm mb-5">
+                            <span
+                                class="inline-block py-1.5 px-5 rounded-full bg-white/15 text-primary-100 font-bold tracking-widest text-sm mb-5"
+                            >
                                 제 4대 담임목사
                             </span>
-                            <h2 class="text-4xl md:text-7xl font-black text-white font-serif mb-4 tracking-tight">
+                            <h2
+                                class="text-4xl md:text-7xl font-black text-white font-serif mb-4 tracking-tight"
+                            >
                                 강길수
                             </h2>
-                            <p class="text-xl md:text-2xl text-primary-200 font-medium mb-8">
+                            <p
+                                class="text-xl md:text-2xl text-primary-200 font-medium mb-8"
+                            >
                                 부평동부교회 담임목사
                             </p>
-                            <div class="flex flex-wrap justify-center md:justify-start gap-3">
-                                <span class="py-2 px-5 rounded-full bg-white/10 text-white text-sm font-medium border border-white/20">대한예수교장로회 합동</span>
-                                <span class="py-2 px-5 rounded-full bg-white/10 text-white text-sm font-medium border border-white/20">032-515-1401</span>
+                            <div
+                                class="flex flex-wrap justify-center md:justify-start gap-3"
+                            >
+                                <span
+                                    class="py-2 px-5 rounded-full bg-white/10 text-white text-sm font-medium border border-white/20"
+                                    >대한예수교장로회 합동</span
+                                >
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 인용 문구 -->
-                <div class="relative bg-primary-50 border border-primary-100 rounded-[2.5rem] p-10 md:p-14 mb-16 overflow-hidden">
-                    <div class="absolute left-8 top-6 text-primary-200 text-[8rem] font-serif leading-none select-none">"</div>
+                <div
+                    class="relative bg-primary-50 border border-primary-100 rounded-[2.5rem] p-10 md:p-14 mb-16 overflow-hidden"
+                >
+                    <div
+                        class="absolute left-8 top-6 text-primary-200 text-[8rem] font-serif leading-none select-none"
+                    >
+                        "
+                    </div>
                     <div class="relative z-10 text-center max-w-3xl mx-auto">
-                        <p class="text-2xl md:text-3xl font-bold text-gray-900 leading-relaxed break-keep pt-6">
+                        <p
+                            class="text-2xl md:text-3xl font-bold text-gray-900 leading-relaxed break-keep pt-6"
+                        >
                             안녕하십니까?<br class="hidden md:block" />
                             부평동부교회를 섬기고 있는 강길수 목사입니다.
                         </p>
                         <p class="mt-6 text-lg text-primary-700 font-medium">
-                            우리교회 홈페이지를 방문해주신 여러분을 진심으로 환영합니다.
+                            우리교회 홈페이지를 방문해주신 여러분을 진심으로
+                            환영합니다.
                         </p>
                     </div>
                 </div>
 
                 <!-- 본문 인사말 -->
-                <div class="bg-white rounded-[2.5rem] p-6 md:p-16 lg:p-20 shadow-xl border border-gray-100 mb-16 relative overflow-hidden">
-                    <div class="absolute -right-20 -bottom-20 w-72 h-72 bg-primary-50/60 rounded-full blur-3xl pointer-events-none"></div>
+                <div
+                    class="bg-white rounded-[2.5rem] p-6 md:p-16 lg:p-20 shadow-xl border border-gray-100 mb-16 relative overflow-hidden"
+                >
+                    <div
+                        class="absolute -right-20 -bottom-20 w-72 h-72 bg-primary-50/60 rounded-full blur-3xl pointer-events-none"
+                    ></div>
 
-                    <div class="relative z-10 space-y-0 divide-y divide-gray-100">
-
+                    <div
+                        class="relative z-10 space-y-0 divide-y divide-gray-100"
+                    >
                         <!-- 단락 1 -->
-                        <div class="flex flex-col md:flex-row gap-6 md:gap-12 py-10 first:pt-0 group">
+                        <div
+                            class="flex flex-col md:flex-row gap-6 md:gap-12 py-10 first:pt-0 group"
+                        >
                             <div class="shrink-0 md:w-36">
-                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 text-primary-700 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                <span
+                                    class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 text-primary-700 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300"
+                                >
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="1.5"
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-2 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                                        /></svg
+                                    >
                                 </span>
-                                <p class="mt-3 text-xs font-bold text-gray-400 tracking-widest uppercase hidden md:block">교회 소개</p>
+                                <p
+                                    class="mt-3 text-xs font-bold text-gray-400 tracking-widest uppercase hidden md:block"
+                                >
+                                    교회 소개
+                                </p>
                             </div>
                             <div class="flex-1">
-                                <p class="text-lg md:text-xl text-gray-700 leading-loose break-keep">
-                                    우리교회는 대한예수교장로회 합동 측 교단에 속한 교회로서 <strong class="text-gray-900">1964년 12월 18일</strong>, 우상렬 목사님과 몇 분의 성도들에 의해 이 땅에 모습을 드러내었습니다. 이후 우리교회는 수십 년이 흐르기까지 괄목할만한 성장을 이루며 부평의 중심교회로 자리매김을 해왔습니다. 한때 교회가 나누어지는 진통과 아픔을 겪기도 하였지만 지금은 오히려 치유하시는 하나님(여호와 라파)의 사랑의 손길을 깊이 경험하며 더욱 견고한 신앙공동체로 재도약을 하고 있습니다.
+                                <p
+                                    class="text-lg md:text-xl text-gray-700 leading-loose break-keep"
+                                >
+                                    우리교회는 대한예수교장로회 합동 측 교단에
+                                    속한 교회로서 <strong class="text-gray-900"
+                                        >1964년 12월 18일</strong
+                                    >, 우상렬 목사님과 몇 분의 성도들에 의해 이
+                                    땅에 모습을 드러내었습니다. 이후 우리교회는
+                                    수십 년이 흐르기까지 괄목할만한 성장을
+                                    이루며 부평의 중심교회로 자리매김을
+                                    해왔습니다. 한때 교회가 나누어지는 진통과
+                                    아픔을 겪기도 하였지만 지금은 오히려
+                                    치유하시는 하나님(여호와 라파)의 사랑의
+                                    손길을 깊이 경험하며 더욱 견고한
+                                    신앙공동체로 재도약을 하고 있습니다.
                                 </p>
                             </div>
                         </div>
 
                         <!-- 단락 2 -->
-                        <div class="flex flex-col md:flex-row gap-6 md:gap-12 py-10 group">
+                        <div
+                            class="flex flex-col md:flex-row gap-6 md:gap-12 py-10 group"
+                        >
                             <div class="shrink-0 md:w-36">
-                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 text-primary-700 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                                <span
+                                    class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 text-primary-700 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300"
+                                >
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="1.5"
+                                            d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                                        /></svg
+                                    >
                                 </span>
-                                <p class="mt-3 text-xs font-bold text-gray-400 tracking-widest uppercase hidden md:block">사명과 비전</p>
+                                <p
+                                    class="mt-3 text-xs font-bold text-gray-400 tracking-widest uppercase hidden md:block"
+                                >
+                                    사명과 비전
+                                </p>
                             </div>
                             <div class="flex-1">
-                                <p class="text-lg md:text-xl text-gray-700 leading-loose break-keep">
-                                    저는 부평동부교회의 <strong class="text-gray-900">제 4대 목사</strong>로서 우리교회에 맡기신 하나님의 거룩한 사명을 이루기 위해 온 성도들과 함께 혼신의 힘을 기울이고 있습니다. 교회의 나아갈 방향과 목표 등은 교회비전에 자세하게 소개되어 있습니다. 우리교회는 그 내용을 따라 한걸음씩 성실하게 앞을 향하여 계속 나아갈 것입니다. 언젠가 다시 임할 주님의 나라를 소망하면서 이 땅에서 <strong class="text-primary-700">'영광스러운 교회'(엡 5:27)</strong>로서의 거룩한 자태를 선명하게 드러내기 위해 영성과 섬김과 사역의 고삐를 늦추지 않을 것입니다.
+                                <p
+                                    class="text-lg md:text-xl text-gray-700 leading-loose break-keep"
+                                >
+                                    저는 부평동부교회의 <strong
+                                        class="text-gray-900"
+                                        >제 4대 목사</strong
+                                    >로서 우리교회에 맡기신 하나님의 거룩한
+                                    사명을 이루기 위해 온 성도들과 함께 혼신의
+                                    힘을 기울이고 있습니다. 교회의 나아갈 방향과
+                                    목표 등은 교회비전에 자세하게 소개되어
+                                    있습니다. 우리교회는 그 내용을 따라 한걸음씩
+                                    성실하게 앞을 향하여 계속 나아갈 것입니다.
+                                    언젠가 다시 임할 주님의 나라를 소망하면서 이
+                                    땅에서
+                                    <strong class="text-primary-700"
+                                        >'영광스러운 교회'(엡 5:27)</strong
+                                    >로서의 거룩한 자태를 선명하게 드러내기 위해
+                                    영성과 섬김과 사역의 고삐를 늦추지 않을
+                                    것입니다.
                                 </p>
                             </div>
                         </div>
 
                         <!-- 단락 3 -->
-                        <div class="flex flex-col md:flex-row gap-6 md:gap-12 py-10 group">
+                        <div
+                            class="flex flex-col md:flex-row gap-6 md:gap-12 py-10 group"
+                        >
                             <div class="shrink-0 md:w-36">
-                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 text-primary-700 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+                                <span
+                                    class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 text-primary-700 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300"
+                                >
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="1.5"
+                                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
+                                        /></svg
+                                    >
                                 </span>
-                                <p class="mt-3 text-xs font-bold text-gray-400 tracking-widest uppercase hidden md:block">홈페이지</p>
+                                <p
+                                    class="mt-3 text-xs font-bold text-gray-400 tracking-widest uppercase hidden md:block"
+                                >
+                                    홈페이지
+                                </p>
                             </div>
                             <div class="flex-1">
-                                <p class="text-lg md:text-xl text-gray-700 leading-loose break-keep">
-                                    우리교회의 홈페이지는 이러한 소망을 실현하는 데에 기여하고자 운영되고 있습니다. 모쪼록 방문하실 때마다 모든 분들이 주님을 섬기는 열정과 의욕이 생겨나고 세상을 변화시킬 주인공으로 강한 도전을 받으실 수 있기를 기대합니다. 특히 아직 예수 그리스도의 주되심을 고백하지 못하는 분들에게는 복음을 듣고 깨달아 우리와 동일한 신앙고백을 하실 수 있는 은혜가 임하기를 간절히 소망합니다.
+                                <p
+                                    class="text-lg md:text-xl text-gray-700 leading-loose break-keep"
+                                >
+                                    우리교회의 홈페이지는 이러한 소망을 실현하는
+                                    데에 기여하고자 운영되고 있습니다. 모쪼록
+                                    방문하실 때마다 모든 분들이 주님을 섬기는
+                                    열정과 의욕이 생겨나고 세상을 변화시킬
+                                    주인공으로 강한 도전을 받으실 수 있기를
+                                    기대합니다. 특히 아직 예수 그리스도의
+                                    주되심을 고백하지 못하는 분들에게는 복음을
+                                    듣고 깨달아 우리와 동일한 신앙고백을 하실 수
+                                    있는 은혜가 임하기를 간절히 소망합니다.
                                 </p>
                             </div>
                         </div>
 
                         <!-- 단락 4 -->
-                        <div class="flex flex-col md:flex-row gap-6 md:gap-12 py-10 last:pb-0 group">
+                        <div
+                            class="flex flex-col md:flex-row gap-6 md:gap-12 py-10 last:pb-0 group"
+                        >
                             <div class="shrink-0 md:w-36">
-                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 text-primary-700 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                                <span
+                                    class="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-100 text-primary-700 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300"
+                                >
+                                    <svg
+                                        class="w-6 h-6"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                        ><path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="1.5"
+                                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                                        /></svg
+                                    >
                                 </span>
-                                <p class="mt-3 text-xs font-bold text-gray-400 tracking-widest uppercase hidden md:block">환영 인사</p>
+                                <p
+                                    class="mt-3 text-xs font-bold text-gray-400 tracking-widest uppercase hidden md:block"
+                                >
+                                    환영 인사
+                                </p>
                             </div>
                             <div class="flex-1">
-                                <p class="text-lg md:text-xl text-gray-700 leading-loose break-keep">
-                                    혹시, 홈페이지 방문중에 신앙의 상담을 원하시는 분은 언제든지 교회로 연락주시기 바랍니다. 성심성의껏 상담을 해드리겠습니다. 끝으로, 우리교회에서 함께 신앙생활 하기를 원하시는 분은 주저하지 마시고 교회로 연락주시거나 직접 방문해주십시오. 우리교회의 모든 성도들은 여러분을 전심으로 맞이하며 환영할 준비가 되어 있습니다. <strong class="text-gray-900">한가족으로 함께 섬기는 것보다 더 큰 기쁨이 우리에겐 없습니다.</strong> 감사합니다.
+                                <p
+                                    class="text-lg md:text-xl text-gray-700 leading-loose break-keep"
+                                >
+                                    혹시, 홈페이지 방문중에 신앙의 상담을
+                                    원하시는 분은 언제든지 교회로 연락주시기
+                                    바랍니다. 성심성의껏 상담을 해드리겠습니다.
+                                    끝으로, 우리교회에서 함께 신앙생활 하기를
+                                    원하시는 분은 주저하지 마시고 교회로
+                                    연락주시거나 직접 방문해주십시오. 우리교회의
+                                    모든 성도들은 여러분을 전심으로 맞이하며
+                                    환영할 준비가 되어 있습니다. <strong
+                                        class="text-gray-900"
+                                        >한가족으로 함께 섬기는 것보다 더 큰
+                                        기쁨이 우리에겐 없습니다.</strong
+                                    > 감사합니다.
                                 </p>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
                 <!-- 서명 영역 -->
                 <div class="flex justify-end">
-                    <div class="text-right bg-primary-50 rounded-3xl px-10 py-8 border border-primary-100 inline-block">
-                        <p class="text-sm text-primary-600 font-bold tracking-widest mb-2">부평동부교회</p>
-                        <p class="text-3xl font-black text-gray-900 font-serif">강길수 목사</p>
-                        <div class="mt-3 w-24 h-0.5 bg-primary-300 ml-auto"></div>
+                    <div
+                        class="text-right bg-primary-50 rounded-3xl px-10 py-8 border border-primary-100 inline-block"
+                    >
+                        <p
+                            class="text-sm text-primary-600 font-bold tracking-widest mb-2"
+                        >
+                            부평동부교회
+                        </p>
+                        <p class="text-3xl font-black text-gray-900 font-serif">
+                            강길수 목사
+                        </p>
+                        <div
+                            class="mt-3 w-24 h-0.5 bg-primary-300 ml-auto"
+                        ></div>
                     </div>
                 </div>
-
             </div>
         {/if}
 
         {#if activeTab === "people"}
             <div class="animate-fade-in-up" in:fade={{ duration: 400 }}>
-                <div class="text-center md:text-left mb-16">
+                <div class="text-center mb-8 md:mb-16">
                     <h2
-                        class="text-4xl md:text-5xl font-black text-gray-900 font-serif mb-6"
+                        class="text-4xl md:text-5xl font-black text-gray-900 mb-6"
                     >
                         섬기는 분들
                     </h2>
@@ -580,31 +933,51 @@
                 </div>
 
                 <!-- 필터 -->
-                <div class="flex items-center gap-3 overflow-x-auto no-scrollbar py-1 px-0.5 mb-12">
-                    {#each peopleFilters as filter}
-                        <button
-                            type="button"
-                            class="whitespace-nowrap shrink-0 px-6 py-3 rounded-full text-base font-bold transition-all duration-300 shadow-sm {selectedPeopleFilter === filter ? 'bg-primary-900 text-white shadow-lg scale-105' : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
-                            onclick={() => selectedPeopleFilter = filter}
-                        >{filter}</button>
-                    {/each}
+                <div class="mb-8 md:mb-12">
+                    <!-- 모바일: select -->
+                    <select
+                        bind:value={selectedPeopleFilter}
+                        class="md:hidden w-full px-4 py-3.5 rounded-2xl border-2 border-gray-200 bg-white font-bold text-gray-800 text-base focus:outline-none focus:border-primary-500 transition-colors"
+                    >
+                        {#each peopleFilters as filter}
+                            <option value={filter}>{filter}</option>
+                        {/each}
+                    </select>
+                    <!-- 데스크톱: 버튼 -->
+                    <div class="hidden md:flex items-center gap-3 flex-wrap">
+                        {#each peopleFilters as filter}
+                            <button
+                                type="button"
+                                class="px-6 py-3 rounded-full text-base font-bold transition-all duration-300 shadow-sm {selectedPeopleFilter ===
+                                filter
+                                    ? 'bg-primary-900 text-white shadow-lg scale-105'
+                                    : 'bg-white text-gray-600 border-2 border-gray-100 hover:border-primary-300 hover:text-primary-900'}"
+                                onclick={() => (selectedPeopleFilter = filter)}
+                                >{filter}</button
+                            >
+                        {/each}
+                    </div>
                 </div>
 
                 <div
-                    class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"
+                    class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 lg:gap-12"
                 >
-                    {#each peopleData.filter(p => matchesFilter(p.role, selectedPeopleFilter)) as person}
+                    {#each peopleData.filter( (p) => matchesFilter(p.role, selectedPeopleFilter), ) as person}
                         <div
-                            class="text-center group bg-white p-6 md:p-12 rounded-[2.5rem] border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-500"
+                            class="text-center group bg-white p-4 md:p-12 rounded-2xl md:rounded-[2.5rem] border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-500"
                         >
                             <div
-                                class="w-32 h-40 md:w-40 md:h-52 mx-auto rounded-2xl bg-gray-50 mb-6 md:mb-8 flex items-center justify-center text-gray-300 border-4 border-white shadow-md group-hover:scale-105 transition-all duration-500 overflow-hidden relative"
+                                class="w-20 h-28 md:w-40 md:h-52 mx-auto rounded-xl md:rounded-2xl bg-gray-50 mb-4 md:mb-8 flex items-center justify-center text-gray-300 border-2 md:border-4 border-white shadow-md overflow-hidden"
                             >
                                 {#if person.image}
-                                    <img src={person.image} alt={person.name} class="w-full h-full object-cover" />
+                                    <img
+                                        src={person.image}
+                                        alt={person.name}
+                                        class="w-full h-full object-cover"
+                                    />
                                 {:else}
                                     <svg
-                                        class="w-12 h-12 md:w-16 md:h-16"
+                                        class="w-10 h-10 md:w-16 md:h-16"
                                         fill="currentColor"
                                         viewBox="0 0 24 24"
                                         ><path
@@ -615,29 +988,29 @@
                             </div>
 
                             <h3
-                                class="text-xl md:text-2xl font-bold text-gray-900 mb-2"
+                                class="text-sm md:text-2xl font-bold text-gray-900 mb-0.5"
                             >
                                 {person.name}
-                                <span
-                                    class="text-base md:text-lg font-medium text-gray-500"
-                                    >{person.role}</span
-                                >
                             </h3>
-
-                            <div class="space-y-1 mt-4">
-                                {#if person.duty}
-                                    <p
-                                        class="text-sm md:text-base text-primary-600 font-medium break-keep"
-                                    >
-                                        {person.duty}
-                                    </p>
-                                {/if}
-                                {#if person.phone}
-                                    <p class="text-sm text-gray-500 mt-2">
-                                        {person.phone}
-                                    </p>
-                                {/if}
-                            </div>
+                            <p
+                                class="text-xs md:text-base font-medium text-gray-500"
+                            >
+                                {person.role}
+                            </p>
+                            {#if person.duty}
+                                <p
+                                    class="hidden md:block text-sm text-primary-600 font-medium mt-2 leading-relaxed break-keep"
+                                >
+                                    {person.duty}
+                                </p>
+                            {/if}
+                            {#if person.phone}
+                                <p
+                                    class="hidden md:block text-sm text-gray-400 mt-1"
+                                >
+                                    {person.phone}
+                                </p>
+                            {/if}
                         </div>
                     {/each}
                 </div>
@@ -720,41 +1093,43 @@
                 </div>
 
                 <!-- 예배 시간표 -->
-                <div class="bg-white rounded-[3rem] p-6 md:p-12 shadow-sm border border-gray-100">
-                    <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 md:mb-8 border-b-2 border-primary-100 pb-4 inline-block">
+                <div
+                    class="bg-white rounded-[3rem] p-6 md:p-12 shadow-sm border border-gray-100"
+                >
+                    <h3
+                        class="text-xl md:text-2xl font-bold text-gray-900 mb-6 md:mb-8 border-b-2 border-primary-100 pb-4 inline-block"
+                    >
                         정규 예배 시간안내
                     </h3>
 
                     <!-- 모바일: 리스트 레이아웃 -->
                     <div class="md:hidden space-y-5">
-                        {#each [
-                            { label: '주일', bg: 'bg-primary-50', items: [
-                                { name: '1부', time: '09:00', place: '글로리홀' },
-                                { name: '2부', time: '11:00', place: '글로리홀' },
-                                { name: '오후', time: '14:30', place: '글로리홀' },
-                                { name: '새가족', time: '11:00', place: '바나바홀' },
-                                { name: '영아부', time: '11:00', place: '본관 1층' },
-                                { name: '유치부', time: '11:00', place: '본관 1층' },
-                                { name: '유초등부', time: '11:00', place: '본관 1층' },
-                                { name: '중고등부', time: '11:00', place: '다니엘관' },
-                                { name: '청년부', time: '14:00', place: '다니엘관' },
-                            ]},
-                            { label: '주중', bg: 'bg-gray-50', items: [
-                                { name: '수요예배 (WBA)', time: '20:00', place: '글로리홀' },
-                                { name: '금요기도회', time: '21:00', place: '글로리홀' },
-                                { name: '새벽기도회', time: '05:00', place: '글로리홀' },
-                            ]},
-                        ] as group}
-                            <div class="rounded-2xl overflow-hidden border border-gray-100">
-                                <div class="px-4 py-2.5 {group.bg} font-bold text-primary-800 text-sm">
+                        {#each [{ label: "주일", bg: "bg-primary-50", items: [{ name: "1부", time: "09:00", place: "글로리홀" }, { name: "2부", time: "11:00", place: "글로리홀" }, { name: "오후", time: "14:30", place: "글로리홀" }, { name: "새가족", time: "11:00", place: "바나바홀" }, { name: "영아부", time: "11:00", place: "본관 1층" }, { name: "유치부", time: "11:00", place: "본관 1층" }, { name: "유초등부", time: "11:00", place: "본관 1층" }, { name: "중고등부", time: "11:00", place: "다니엘관" }, { name: "청년부", time: "14:00", place: "다니엘관" }] }, { label: "주중", bg: "bg-gray-50", items: [{ name: "WBA", time: "20:00", place: "글로리홀" }, { name: "금요기도회", time: "21:00", place: "글로리홀" }, { name: "새벽기도회", time: "05:00", place: "본관 1층" }] }] as group}
+                            <div
+                                class="rounded-2xl overflow-hidden border border-gray-100"
+                            >
+                                <div
+                                    class="px-4 py-2.5 {group.bg} font-bold text-primary-800 text-sm"
+                                >
                                     {group.label}
                                 </div>
                                 <div class="divide-y divide-gray-100">
                                     {#each group.items as item}
-                                        <div class="flex items-center px-4 py-3 gap-3">
-                                            <span class="w-24 shrink-0 text-sm font-medium text-gray-800">{item.name}</span>
-                                            <span class="text-sm font-medium text-gray-500 w-14 shrink-0">{item.time}</span>
-                                            <span class="text-sm font-medium text-primary-700">{item.place}</span>
+                                        <div
+                                            class="flex items-center px-4 py-3 gap-3"
+                                        >
+                                            <span
+                                                class="w-24 shrink-0 text-sm font-medium text-gray-800"
+                                                >{item.name}</span
+                                            >
+                                            <span
+                                                class="text-sm font-medium text-gray-500 w-14 shrink-0"
+                                                >{item.time}</span
+                                            >
+                                            <span
+                                                class="text-sm font-medium text-primary-700"
+                                                >{item.place}</span
+                                            >
                                         </div>
                                     {/each}
                                 </div>
@@ -764,68 +1139,201 @@
 
                     <!-- 데스크탑: 테이블 레이아웃 -->
                     <div class="hidden md:block overflow-x-auto">
-                        <table class="w-full border-collapse min-w-140 text-center">
+                        <table
+                            class="w-full border-collapse min-w-140 text-center"
+                        >
                             <thead>
                                 <tr class="bg-primary-800 text-white">
-                                    <th class="py-4 px-6 font-bold text-base w-20"></th>
-                                    <th class="py-4 px-6 font-bold text-base border-l border-primary-700">예배</th>
-                                    <th class="py-4 px-6 font-bold text-base border-l border-primary-700">시간</th>
-                                    <th class="py-4 px-6 font-bold text-base border-l border-primary-700">장소</th>
+                                    <th
+                                        class="py-4 px-6 font-bold text-base w-20"
+                                    ></th>
+                                    <th
+                                        class="py-4 px-6 font-bold text-base border-l border-primary-700"
+                                        >예배</th
+                                    >
+                                    <th
+                                        class="py-4 px-6 font-bold text-base border-l border-primary-700"
+                                        >시간</th
+                                    >
+                                    <th
+                                        class="py-4 px-6 font-bold text-base border-l border-primary-700"
+                                        >장소</th
+                                    >
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200 text-gray-800 text-base">
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td rowspan="9" class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-primary-50/60">주일</td>
-                                    <td class="py-4 px-6 border-l border-gray-200">1부</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">09:00</td>
-                                    <td rowspan="3" class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30">글로리홀</td>
+                            <tbody
+                                class="divide-y divide-gray-200 text-gray-800 text-base"
+                            >
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        rowspan="9"
+                                        class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-primary-50/60"
+                                        >주일</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >1부</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >09:00</td
+                                    >
+                                    <td
+                                        rowspan="3"
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >글로리홀</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">2부</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">11:00</td>
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >2부</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >11:00</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">오후</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">14:30</td>
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >오후</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >14:30</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">새가족</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">11:00</td>
-                                    <td class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30">바나바홀</td>
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >새가족</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >11:00</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >바나바홀</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">영아부</td>
-                                    <td rowspan="3" class="py-4 px-6 font-medium border-l border-gray-200">11:00</td>
-                                    <td rowspan="3" class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30">본관 1층</td>
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >영아부</td
+                                    >
+                                    <td
+                                        rowspan="3"
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >11:00</td
+                                    >
+                                    <td
+                                        rowspan="3"
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >본관 1층</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">유치부</td>
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >유치부</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">유초등부</td>
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >유초등부</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">중고등부</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">11:00</td>
-                                    <td rowspan="2" class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30">다니엘관</td>
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >중고등부</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >11:00</td
+                                    >
+                                    <td
+                                        rowspan="2"
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >다니엘관</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-primary-50/40 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">청년부</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">14:00</td>
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors"
+                                >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >청년부</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >14:00</td
+                                    >
                                 </tr>
-                                <tr class="hover:bg-gray-50 transition-colors border-t-2 border-gray-300">
-                                    <td rowspan="3" class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-gray-50">주중</td>
-                                    <td class="py-4 px-6 border-l border-gray-200">수요예배 (WBA)</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">20:00</td>
-                                    <td rowspan="3" class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30">글로리홀</td>
+                                <tr
+                                    class="hover:bg-gray-50 transition-colors border-t-2 border-gray-300"
+                                >
+                                    <td
+                                        rowspan="3"
+                                        class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-gray-50"
+                                        >주중</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >WBA</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >20:00</td
+                                    >
+                                    <td
+                                        rowspan="2"
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >글로리홀</td
+                                    >
                                 </tr>
                                 <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">금요기도회</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">21:00</td>
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >금요기도회</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >21:00</td
+                                    >
                                 </tr>
                                 <tr class="hover:bg-gray-50 transition-colors">
-                                    <td class="py-4 px-6 border-l border-gray-200">새벽기도회</td>
-                                    <td class="py-4 px-6 font-medium border-l border-gray-200">05:00</td>
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >새벽기도회</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >05:00</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >본관 1층</td
+                                    >
                                 </tr>
                             </tbody>
                         </table>
@@ -886,7 +1394,9 @@
                             </span>
                             대중교통 이용안내
                         </h3>
-                        <ul class="text-base md:text-xl text-gray-700 space-y-8">
+                        <ul
+                            class="text-base md:text-xl text-gray-700 space-y-8"
+                        >
                             <li class="flex flex-col gap-4">
                                 <div class="flex items-center">
                                     <span

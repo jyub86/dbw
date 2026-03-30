@@ -14,7 +14,7 @@
     let authChecked = $state(false);
 
     const MANAGER_LEVEL = 50;
-    const PDF_ALLOWED_CATEGORY_IDS = [2, 12]; // 교회소식, 구역공과
+    const PDF_ALLOWED_CATEGORY_IDS = [2, 12]; // 교회소식, 교육자료
 
     // 기존 미디어 URL
     let existingUrls = $state<string[]>([...data.post.media_urls]);

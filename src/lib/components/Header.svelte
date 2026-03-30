@@ -72,11 +72,8 @@
 	});
 </script>
 
-<header
-	class="fixed top-0 left-0 w-full z-50 transition-all duration-500 {scrolled
-		? 'bg-white/90 backdrop-blur-lg shadow-sm py-2'
-		: 'bg-transparent py-6'}"
->
+<header class="fixed top-0 left-0 w-full z-50">
+	<div class="relative z-50 transition-all duration-500 {scrolled ? 'bg-white/90 backdrop-blur-lg shadow-sm py-2' : 'bg-transparent py-6'}">
 	<div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
 		<div class="flex items-center justify-between">
 			<!-- Logo (Left) -->
@@ -114,7 +111,7 @@
 			</nav>
 
 			<!-- Right Actions / Mobile Toggle -->
-			<div class="w-auto md:w-1/4 flex justify-end z-50">
+			<div class="w-auto md:w-1/4 flex justify-end relative z-50">
 				<div class="hidden md:flex items-center">
 						{#if isLoggedIn}
 						<div class="relative profile-dropdown">
@@ -184,6 +181,7 @@
 				</button>
 			</div>
 		</div>
+	</div>
 	</div>
 
 	<!-- Premium Mobile Menu Fullscreen Overlay -->

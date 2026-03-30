@@ -9,7 +9,7 @@ const FILTER_CATEGORIES = [
 	{ label: '교회소식', ids: [2] },
 	{ label: '주보', ids: [3] },
 	{ label: '교우동정', ids: [10] },
-	{ label: '구역공과', ids: [12] },
+	{ label: '교육자료', ids: [12] },
 	{ label: '선교소식', ids: [13] },
 ];
 
