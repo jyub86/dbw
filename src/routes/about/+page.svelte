@@ -273,14 +273,14 @@
         {
             name: "김현겸",
             role: "부목사",
-            duty: "사랑공동체 / 3040 / 중고등부 / 찬양단",
+            duty: "열매공동체 / 중고등부 / 찬양단",
             phone: "032-503-9214",
             image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/kimhyungyum.jpg",
         },
         {
             name: "임효빈",
             role: "부목사",
-            duty: "화평공동체 / 유초등부 / 전도폭발 / 지역전도",
+            duty: "줄기공동체 / 유초등부 / 전도폭발 / 지역전도",
             phone: "032-513-7975",
             image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/limhyubin.jpg",
         },
@@ -288,14 +288,14 @@
         {
             name: "한성숙",
             role: "전임전도사",
-            duty: "교구",
+            duty: "뿌리공동체 / 새가족부",
             phone: "032-503-9212",
             image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/hansungsuk.jpg",
         },
         {
             name: "유선아",
             role: "교육전도사",
-            duty: "유치부",
+            duty: "유치부 / 방송",
             phone: "",
             image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yousuna.jpg",
         },
@@ -1104,7 +1104,7 @@
 
                     <!-- 모바일: 리스트 레이아웃 -->
                     <div class="md:hidden space-y-5">
-                        {#each [{ label: "주일", bg: "bg-primary-50", items: [{ name: "1부", time: "09:00", place: "글로리홀" }, { name: "2부", time: "11:00", place: "글로리홀" }, { name: "오후", time: "14:30", place: "글로리홀" }, { name: "새가족", time: "11:00", place: "바나바홀" }, { name: "영아부", time: "11:00", place: "본관 1층" }, { name: "유치부", time: "11:00", place: "본관 1층" }, { name: "유초등부", time: "11:00", place: "본관 1층" }, { name: "중고등부", time: "11:00", place: "다니엘관" }, { name: "청년부", time: "14:00", place: "다니엘관" }] }, { label: "주중", bg: "bg-gray-50", items: [{ name: "WBA", time: "20:00", place: "글로리홀" }, { name: "금요기도회", time: "21:00", place: "글로리홀" }, { name: "새벽기도회", time: "05:00", place: "본관 1층" }] }] as group}
+                        {#each [{ label: "주일", bg: "bg-primary-50", items: [{ name: "1부 예배", time: "09:00", place: "글로리홀" }, { name: "2부 예배", time: "11:00", place: "글로리홀" }, { name: "소그룹 모임", time: "13:30", place: "글로리홀" }, { name: "새가족교육", time: "12:00", place: "바나바홀" }] }, { label: "주중", bg: "bg-gray-50", items: [{ name: "수요 성경 아카데미", time: "20:00", place: "글로리홀" }, { name: "금요기도회", time: "21:00", place: "글로리홀" }, { name: "새벽기도회", time: "05:00", place: "유초등부실" }] }, { label: "주일학교", bg: "bg-primary-50", items: [{ name: "영아부", time: "11:00", place: "영유아부실" }, { name: "유치부", time: "11:00", place: "유치부실" }, { name: "유초등부", time: "11:00", place: "유초등부실" }, { name: "중고등부", time: "11:00", place: "다니엘관" }, { name: "청년부", time: "14:00", place: "다니엘관" }] }] as group}
                             <div
                                 class="rounded-2xl overflow-hidden border border-gray-100"
                             >
@@ -1164,17 +1164,18 @@
                             <tbody
                                 class="divide-y divide-gray-200 text-gray-800 text-base"
                             >
+                                <!-- 주일 -->
                                 <tr
                                     class="hover:bg-primary-50/40 transition-colors"
                                 >
                                     <td
-                                        rowspan="9"
+                                        rowspan="4"
                                         class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-primary-50/60"
                                         >주일</td
                                     >
                                     <td
                                         class="py-4 px-6 border-l border-gray-200"
-                                        >1부</td
+                                        >1부 예배</td
                                     >
                                     <td
                                         class="py-4 px-6 font-medium border-l border-gray-200"
@@ -1191,7 +1192,7 @@
                                 >
                                     <td
                                         class="py-4 px-6 border-l border-gray-200"
-                                        >2부</td
+                                        >2부 예배</td
                                     >
                                     <td
                                         class="py-4 px-6 font-medium border-l border-gray-200"
@@ -1203,11 +1204,11 @@
                                 >
                                     <td
                                         class="py-4 px-6 border-l border-gray-200"
-                                        >오후</td
+                                        >소그룹 모임</td
                                     >
                                     <td
                                         class="py-4 px-6 font-medium border-l border-gray-200"
-                                        >14:30</td
+                                        >13:30</td
                                     >
                                 </tr>
                                 <tr
@@ -1215,33 +1216,87 @@
                                 >
                                     <td
                                         class="py-4 px-6 border-l border-gray-200"
-                                        >새가족</td
+                                        >새가족교육</td
                                     >
                                     <td
                                         class="py-4 px-6 font-medium border-l border-gray-200"
-                                        >11:00</td
+                                        >12:00</td
                                     >
                                     <td
                                         class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
                                         >바나바홀</td
                                     >
                                 </tr>
+                                <!-- 주중 -->
                                 <tr
-                                    class="hover:bg-primary-50/40 transition-colors"
+                                    class="hover:bg-gray-50 transition-colors border-t-2 border-gray-300"
                                 >
+                                    <td
+                                        rowspan="3"
+                                        class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-gray-50"
+                                        >주중</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >수요 성경 아카데미</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >20:00</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >글로리홀</td
+                                    >
+                                </tr>
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >금요기도회</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >21:00</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >글로리홀</td
+                                    >
+                                </tr>
+                                <tr class="hover:bg-gray-50 transition-colors">
+                                    <td
+                                        class="py-4 px-6 border-l border-gray-200"
+                                        >새벽기도회</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >05:00</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >유초등부실</td
+                                    >
+                                </tr>
+                                <!-- 주일학교 -->
+                                <tr
+                                    class="hover:bg-primary-50/40 transition-colors border-t-2 border-gray-300"
+                                >
+                                    <td
+                                        rowspan="5"
+                                        class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-primary-50/60"
+                                        >주일학교</td
+                                    >
                                     <td
                                         class="py-4 px-6 border-l border-gray-200"
                                         >영아부</td
                                     >
                                     <td
-                                        rowspan="3"
                                         class="py-4 px-6 font-medium border-l border-gray-200"
                                         >11:00</td
                                     >
                                     <td
-                                        rowspan="3"
                                         class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
-                                        >본관 1층</td
+                                        >영유아부실</td
                                     >
                                 </tr>
                                 <tr
@@ -1251,6 +1306,14 @@
                                         class="py-4 px-6 border-l border-gray-200"
                                         >유치부</td
                                     >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >11:00</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >유치부실</td
+                                    >
                                 </tr>
                                 <tr
                                     class="hover:bg-primary-50/40 transition-colors"
@@ -1258,6 +1321,14 @@
                                     <td
                                         class="py-4 px-6 border-l border-gray-200"
                                         >유초등부</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium border-l border-gray-200"
+                                        >11:00</td
+                                    >
+                                    <td
+                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
+                                        >유초등부실</td
                                     >
                                 </tr>
                                 <tr
@@ -1287,52 +1358,6 @@
                                     <td
                                         class="py-4 px-6 font-medium border-l border-gray-200"
                                         >14:00</td
-                                    >
-                                </tr>
-                                <tr
-                                    class="hover:bg-gray-50 transition-colors border-t-2 border-gray-300"
-                                >
-                                    <td
-                                        rowspan="3"
-                                        class="font-bold text-primary-800 text-lg border-r border-gray-200 bg-gray-50"
-                                        >주중</td
-                                    >
-                                    <td
-                                        class="py-4 px-6 border-l border-gray-200"
-                                        >WBA</td
-                                    >
-                                    <td
-                                        class="py-4 px-6 font-medium border-l border-gray-200"
-                                        >20:00</td
-                                    >
-                                    <td
-                                        rowspan="2"
-                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
-                                        >글로리홀</td
-                                    >
-                                </tr>
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td
-                                        class="py-4 px-6 border-l border-gray-200"
-                                        >금요기도회</td
-                                    >
-                                    <td
-                                        class="py-4 px-6 font-medium border-l border-gray-200"
-                                        >21:00</td
-                                    >
-                                </tr>
-                                <tr class="hover:bg-gray-50 transition-colors">
-                                    <td
-                                        class="py-4 px-6 border-l border-gray-200"
-                                        >새벽기도회</td
-                                    >
-                                    <td
-                                        class="py-4 px-6 font-medium border-l border-gray-200"
-                                        >05:00</td
-                                    >
-                                    <td
-                                        class="py-4 px-6 font-medium text-primary-700 border-l border-gray-200 bg-primary-50/30"
-                                        >본관 1층</td
                                     >
                                 </tr>
                             </tbody>
