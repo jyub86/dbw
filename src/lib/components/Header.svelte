@@ -16,9 +16,11 @@
 
 	const menus = [
 		{ name: "교회 소개", href: "/about" },
-		{ name: "영상", href: "/videos" },
+		{ name: "교회 영상", href: "/videos" },
+		{ name: "공동체", href: "/community" },
+		{ name: "다음 세대", href: "/next-gen" },
 		{ name: "교회 소식", href: "/news" },
-		{ name: "게시판", href: "/board" },
+		{ name: "커뮤니티", href: "/board" },
 	];
 
 	function toggleNav() {
@@ -77,18 +79,18 @@
 	<div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
 		<div class="flex items-center justify-between">
 			<!-- Logo (Left) -->
-			<div class="flex-1 md:w-1/4 flex justify-start z-50">
+			<div class="shrink-0 flex justify-start z-50 mr-4">
 				<a href="/" class="flex items-center">
 					<img src="/logo.png" alt="부평동부교회" class="h-10 md:h-12 w-auto" />
 				</a>
 			</div>
 
 			<!-- Desktop Nav (Center) -->
-			<nav class="hidden md:flex md:w-2/4 justify-center space-x-12">
+			<nav class="hidden md:flex md:flex-1 justify-center space-x-6 lg:space-x-8">
 				{#each menus as menu}
 					<a
 						href={menu.href}
-						class="relative text-lg font-bold group py-2
+						class="relative text-sm lg:text-base font-bold group py-2 whitespace-nowrap
 						{scrolled || $page.url.pathname !== '/'
 							? 'text-gray-700 hover:text-primary-600'
 							: 'text-white/90 hover:text-white'}
@@ -111,7 +113,7 @@
 			</nav>
 
 			<!-- Right Actions / Mobile Toggle -->
-			<div class="w-auto md:w-1/4 flex justify-end relative z-50">
+			<div class="shrink-0 flex justify-end relative z-50 ml-4">
 				<div class="hidden md:flex items-center">
 						{#if isLoggedIn}
 						<div class="relative profile-dropdown">
