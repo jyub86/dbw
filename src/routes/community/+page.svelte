@@ -74,7 +74,7 @@
                         <p class="text-5xl mb-6">🍎</p>
                         <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">열매공동체</h2>
                         <p class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl">
-                            50대 이하 성도들이 함께하는 공동체입니다. 활발한 교제와 역동적인 사역 속에서
+                            31-55세 성도들이 함께하는 공동체입니다. 활발한 교제와 역동적인 사역 속에서
                             믿음의 열매를 맺으며, 하나님나라를 향해 함께 나아갑니다.
                         </p>
                     </div>
@@ -89,7 +89,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">모임 대상</h3>
-                        <p class="text-gray-600 font-medium">50대 이하 성도</p>
+                        <p class="text-gray-600 font-medium">31-55세 성도</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -98,7 +98,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">모임 시간</h3>
-                        <p class="text-gray-600 font-medium">주일 2부 예배 후</p>
+                        <p class="text-gray-600 font-medium">주일 오후 1시 30분</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -122,7 +122,7 @@
                         <p class="text-5xl mb-6">🌿</p>
                         <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">줄기공동체</h2>
                         <p class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl">
-                            50대 이상 70대 이하 성도들이 함께하는 공동체입니다. 풍성한 신앙의 경험을 나누며
+                            56-70세 성도들이 함께하는 공동체입니다. 풍성한 신앙의 경험을 나누며
                             교회의 든든한 줄기가 되어 다음세대와 어르신 사이를 이어주는 중추 공동체입니다.
                         </p>
                     </div>
@@ -136,7 +136,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">모임 대상</h3>
-                        <p class="text-gray-600 font-medium">50대 이상 70대 이하 성도</p>
+                        <p class="text-gray-600 font-medium">56-70세 성도</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -145,16 +145,16 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">모임 시간</h3>
-                        <p class="text-gray-600 font-medium">주일 2부 예배 후</p>
+                        <p class="text-gray-600 font-medium">주일 오후 1시 30분</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">주요 사역</h3>
-                        <p class="text-gray-600 font-medium">말씀 나눔 · 봉사 · 섬김</p>
+                        <p class="text-gray-600 font-medium">소그룹 성경공부 · 교제</p>
                     </div>
                 </div>
             </div>
@@ -169,7 +169,7 @@
                         <p class="text-5xl mb-6">🌱</p>
                         <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">뿌리공동체</h2>
                         <p class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl">
-                            70대 이상 어르신 성도들이 함께하는 공동체입니다. 오랜 믿음의 여정 속에 쌓아온
+                            71세 이상 어르신 성도들이 함께하는 공동체입니다. 오랜 믿음의 여정 속에 쌓아온
                             신앙의 유산을 나누며, 교회의 깊은 뿌리로서 기도와 사랑으로 공동체를 지탱합니다.
                         </p>
                     </div>
@@ -183,7 +183,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">모임 대상</h3>
-                        <p class="text-gray-600 font-medium">70대 이상 성도</p>
+                        <p class="text-gray-600 font-medium">71세 이상 성도</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -192,7 +192,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">모임 시간</h3>
-                        <p class="text-gray-600 font-medium">주일 1부 예배 후</p>
+                        <p class="text-gray-600 font-medium">주일 오후 1시 30분</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -201,7 +201,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">주요 사역</h3>
-                        <p class="text-gray-600 font-medium">기도 · 말씀 묵상 · 친교</p>
+                        <p class="text-gray-600 font-medium">소그룹 성경공부 · 교제</p>
                     </div>
                 </div>
             </div>
@@ -239,7 +239,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">새가족 교육</h3>
-                        <p class="text-gray-600 font-medium">매월 첫째 주 시작</p>
+                        <p class="text-gray-600 font-medium">주일 2부 예배 후</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -286,7 +286,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">운영 시간</h3>
-                        <p class="text-gray-600 font-medium">주일 예배 시간 중 운영</p>
+                        <p class="text-gray-600 font-medium">주일 예배 시간 & 소그룹 모임 시간 운영</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">

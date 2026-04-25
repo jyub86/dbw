@@ -28,13 +28,13 @@
 </script>
 
 <svelte:head>
-    <title>영상 - 부평동부교회</title>
+    <title>교회 영상 - 부평동부교회</title>
 </svelte:head>
 
 <div class="bg-gradient-to-b from-primary-50 to-white py-10 md:py-20 border-b border-gray-100">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 text-center animate-fade-in-up">
         <h1 class="text-3xl md:text-6xl font-black text-gray-900 mb-4 md:mb-8 tracking-tight font-serif drop-shadow-sm">
-            영상
+            교회 영상
         </h1>
         <p class="text-base md:text-2xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
             예배 실황과 은혜로운 설교, 찬양을 영상으로 만나보세요.

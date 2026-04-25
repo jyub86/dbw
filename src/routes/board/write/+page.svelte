@@ -161,6 +161,7 @@
             return;
         }
 
+
         submitting = true; error = '';
 
         const { data: { session } } = await supabaseBrowser.auth.getSession();

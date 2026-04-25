@@ -121,7 +121,7 @@
                         <p class="text-5xl mb-6">🧒</p>
                         <h2 class="text-3xl md:text-4xl font-black text-gray-900 mb-4">유치부</h2>
                         <p class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl">
-                            4~7세 유아들이 찬양과 말씀, 놀이를 통해 하나님을 만나는 부서입니다.
+                            5-7세 유아들이 찬양과 말씀, 놀이를 통해 하나님을 만나는 부서입니다.
                             눈높이에 맞는 예배와 교육으로 어린 마음에 믿음의 씨앗을 심어갑니다.
                         </p>
                     </div>
@@ -135,7 +135,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">대상</h3>
-                        <p class="text-gray-600 font-medium">4세 ~ 7세 (미취학)</p>
+                        <p class="text-gray-600 font-medium">5-7세 (미취학)</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -149,11 +149,12 @@
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </div>
-                        <h3 class="font-black text-gray-900 text-lg mb-2">주요 활동</h3>
-                        <p class="text-gray-600 font-medium">찬양 · 성경 이야기 · 만들기</p>
+                        <h3 class="font-black text-gray-900 text-lg mb-2">장소</h3>
+                        <p class="text-gray-600 font-medium">유치부실</p>
                     </div>
                 </div>
             </div>
@@ -196,11 +197,12 @@
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </div>
-                        <h3 class="font-black text-gray-900 text-lg mb-2">주요 활동</h3>
-                        <p class="text-gray-600 font-medium">성경 암송 · 소그룹 · 캠프</p>
+                        <h3 class="font-black text-gray-900 text-lg mb-2">장소</h3>
+                        <p class="text-gray-600 font-medium">유초등부실</p>
                     </div>
                 </div>
             </div>
@@ -238,16 +240,17 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">예배 시간</h3>
-                        <p class="text-gray-600 font-medium">주일 오후 1시 30분</p>
+                        <p class="text-gray-600 font-medium">주일 오전 11시</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </div>
-                        <h3 class="font-black text-gray-900 text-lg mb-2">주요 활동</h3>
-                        <p class="text-gray-600 font-medium">수련회 · 큐티 · 소그룹 모임</p>
+                        <h3 class="font-black text-gray-900 text-lg mb-2">장소</h3>
+                        <p class="text-gray-600 font-medium">다니엘관 1층</p>
                     </div>
                 </div>
             </div>
@@ -277,7 +280,7 @@
                             </svg>
                         </div>
                         <h3 class="font-black text-gray-900 text-lg mb-2">대상</h3>
-                        <p class="text-gray-600 font-medium">대학생 · 청년 (19세 이상)</p>
+                        <p class="text-gray-600 font-medium">청년 (20세 이상)</p>
                     </div>
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -291,11 +294,12 @@
                     <div class="bg-white rounded-3xl p-8 shadow-md border border-gray-100 text-center">
                         <div class="w-14 h-14 bg-primary-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
                             <svg class="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 18.657A8 8 0 016.343 7.343S7 9 9 10c0-2 .5-5 2.986-7C14 5 16.09 5.777 17.656 7.343A7.975 7.975 0 0120 13a7.975 7.975 0 01-2.343 5.657z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
                             </svg>
                         </div>
-                        <h3 class="font-black text-gray-900 text-lg mb-2">주요 활동</h3>
-                        <p class="text-gray-600 font-medium">셀 모임 · 성경 스터디 · 봉사</p>
+                        <h3 class="font-black text-gray-900 text-lg mb-2">장소</h3>
+                        <p class="text-gray-600 font-medium">다니엘관 1층</p>
                     </div>
                 </div>
             </div>

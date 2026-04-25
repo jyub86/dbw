@@ -81,7 +81,7 @@
 			<!-- Logo (Left) -->
 			<div class="shrink-0 flex justify-start z-50 mr-4">
 				<a href="/" class="flex items-center">
-					<img src="/logo.png" alt="부평동부교회" class="h-10 md:h-12 w-auto" />
+					<img src="/logo2.png" alt="부평동부교회" class="h-10 md:h-12 w-auto" />
 				</a>
 			</div>
 
