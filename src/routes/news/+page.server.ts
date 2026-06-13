@@ -1,13 +1,12 @@
 import type { PageServerLoad } from './$types';
 import { supabase } from '$lib/supabase';
 
-const ALL_CATEGORY_IDS = [2, 3, 10, 12, 13];
+const ALL_CATEGORY_IDS = [2, 10, 12, 13];
 const PAGE_SIZE = 20;
 
 // 화면에 보여줄 카테고리 필터 버튼 정의
 const FILTER_CATEGORIES = [
 	{ label: '교회소식', ids: [2] },
-	{ label: '주보', ids: [3] },
 	{ label: '교우동정', ids: [10] },
 	{ label: '교육자료', ids: [12] },
 	{ label: '선교소식', ids: [13] },

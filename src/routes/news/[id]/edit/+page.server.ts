@@ -2,7 +2,7 @@ import type { PageServerLoad } from './$types';
 import { supabase } from '$lib/supabase';
 import { error } from '@sveltejs/kit';
 
-const NEWS_CATEGORY_IDS = [2, 3, 10, 12, 13];
+const NEWS_CATEGORY_IDS = [2, 10, 12, 13];
 
 export const load: PageServerLoad = async ({ params }) => {
 	const [postRes, categoriesRes] = await Promise.all([

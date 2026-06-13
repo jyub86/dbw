@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { supabase } from '$lib/supabase';
 
-const VIDEO_CATEGORY_IDS = [4, 5, 6]; // 설교, 찬양, 예배실황
+const VIDEO_CATEGORY_IDS = [4, 5, 6, 14]; // 설교, 찬양, 예배실황, 수요 성경 아카데미
 
 function getYoutubeId(url: string): string | null {
 	const match = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/);
@@ -29,7 +29,7 @@ export const load: PageServerLoad = async () => {
 		supabase
 			.from('posts')
 			.select('id, title, category_id, created_at, categories(name)')
-			.in('category_id', [2, 3])
+			.in('category_id', [2])
 			.eq('active', true)
 			.order('created_at', { ascending: false })
 			.limit(5),

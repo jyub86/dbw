@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { supabase } from '$lib/supabase';
 
-const VIDEO_CATEGORY_IDS = [4, 5, 6, 9]; // 설교, 찬양, 예배실황, 1401MEDIA
+const VIDEO_CATEGORY_IDS = [4, 5, 6, 9, 14]; // 설교, 찬양, 예배실황, 1401MEDIA, 수요 성경 아카데미
 const VIDEO_ONLY_CATEGORY_IDS = [9]; // YouTube URL이 있는 게시물만 표시
 
 function getYoutubeId(url: string): string | null {
