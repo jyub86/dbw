@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>소그룹 출석부 사용 안내 — 부평동부교회</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --p50:#fdf8f6; --p100:#f5ece4; --p200:#ead6c4; --p300:#d9b99a;
+    --p500:#d4ba9e; --p600:#b8946b; --p700:#9a7550; --p800:#7a5b3c; --p900:#4a3c31;
+    --ink:#2b2520; --g900:#2b2520; --g700:#5a5249; --g500:#8b8378; --g400:#a99f93;
+    --g200:#e7e1da; --g100:#f3efea; --line:#ece6df; --bg:#fbf9f7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html,body{height:100%;}
+  body{font-family:'Noto Sans KR',-apple-system,BlinkMacSystemFont,system-ui,sans-serif;background:var(--p900);color:var(--ink);overflow:hidden;-webkit-font-smoothing:antialiased;}
+  .deck{position:relative;width:100vw;height:100vh;}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;padding:5vh 7vw;background:var(--bg);animation:fade .35s ease;overflow:auto;}
+  .slide.active{display:flex;}
+  @keyframes fade{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+  .eyebrow{color:var(--p600);font-weight:700;letter-spacing:.04em;font-size:clamp(.85rem,1.6vw,1.1rem);margin-bottom:1rem;}
+  h1{font-size:clamp(2rem,6vw,4.2rem);font-weight:900;line-height:1.15;color:var(--p900);letter-spacing:-.02em;}
+  h2{font-size:clamp(1.5rem,4vw,2.8rem);font-weight:900;line-height:1.2;color:var(--p900);letter-spacing:-.02em;margin-bottom:1.8rem;}
+  p.lead{font-size:clamp(1.05rem,2.3vw,1.6rem);line-height:1.6;color:var(--g700);max-width:60ch;}
+
+  .cover{background:linear-gradient(140deg,var(--p900),#5e4b3c 60%,var(--p700));color:#fff;}
+  .cover h1{color:#fff;} .cover .eyebrow{color:var(--p300);}
+  .cover .sub{margin-top:1.6rem;font-size:clamp(1rem,2.4vw,1.6rem);color:#e9ddd0;line-height:1.6;}
+  .badge{display:inline-block;margin-bottom:2rem;padding:.5rem 1.1rem;border:1px solid rgba(255,255,255,.35);border-radius:999px;font-weight:700;font-size:clamp(.8rem,1.6vw,1rem);color:#f0e6d8;}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.2rem;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:1.4rem;padding:1.6rem;box-shadow:0 6px 24px rgba(74,60,49,.06);}
+  .card .ico{font-size:2.4rem;margin-bottom:.6rem;}
+  .card h3{font-size:clamp(1.1rem,2.2vw,1.45rem);font-weight:900;color:var(--p800);margin-bottom:.5rem;}
+  .card p{color:var(--g700);font-size:clamp(.95rem,1.7vw,1.1rem);line-height:1.55;}
+
+  .split{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(1.4rem,4vw,3rem);align-items:center;}
+  @media (max-width:860px){.split{grid-template-columns:1fr;gap:1.6rem;}.slide{padding:4vh 6vw;justify-content:flex-start;padding-top:8vh;}}
+  .steps{list-style:none;display:flex;flex-direction:column;gap:1rem;}
+  .steps li{display:flex;gap:1rem;align-items:flex-start;font-size:clamp(1rem,2.1vw,1.4rem);line-height:1.5;color:var(--g700);}
+  .num{flex:none;width:2.1rem;height:2.1rem;border-radius:50%;background:var(--p600);color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:1.05rem;}
+  .tip{margin-top:1.5rem;background:var(--p100);border-left:5px solid var(--p500);border-radius:.6rem;padding:.9rem 1.1rem;font-size:clamp(.92rem,1.8vw,1.2rem);color:var(--p900);line-height:1.5;}
+  .tip b{color:var(--p800);}
+
+  ul.bullets{list-style:none;display:flex;flex-direction:column;gap:1rem;}
+  ul.bullets li{font-size:clamp(1.05rem,2.2vw,1.5rem);line-height:1.5;padding-left:2rem;position:relative;color:var(--g700);}
+  ul.bullets li::before{content:"✔";position:absolute;left:0;color:var(--p600);font-weight:900;}
+
+  /* ===== 브라우저 프레임 목업 ===== */
+  .browser{width:100%;max-width:440px;justify-self:center;background:#fff;border-radius:1.2rem;box-shadow:0 18px 50px rgba(43,37,32,.22);overflow:hidden;border:1px solid var(--g200);}
+  .bbar{display:flex;align-items:center;gap:.45rem;padding:.6rem .8rem;background:#efe9e2;border-bottom:1px solid var(--g200);}
+  .bdot{width:.62rem;height:.62rem;border-radius:50%;background:#cdbfae;}
+  .burl{margin-left:.6rem;flex:1;background:#fff;border-radius:999px;padding:.25rem .8rem;font-size:.72rem;color:var(--g500);font-weight:600;text-align:center;}
+  .screen{padding:1rem 1rem 1.2rem;background:var(--bg);max-height:62vh;overflow:auto;}
+  @media (max-width:860px){.screen{max-height:none;}}
+
+  .s-title{font-weight:900;color:var(--p900);font-size:1.05rem;}
+  .s-sub{color:var(--g500);font-size:.72rem;margin-top:.1rem;margin-bottom:.7rem;}
+  /* 탭 */
+  .tabs{display:inline-flex;gap:.2rem;background:var(--g100);border-radius:.8rem;padding:.22rem;margin:.5rem 0 .9rem;}
+  .tab{padding:.32rem .6rem;border-radius:.55rem;font-size:.72rem;font-weight:700;color:var(--g500);}
+  .tab.on{background:#fff;color:var(--p800);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  /* 공동체 pill / 셀렉터 */
+  .pill{display:inline-block;background:var(--p50);color:var(--p800);font-weight:700;border-radius:999px;padding:.3rem .8rem;font-size:.8rem;border:1px solid var(--p100);}
+  .selrow{display:flex;gap:.5rem;margin:.6rem 0 .9rem;}
+  .sel{flex:1;border:2px solid var(--g200);border-radius:.7rem;padding:.5rem .65rem;font-weight:700;color:var(--p900);font-size:.85rem;display:flex;justify-content:space-between;align-items:center;background:#fff;}
+  .sel small{color:var(--g400);font-weight:600;}
+  /* 요약 카드 3개 */
+  .stat3{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:.4rem;}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:.9rem;padding:.7rem .3rem;text-align:center;}
+  .stat b{display:block;font-size:1.35rem;font-weight:900;color:var(--g900);line-height:1;}
+  .stat b.hl{color:var(--p700);}
+  .stat span{display:block;font-size:.66rem;color:var(--g500);margin-top:.35rem;font-weight:600;}
+  /* 출석 체크 행 */
+  .panel{border:1px solid var(--line);border-radius:1rem;overflow:hidden;background:#fff;}
+  .row{display:flex;align-items:center;gap:.65rem;padding:.55rem .7rem;border-bottom:1px solid #f4efe9;}
+  .row:last-child{border-bottom:0;}
+  .row.alt{background:#faf7f3;}
+  .chk{width:1.5rem;height:1.5rem;border-radius:.45rem;border:2px solid var(--p300);flex:none;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;font-weight:900;background:#fff;}
+  .chk.on{background:var(--p600);border-color:var(--p600);}
+  .who{width:5.2rem;flex:none;}
+  .who b{font-size:.86rem;color:var(--g900);font-weight:700;}
+  .who .lead{font-size:.6rem;color:var(--p700);font-weight:700;margin-left:.15rem;}
+  .who small{display:block;font-size:.64rem;color:var(--g400);}
+  .inp{flex:1;background:#fff;border:1px solid var(--g200);border-radius:.5rem;padding:.4rem .55rem;color:var(--g500);font-size:.76rem;}
+  .inp.ph{color:var(--g400);}
+  .label{font-weight:900;color:var(--p800);font-size:.78rem;margin:.9rem 0 .4rem;}
+  .label span{color:var(--g400);font-weight:500;}
+  .ta{background:#fff;border:1px solid var(--g200);border-radius:.6rem;padding:.6rem .7rem;color:var(--g700);font-size:.8rem;line-height:1.5;}
+  /* 모아보기 카드 */
+  .gcard{border:1px solid var(--line);border-radius:.9rem;padding:.7rem .8rem;margin-bottom:.5rem;background:#fff;}
+  .gcard .gh{display:flex;align-items:center;gap:.4rem;}
+  .gcard .gh b{font-weight:900;color:var(--g900);font-size:.88rem;}
+  .gcard .gh .cnt{margin-left:auto;font-size:.66rem;color:var(--g400);}
+  .gitem{display:flex;gap:.5rem;margin-top:.4rem;font-size:.78rem;}
+  .gitem .gd{color:var(--p700);font-weight:800;flex:none;width:3.4rem;}
+  .gitem .gt{color:var(--g700);}
+  /* 막대 그래프 */
+  .bars{display:flex;align-items:flex-end;gap:.4rem;height:120px;padding:1.1rem .2rem 0;border:1px solid var(--line);border-radius:1rem;background:#fff;}
+  .bar{flex:1;height:88px;background:var(--g100);border-radius:.35rem .35rem 0 0;display:flex;align-items:flex-end;position:relative;}
+  .bar i{display:block;width:100%;background:var(--p500);border-radius:.35rem .35rem 0 0;}
+  .bar span{position:absolute;top:-1.05rem;left:0;right:0;text-align:center;font-size:.6rem;font-weight:800;color:var(--g500);}
+  .axis{display:flex;gap:.4rem;padding:.25rem .2rem 0;}
+  .axis div{flex:1;text-align:center;font-size:.55rem;color:var(--g400);}
+  /* 구성원별 가로 막대 */
+  .mrow{display:flex;align-items:center;gap:.5rem;padding:.4rem .1rem;}
+  .mrow .mn{width:3.6rem;font-size:.76rem;color:var(--g700);font-weight:600;}
+  .track{flex:1;height:.6rem;background:var(--g100);border-radius:999px;overflow:hidden;}
+  .track i{display:block;height:100%;background:var(--p500);border-radius:999px;}
+  .mrow .mv{width:5rem;text-align:right;font-size:.66rem;font-weight:800;color:var(--g500);}
+  /* 헤더 목업 */
+  .navmock{display:flex;align-items:center;justify-content:space-between;padding:.2rem .1rem;}
+  .logo{font-weight:900;color:var(--p900);font-size:.95rem;letter-spacing:-.02em;}
+  .navmenu{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center;}
+  .navmenu .m{font-size:.72rem;color:var(--g500);font-weight:700;}
+  .navmenu .m.on{color:var(--p800);}
+  .navmenu .m.cta{background:var(--p600);color:#fff;border-radius:999px;padding:.2rem .55rem;}
+  .avatar{width:1.5rem;height:1.5rem;border-radius:50%;background:var(--p200);}
+  .arrowcue{color:var(--p600);font-weight:800;font-size:.8rem;margin-top:.8rem;}
+
+  .shield{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.1rem;}
+  .check{color:#2e7d52;font-weight:900;} .cross{color:#c0392b;font-weight:900;}
+
+  /* 컨트롤 */
+  .controls{position:fixed;bottom:1.3rem;right:1.5rem;display:flex;gap:.6rem;z-index:20;}
+  .btn{width:2.8rem;height:2.8rem;border-radius:50%;border:none;background:rgba(255,255,255,.92);color:var(--p800);font-size:1.2rem;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.18);display:flex;align-items:center;justify-content:center;}
+  .btn:hover{background:#fff;}
+  .counter{position:fixed;bottom:1.6rem;left:1.5rem;color:#fff;font-weight:700;font-size:.9rem;z-index:20;background:rgba(0,0,0,.18);padding:.3rem .8rem;border-radius:999px;}
+  .dots{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%);display:flex;gap:.45rem;z-index:20;}
+  .dots b{width:.55rem;height:.55rem;border-radius:50%;background:rgba(255,255,255,.35);cursor:pointer;}
+  .dots b.on{background:#fff;width:1.5rem;border-radius:999px;}
+  @media (max-width:860px){.counter,.dots{display:none;}}
+  .progress{position:fixed;top:0;left:0;height:4px;background:var(--p500);z-index:30;transition:width .35s;width:0;}
+</style>
+</head>
+<body>
+<div class="progress" id="bar"></div>
+<div class="deck" id="deck">
+
+  <!-- 1 표지 -->
+  <section class="slide cover active">
+    <span class="badge">부평동부교회 · 공동체</span>
+    <div class="eyebrow">소그룹 리더를 위한 안내</div>
+    <h1>소그룹 출석부<br/>이렇게 사용하세요</h1>
+    <p class="sub">주일 소그룹 출석을 휴대폰·컴퓨터에서 간편하게 기록하고,<br/>우리 그룹의 출석을 한눈에 살펴봅니다.</p>
+  </section>
+
+  <!-- 2 개요 -->
+  <section class="slide">
+    <div class="eyebrow">출석부란?</div>
+    <h2>종이 대신, 어디서나 클릭 한 번으로</h2>
+    <p class="lead">매주 소그룹 모임 후, 리더가 직접 <b>출석을 체크</b>하고 <b>나눔·심방 내용</b>을 남깁니다.
+    기록은 자동으로 저장되어, 우리 그룹의 출석 흐름을 언제든 다시 볼 수 있습니다.</p>
+    <div class="tip">📱 <b>앱 설치 없이</b> 교회 웹사이트에서 카카오 로그인만 하면 바로 사용할 수 있어요.</div>
+  </section>
+
+  <!-- 3 기능 -->
+  <section class="slide">
+    <div class="eyebrow">세 가지 기능</div>
+    <h2>출석부로 할 수 있는 일</h2>
+    <div class="cards">
+      <div class="card"><div class="ico">✅</div><h3>출석 체크</h3><p>주차별로 우리 그룹원의 출석을 체크박스로 표시합니다.</p></div>
+      <div class="card"><div class="ico">📝</div><h3>특이사항·기타 의견</h3><p>그룹원별 심방·기도제목과 그룹 전체의 의견을 기록합니다.</p></div>
+      <div class="card"><div class="ico">📊</div><h3>출석률 보기</h3><p>주차별·구성원별 출석률을 그래프로 한눈에 확인합니다.</p></div>
+    </div>
+  </section>
+
+  <!-- 4 시작하기 -->
+  <section class="slide">
+    <div class="split">
+      <div>
+        <div class="eyebrow">시작하기</div>
+        <h2>로그인하고 메뉴 열기</h2>
+        <ul class="steps">
+          <li><span class="num">1</span><div>교회 웹사이트에서 <b>카카오로 로그인</b>합니다.</div></li>
+          <li><span class="num">2</span><div>상단 메뉴에서 <b>"출석부"</b>를 누릅니다.</div></li>
+        </ul>
+        <div class="tip">🔒 <b>"출석부" 메뉴는 리더에게만 보입니다.</b> 보이지 않으면 담당 교역자께 알려주세요.</div>
+      </div>
+      <div class="browser" aria-hidden="true">
+        <div class="bbar"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span><div class="burl">dbchurch.net</div></div>
+        <div class="screen">
+          <div class="navmock">
+            <div class="logo">부평동부교회</div>
+            <div class="avatar"></div>
+          </div>
+          <div class="navmenu" style="margin-top:.9rem">
+            <span class="m">교회 소개</span><span class="m">공동체</span><span class="m">교회 소식</span><span class="m">교회 일정</span><span class="m cta">📋 출석부</span>
+          </div>
+          <div class="arrowcue">↑ 로그인하면 상단에 "출석부"가 나타납니다</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 1단계 그룹/주차 -->
+  <section class="slide">
+    <div class="split">
+      <div>
+        <div class="eyebrow">1단계</div>
+        <h2>소그룹과 주차 고르기</h2>
+        <ul class="steps">
+          <li><span class="num">1</span><div>내 <b>소그룹</b>을 선택합니다. <small style="color:#a99f93">(여러 그룹이면 골라서)</small></div></li>
+          <li><span class="num">2</span><div>기록할 <b>주차(날짜)</b>를 선택합니다.</div></li>
+        </ul>
+        <div class="tip">📅 보통 <b>가장 최근 주일</b>이 자동으로 선택돼 있어요.</div>
+      </div>
+      <div class="browser" aria-hidden="true">
+        <div class="bbar"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span><div class="burl">dbchurch.net · 출석부</div></div>
+        <div class="screen">
+          <div class="s-title">소그룹 출석부</div>
+          <div class="s-sub">소그룹 리더가 출석과 특이사항을 기록합니다.</div>
+          <div class="tabs"><span class="tab on">출석 체크</span><span class="tab">통계</span><span class="tab">관리</span></div>
+          <div class="selrow"><div class="sel">열매 · 행복 <small>▾</small></div><div class="sel">6월 14일 <small>▾</small></div></div>
+          <div class="stat3">
+            <div class="stat"><b>14</b><span>소그룹원</span></div>
+            <div class="stat"><b>18</b><span>진행 주차</span></div>
+            <div class="stat"><b class="hl">72%</b><span>전체 출석률</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 2단계 출석체크 -->
+  <section class="slide">
+    <div class="split">
+      <div>
+        <div class="eyebrow">2단계</div>
+        <h2>출석 체크하기</h2>
+        <ul class="steps">
+          <li><span class="num">1</span><div>출석한 그룹원의 <b>네모 칸을 탭</b>하면 ✔ 표시됩니다.</div></li>
+          <li><span class="num">2</span><div>다시 누르면 출석이 해제됩니다.</div></li>
+        </ul>
+        <div class="tip">💾 <b>자동 저장됩니다.</b> 따로 "저장" 버튼을 누르지 않아도 돼요.</div>
+      </div>
+      <div class="browser" aria-hidden="true">
+        <div class="bbar"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span><div class="burl">dbchurch.net · 출석부</div></div>
+        <div class="screen">
+          <div class="s-title">출석 체크</div>
+          <div class="s-sub">6월 14일</div>
+          <div class="panel">
+            <div class="row"><span class="chk on">✔</span><div class="who"><b>홍길동</b><span class="lead">리더</span><small>권사</small></div><div class="inp ph">특이사항 (이 주차)</div></div>
+            <div class="row alt"><span class="chk on">✔</span><div class="who"><b>김철수</b><small>집사</small></div><div class="inp ph">특이사항 (이 주차)</div></div>
+            <div class="row"><span class="chk"></span><div class="who"><b>박민수</b><small>성도</small></div><div class="inp ph">특이사항 (이 주차)</div></div>
+            <div class="row alt"><span class="chk on">✔</span><div class="who"><b>이영희</b><small>집사</small></div><div class="inp ph">특이사항 (이 주차)</div></div>
+            <div class="row"><span class="chk on">✔</span><div class="who"><b>최지은</b><small>권사</small></div><div class="inp ph">특이사항 (이 주차)</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 3단계 특이사항 -->
+  <section class="slide">
+    <div class="split">
+      <div>
+        <div class="eyebrow">3단계</div>
+        <h2>특이사항 적기 <span style="font-size:.55em;color:#a99f93">개인별</span></h2>
+        <p class="lead">그룹원 한 사람씩의 <b>심방 내용·기도제목·근황</b>을 그 주차에 기록합니다.</p>
+        <div class="tip">✍️ 칸에 입력하고 <b>다른 곳을 누르면 저장</b>됩니다. 매주 적으면 그 사람의 기록이 쌓여요.</div>
+      </div>
+      <div class="browser" aria-hidden="true">
+        <div class="bbar"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span><div class="burl">dbchurch.net · 출석부</div></div>
+        <div class="screen">
+          <div class="s-title">출석 체크</div>
+          <div class="s-sub">6월 14일</div>
+          <div class="panel">
+            <div class="row"><span class="chk on">✔</span><div class="who"><b>김철수</b><small>집사</small></div><div class="inp">새 직장 적응 기도 부탁</div></div>
+            <div class="row alt"><span class="chk on">✔</span><div class="who"><b>이영희</b><small>집사</small></div><div class="inp">자녀 수험생, 건강</div></div>
+            <div class="row"><span class="chk"></span><div class="who"><b>박민수</b><small>성도</small></div><div class="inp">출장으로 결석</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 4단계 기타의견 -->
+  <section class="slide">
+    <div class="split">
+      <div>
+        <div class="eyebrow">4단계</div>
+        <h2>기타 의견 적기 <span style="font-size:.55em;color:#a99f93">소그룹 전체</span></h2>
+        <p class="lead">개인이 아닌 <b>소그룹 전체에서 나온 의견·건의사항</b>을 그 주차에 남깁니다.</p>
+        <div class="tip">💡 예: "다음 주 야유회 장소 논의", "교재 변경 건의" 등</div>
+      </div>
+      <div class="browser" aria-hidden="true">
+        <div class="bbar"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span><div class="burl">dbchurch.net · 출석부</div></div>
+        <div class="screen">
+          <div class="s-title">출석 체크</div>
+          <div class="s-sub">6월 14일</div>
+          <div class="row" style="border:0;padding:.3rem 0"><span class="chk on">✔</span><div class="who"><b>최지은</b><small>권사</small></div><div class="inp">감사 나눔</div></div>
+          <div class="label">기타 의견 <span>— 이 주차 소그룹에서 나온 의견</span></div>
+          <div class="ta">다음 달 소그룹 야유회를 6월 28일로 제안.<br/>새가족 환영 모임 준비가 필요함.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 모아보기 -->
+  <section class="slide">
+    <div class="split">
+      <div>
+        <div class="eyebrow">지난 기록 보기</div>
+        <h2>모아보기</h2>
+        <p class="lead">그동안 적은 <b>특이사항·기타 의견</b>이 <b>최근 순</b>으로 모여 보입니다.
+        한 사람의 기록을 쭉 살펴보며 돌봄에 활용하세요.</p>
+        <div class="tip">📂 화면을 아래로 내리면 <b>"특이사항 모아보기 / 기타 의견 모아보기"</b>가 있어요.</div>
+      </div>
+      <div class="browser" aria-hidden="true">
+        <div class="bbar"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span><div class="burl">dbchurch.net · 출석부</div></div>
+        <div class="screen">
+          <div class="s-title">특이사항 모아보기</div>
+          <div class="s-sub">&nbsp;</div>
+          <div class="gcard"><div class="gh"><b>김철수</b><span class="cnt">2건</span></div>
+            <div class="gitem"><span class="gd">6월 14일</span><span class="gt">새 직장 적응 기도</span></div>
+            <div class="gitem"><span class="gd">6월 7일</span><span class="gt">감기 회복 중</span></div>
+          </div>
+          <div class="gcard"><div class="gh"><b>이영희</b><span class="cnt">1건</span></div>
+            <div class="gitem"><span class="gd">6월 14일</span><span class="gt">자녀 수험생 건강</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 그래프 -->
+  <section class="slide">
+    <div class="split">
+      <div>
+        <div class="eyebrow">한눈에 보기</div>
+        <h2>우리 그룹 출석률</h2>
+        <p class="lead"><b>주차별 출석률</b>과 <b>구성원별 출석</b>을 그래프로 보여줍니다.
+        흐름을 보며 빠지는 분을 살피고 격려할 수 있어요.</p>
+      </div>
+      <div class="browser" aria-hidden="true">
+        <div class="bbar"><span class="bdot"></span><span class="bdot"></span><span class="bdot"></span><div class="burl">dbchurch.net · 출석부</div></div>
+        <div class="screen">
+          <div class="s-title">주차별 출석률</div>
+          <div class="s-sub">&nbsp;</div>
+          <div class="bars">
+            <div class="bar"><span>64%</span><i style="height:64%"></i></div>
+            <div class="bar"><span>71%</span><i style="height:71%"></i></div>
+            <div class="bar"><span>57%</span><i style="height:57%"></i></div>
+            <div class="bar"><span>79%</span><i style="height:79%"></i></div>
+            <div class="bar"><span>72%</span><i style="height:72%"></i></div>
+          </div>
+          <div class="axis"><div>5/24</div><div>5/31</div><div>6/7</div><div>6/14</div><div>오늘</div></div>
+          <div class="s-title" style="margin-top:1rem">소그룹원별 출석</div>
+          <div style="margin-top:.4rem">
+            <div class="mrow"><span class="mn">홍길동</span><div class="track"><i style="width:94%"></i></div><span class="mv">17/18 (94%)</span></div>
+            <div class="mrow"><span class="mn">김철수</span><div class="track"><i style="width:78%"></i></div><span class="mv">14/18 (78%)</span></div>
+            <div class="mrow"><span class="mn">이영희</span><div class="track"><i style="width:61%"></i></div><span class="mv">11/18 (61%)</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 개인정보/권한 -->
+  <section class="slide">
+    <div class="eyebrow">개인정보는 안전합니다</div>
+    <h2>누가 무엇을 볼 수 있나요</h2>
+    <div class="shield">
+      <div class="card"><h3>🙋 소그룹 리더</h3><p><span class="check">✔</span> 내 소그룹만 보고 기록<br/><span class="cross">✘</span> 다른 그룹은 볼 수 없음</p></div>
+      <div class="card"><h3>⛪ 지정 교역자·관리자</h3><p><span class="check">✔</span> 전체 그룹 통계·관리<br/><span class="check">✔</span> 명단·교역자 지정</p></div>
+      <div class="card"><h3>🔒 특이사항(심방 내용)</h3><p>해당 그룹 <b>리더</b>와 <b>지정 교역자</b>만 볼 수 있습니다. 다른 리더는 못 봅니다.</p></div>
+    </div>
+    <div class="tip" style="margin-top:1.5rem">🛡️ 일반 교인은 출석부에 들어올 수 없고, 권한은 시스템에서 <b>이중으로 보호</b>됩니다. 안심하고 기록하세요.</div>
+  </section>
+
+  <!-- 12 요약 -->
+  <section class="slide">
+    <div class="eyebrow">기억해 주세요</div>
+    <h2>한 줄 요약</h2>
+    <ul class="bullets">
+      <li>매주 모임 후 <b>출석 체크</b> + <b>특이사항</b>을 남겨주세요.</li>
+      <li>입력하면 <b>자동 저장</b> — 저장 버튼이 따로 없습니다.</li>
+      <li>내 소그룹 외에는 보이지 않으니 <b>안심</b>하고 기록하세요.</li>
+      <li>잘 안 되거나 메뉴가 안 보이면 <b>담당 교역자</b>께 문의하세요.</li>
+    </ul>
+  </section>
+
+  <!-- 13 마무리 -->
+  <section class="slide cover">
+    <div class="eyebrow">함께 세워가요</div>
+    <h1>감사합니다 🙏</h1>
+    <p class="sub">작은 기록이 모여 한 영혼을 더 잘 돌보게 됩니다.<br/>우리 소그룹을 위해 섬겨주셔서 감사합니다.</p>
+  </section>
+
+</div>
+
+<div class="counter"><span id="cur">1</span> / <span id="tot">13</span></div>
+<div class="dots" id="dots"></div>
+<div class="controls">
+  <button class="btn" id="prev" aria-label="이전">‹</button>
+  <button class="btn" id="next" aria-label="다음">›</button>
+</div>
+
+<script>
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsWrap = document.getElementById('dots');
+  const bar = document.getElementById('bar');
+  let i = 0;
+  slides.forEach((_, n) => { const b = document.createElement('b'); b.onclick = () => go(n); dotsWrap.appendChild(b); });
+  const dots = Array.from(dotsWrap.children);
+  document.getElementById('tot').textContent = slides.length;
+  function go(n){
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    dots.forEach((d, k) => d.classList.toggle('on', k === i));
+    document.getElementById('cur').textContent = i + 1;
+    bar.style.width = ((i + 1) / slides.length * 100) + '%';
+    slides[i].scrollTop = 0;
+  }
+  const next = () => go(i + 1), prev = () => go(i - 1);
+  document.getElementById('next').onclick = next;
+  document.getElementById('prev').onclick = prev;
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight','PageDown',' '].includes(e.key)) { next(); e.preventDefault(); }
+    if (['ArrowLeft','PageUp'].includes(e.key)) { prev(); e.preventDefault(); }
+    if (e.key === 'Home') go(0); if (e.key === 'End') go(slides.length - 1);
+  });
+  let sx = 0;
+  document.addEventListener('touchstart', e => sx = e.touches[0].clientX, {passive:true});
+  document.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) (dx < 0 ? next : prev)(); }, {passive:true});
+  go(0);
+</script>
+</body>
+</html>
