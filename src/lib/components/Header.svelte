@@ -8,13 +8,14 @@
 	let profilePicture = $state<string | null>(null);
 	let isLoggedIn = $state(false);
 	let dropdownOpen = $state(false);
+	let canSeeAttendance = $state(false);
 
 	async function logout() {
 		dropdownOpen = false;
 		await supabaseBrowser.auth.signOut();
 	}
 
-	const menus = [
+	const baseMenus = [
 		{ name: "교회 소개", href: "/about" },
 		{ name: "교회 영상", href: "/videos" },
 		{ name: "공동체", href: "/community" },
@@ -22,6 +23,9 @@
 		{ name: "교회 소식", href: "/news" },
 		{ name: "커뮤니티", href: "/board" },
 	];
+	const menus = $derived(
+		canSeeAttendance ? [...baseMenus, { name: "출석부", href: "/attendance" }] : baseMenus,
+	);
 
 	function toggleNav() {
 		navOpen = !navOpen;
@@ -35,10 +39,30 @@
 	async function loadProfile(userId: string) {
 		const { data } = await supabaseBrowser
 			.from("custom_users")
-			.select("profile_picture")
+			.select("id, profile_picture, roles(level)")
 			.eq("auth_id", userId)
 			.single();
 		profilePicture = data?.profile_picture ?? null;
+
+		// 출석부 메뉴 노출: 소그룹 리더 / 지정 교역자 / 관리자(level>=100)
+		const level = (data?.roles as unknown as { level: number } | null)?.level ?? 0;
+		let allowed = level >= 100;
+		if (data?.id && !allowed) {
+			const { count } = await supabaseBrowser
+				.from("small_group_members")
+				.select("id", { count: "exact", head: true })
+				.eq("user_id", data.id)
+				.eq("role", "leader");
+			allowed = (count ?? 0) > 0;
+			if (!allowed) {
+				const { count: mc } = await supabaseBrowser
+					.from("attendance_managers")
+					.select("user_id", { count: "exact", head: true })
+					.eq("user_id", data.id);
+				allowed = (mc ?? 0) > 0;
+			}
+		}
+		canSeeAttendance = allowed;
 	}
 
 	onMount(() => {
@@ -56,7 +80,7 @@
 		const { data: { subscription } } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
 			isLoggedIn = !!session;
 			if (session) loadProfile(session.user.id);
-			else profilePicture = null;
+			else { profilePicture = null; canSeeAttendance = false; }
 		});
 
 		const handleClickOutside = (e: MouseEvent) => {
