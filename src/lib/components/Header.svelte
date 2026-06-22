@@ -21,6 +21,7 @@
 		{ name: "공동체", href: "/community" },
 		{ name: "다음 세대", href: "/next-gen" },
 		{ name: "교회 소식", href: "/news" },
+		{ name: "교회 일정", href: "/events" },
 		{ name: "커뮤니티", href: "/board" },
 	];
 	const menus = $derived(
