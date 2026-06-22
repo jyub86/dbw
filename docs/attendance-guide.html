@@ -417,16 +417,22 @@
     slides[i].scrollTop = 0;
   }
   const next = () => go(i + 1), prev = () => go(i - 1);
-  document.getElementById('next').onclick = next;
-  document.getElementById('prev').onclick = prev;
+  // 버튼 클릭 후 포커스를 떼서 스페이스바가 버튼을 다시 눌러 두 번 넘어가지 않게
+  document.getElementById('next').onclick = (e) => { next(); e.currentTarget.blur(); };
+  document.getElementById('prev').onclick = (e) => { prev(); e.currentTarget.blur(); };
   document.addEventListener('keydown', e => {
     if (['ArrowRight','PageDown',' '].includes(e.key)) { next(); e.preventDefault(); }
     if (['ArrowLeft','PageUp'].includes(e.key)) { prev(); e.preventDefault(); }
     if (e.key === 'Home') go(0); if (e.key === 'End') go(slides.length - 1);
   });
-  let sx = 0;
-  document.addEventListener('touchstart', e => sx = e.touches[0].clientX, {passive:true});
-  document.addEventListener('touchend', e => { const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) (dx < 0 ? next : prev)(); }, {passive:true});
+  // 가로 스와이프만 슬라이드 전환 (세로 스크롤은 무시)
+  let sx = 0, sy = 0;
+  document.addEventListener('touchstart', e => { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, {passive:true});
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - sx;
+    const dy = e.changedTouches[0].clientY - sy;
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) (dx < 0 ? next : prev)();
+  }, {passive:true});
   go(0);
 </script>
 </body>

@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { supabaseBrowser } from '$lib/supabase-browser';
-    import { loadAccess, fetchAll, todayISO } from '$lib/attendance';
+    import { loadAccess, fetchAll, todayISO, fmtDate, pct } from '$lib/attendance';
     import AttendanceNav from '$lib/components/AttendanceNav.svelte';
 
     type Community = { name: string; sort_order: number };
@@ -43,10 +43,6 @@
     const selectedSession = $derived(sessions.find((s) => s.id === selectedSessionId) ?? null);
     const pastSessions = $derived(sessions.filter((s) => s.session_date <= today));
 
-    function fmtDate(iso: string) {
-        const [, m, d] = iso.split('-');
-        return `${Number(m)}월 ${Number(d)}일`;
-    }
     function isPresent(sid: number, mid: number) {
         return !!present[`${sid}:${mid}`];
     }
@@ -265,9 +261,6 @@
         savingGroupNote = false;
     }
 
-    function pct(r: number) {
-        return Math.round(r * 100);
-    }
 </script>
 
 <svelte:head><title>출석부 - 부평동부교회</title></svelte:head>
