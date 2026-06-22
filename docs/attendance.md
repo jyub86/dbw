@@ -32,6 +32,17 @@
 RLS 헬퍼(모두 SECURITY DEFINER): `app_current_user_id()`, `app_is_admin()`,
 `app_is_attendance_manager()`, `app_can_manage()`(admin 또는 교역자), `app_is_group_leader(gid)`.
 
+## 대시보드 집계 RPC (서버 집계)
+
+성능을 위해 통계 대시보드는 원시 행을 받지 않고 **DB 집계 함수(jsonb 반환)** 를 호출한다. 모두 SECURITY DEFINER + `app_can_manage()` 가드(비매니저는 null). Supabase에만 적용됨.
+
+- `att_week(p_session_id bigint)` — 특정 주차(기본 마지막 주)의 overall/공동체별/소그룹별 출석. 기본 화면.
+- `att_weekly_trend(p_weeks int, p_community_id bigint, p_group_id bigint)` — 최근 N주 주간 추이. 공동체/소그룹 필터.
+- `att_monthly_trend(p_community_id bigint, p_group_id bigint)` — 월별 추이. 공동체/소그룹 필터.
+- `att_full(p_community_id bigint)` — 전체 누적(기록주차 기준) overall/공동체별/소그룹별. 별도 탭에서 로드.
+
+추이 출석률 분모 = 그 기간에 출석을 **기록한 그룹**의 인원(미기록 주차로 인한 왜곡 방지).
+
 ## 화면 (`/attendance`)
 
 - **출석 체크** (`/attendance`) — 리더용. 그룹/주차 선택 → 출석 체크 + 인원별 특이사항 + 기타 의견 입력.

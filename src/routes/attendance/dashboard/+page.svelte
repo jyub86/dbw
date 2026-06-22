@@ -2,155 +2,181 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { supabaseBrowser } from '$lib/supabase-browser';
-    import { loadAccess, pct, todayISO, fetchAll } from '$lib/attendance';
+    import { loadAccess, fmtDate } from '$lib/attendance';
     import AttendanceNav from '$lib/components/AttendanceNav.svelte';
 
+    type Sess = { id: number; session_date: string };
     type Community = { id: number; name: string; sort_order: number };
-    type Group = { id: number; name: string; community_id: number; sort_order: number };
-    type Sess = { id: number; session_date: string; sort_order: number };
+    type GroupStat = {
+        id: number; community_id?: number; community: string; name: string;
+        present: number; members: number; recorded?: number; rate: number;
+    };
+    type CommStat = { id: number; name: string; present?: number; members: number; rate: number };
+    type WeekData = {
+        session_id: number; session_date: string;
+        overall: { present: number; members: number; rate: number };
+        communities: CommStat[]; groups: GroupStat[];
+    };
+    type FullData = {
+        overall: { present: number; rate: number };
+        communities: CommStat[]; groups: GroupStat[];
+    };
+    type TrendPoint = { date?: string; ym?: string; present: number; members: number; rate: number };
 
     let loading = $state(true);
     let denied = $state(false);
+    let view = $state<'week' | 'trend' | 'full'>('week');
 
+    let sessions = $state<Sess[]>([]); // 과거 주차 (최신순)
     let communities = $state<Community[]>([]);
-    let groups = $state<Group[]>([]);
-    let memberCount = $state<Record<number, number>>({}); // group_id -> active members
-    let sessions = $state<Sess[]>([]);
-    // present[`${session_id}:${group_id}`] = count
-    let present = $state<Record<string, number>>({});
+    let groups = $state<{ id: number; name: string; community_id: number; sort_order: number }[]>([]);
 
-    const today = todayISO();
-    const pastSessions = $derived(sessions.filter((s) => s.session_date <= today));
+    // 주차별
+    let weekSessionId = $state<number | null>(null);
+    let weekData = $state<WeekData | null>(null);
+    let weekBusy = $state(false);
+    let weekFilter = $state<number | 'all'>('all'); // 그룹 표 공동체 필터
 
-    function presentAt(sid: number, gid: number) {
-        return present[`${sid}:${gid}`] ?? 0;
-    }
-    // 그 그룹이 실제로 기록한 주차 수 (1명 이상 출석 기록이 있는 주차)
-    function groupRecordedCount(gid: number) {
-        return pastSessions.filter((s) => presentAt(s.id, gid) > 0).length;
-    }
-    function groupPresentTotal(gid: number) {
-        return pastSessions.reduce((a, s) => a + presentAt(s.id, gid), 0);
-    }
-    function groupRate(gid: number) {
-        const denom = (memberCount[gid] ?? 0) * groupRecordedCount(gid);
-        return denom ? groupPresentTotal(gid) / denom : 0;
-    }
-    // 그룹별 가장 최근에 "기록된" 주차의 출석률 (+ 날짜)
-    function groupLast(gid: number): { date: string; rate: number } | null {
-        for (let i = pastSessions.length - 1; i >= 0; i--) {
-            const s = pastSessions[i];
-            const c = presentAt(s.id, gid);
-            if (c > 0) {
-                const m = memberCount[gid] ?? 0;
-                return { date: s.session_date, rate: m ? c / m : 0 };
-            }
-        }
-        return null;
-    }
+    // 추이
+    let trendMode = $state<'weekly' | 'monthly'>('weekly');
+    let trendCommunity = $state<number | 'all'>('all');
+    let trendGroup = $state<number | 'all'>('all');
+    let trendData = $state<TrendPoint[]>([]);
+    let trendBusy = $state(false);
 
-    function aggRate(gs: Group[]) {
-        let num = 0,
-            den = 0;
-        for (const g of gs) {
-            num += groupPresentTotal(g.id);
-            den += (memberCount[g.id] ?? 0) * groupRecordedCount(g.id);
-        }
-        return den ? num / den : 0;
-    }
+    // 전체 통계
+    let fullCommunity = $state<number | 'all'>('all');
+    let fullData = $state<FullData | null>(null);
+    let fullBusy = $state(false);
 
-    const communityStats = $derived(
-        communities.map((c) => {
-            const gs = groups.filter((g) => g.community_id === c.id);
-            const members = gs.reduce((a, g) => a + (memberCount[g.id] ?? 0), 0);
-            return { community: c, groups: gs, members, rate: aggRate(gs) };
-        })
-    );
-
-    const overall = $derived({
-        members: groups.reduce((a, g) => a + (memberCount[g.id] ?? 0), 0),
-        rate: aggRate(groups)
-    });
-
-    // 주차별 전체 출석률 (기록한 그룹의 인원만 분모로) — 기록 있는 주차만 표시
-    const weekly = $derived(
-        pastSessions
-            .map((s) => {
-                let cnt = 0,
-                    participating = 0;
-                for (const g of groups) {
-                    const c = presentAt(s.id, g.id);
-                    if (c > 0) {
-                        cnt += c;
-                        participating += memberCount[g.id] ?? 0;
-                    }
-                }
-                return { session: s, count: cnt, rate: participating ? cnt / participating : 0 };
+    // 주차별 소그룹: 공동체(열매→줄기→뿌리)별로 묶고, 그룹은 출석률 내림차순
+    const weekByCommunity = $derived(
+        communities
+            .filter((c) => weekFilter === 'all' || c.id === weekFilter)
+            .map((c) => {
+                const cs = weekData?.communities.find((x) => x.id === c.id);
+                return {
+                    community: c,
+                    rate: cs?.rate ?? 0,
+                    present: cs?.present ?? 0,
+                    members: cs?.members ?? 0,
+                    groups: (weekData?.groups ?? [])
+                        .filter((g) => g.community_id === c.id)
+                        .slice()
+                        .sort((a, b) => b.rate - a.rate)
+                };
             })
-            .filter((w) => w.count > 0)
+            .filter((x) => x.groups.length > 0)
     );
+    // 전체 통계 소그룹: 공동체별로 묶기
+    const fullByCommunity = $derived(
+        communities
+            .filter((c) => fullCommunity === 'all' || c.id === fullCommunity)
+            .map((c) => {
+                const cs = fullData?.communities.find((x) => x.id === c.id);
+                return {
+                    community: c,
+                    rate: cs?.rate ?? 0,
+                    members: cs?.members ?? 0,
+                    groups: (fullData?.groups ?? [])
+                        .filter((g) => g.community_id === c.id)
+                        .slice()
+                        .sort((a, b) => b.rate - a.rate)
+                };
+            })
+            .filter((x) => x.groups.length > 0)
+    );
+    // 추이 소그룹 선택지 (공동체 필터 반영)
+    const trendGroupOptions = $derived(
+        groups.filter((g) => trendCommunity === 'all' || g.community_id === trendCommunity)
+    );
+    const trendScopeLabel = $derived(
+        trendGroup !== 'all'
+            ? (groups.find((g) => g.id === trendGroup)?.name ?? '')
+            : trendCommunity !== 'all'
+              ? (communities.find((c) => c.id === trendCommunity)?.name ?? '')
+              : '전체'
+    );
+
+    function monthLabel(ym: string) {
+        const [, m] = ym.split('-');
+        return `${Number(m)}월`;
+    }
+    function shortDate(iso: string) {
+        const [, m, d] = iso.split('-');
+        return `${Number(m)}/${Number(d)}`;
+    }
 
     onMount(async () => {
         const { hasSession, access } = await loadAccess();
-        if (!hasSession) {
-            goto('/login');
-            return;
-        }
+        if (!hasSession) return goto('/login');
         if (!access || !access.canManage) {
             denied = true;
             loading = false;
             return;
         }
-
-        const [{ data: comms }, { data: gs }, { data: mem }, { data: sess }] = await Promise.all([
-            supabaseBrowser.from('communities').select('id,name,sort_order').order('sort_order'),
-            supabaseBrowser
-                .from('small_groups')
-                .select('id,name,community_id,sort_order')
-                .eq('active', true)
-                .order('sort_order'),
-            supabaseBrowser.from('small_group_members').select('small_group_id').eq('active', true),
+        const [{ data: ss }, { data: cs }, { data: gs }] = await Promise.all([
             supabaseBrowser
                 .from('attendance_sessions')
-                .select('id,session_date,sort_order')
+                .select('id, session_date')
+                .eq('active', true)
+                .lte('session_date', new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' }))
+                .order('session_date', { ascending: false }),
+            supabaseBrowser.from('communities').select('id, name, sort_order').order('sort_order'),
+            supabaseBrowser
+                .from('small_groups')
+                .select('id, name, community_id, sort_order')
                 .eq('active', true)
                 .order('sort_order')
         ]);
-        // 출석기록은 1000행 제한이 있어 끝까지 페이지네이션
-        const recs = await fetchAll<{ session_id: number; small_group_id: number; present: boolean }>(
-            (f, t) =>
-                supabaseBrowser
-                    .from('attendance_records')
-                    .select('session_id,small_group_id,present')
-                    .order('id')
-                    .range(f, t)
-        );
-
-        communities = (comms ?? []) as Community[];
-        groups = (gs ?? []) as Group[];
-        sessions = (sess ?? []) as Sess[];
-
-        const mc: Record<number, number> = {};
-        for (const m of mem ?? []) mc[m.small_group_id] = (mc[m.small_group_id] ?? 0) + 1;
-        memberCount = mc;
-
-        const p: Record<string, number> = {};
-        for (const r of recs ?? []) {
-            if (!r.present) continue;
-            const k = `${r.session_id}:${r.small_group_id}`;
-            p[k] = (p[k] ?? 0) + 1;
-        }
-        present = p;
-
+        sessions = (ss ?? []) as Sess[];
+        communities = (cs ?? []) as Community[];
+        groups = (gs ?? []) as typeof groups;
+        weekSessionId = sessions[0]?.id ?? null;
+        await loadWeek();
         loading = false;
     });
+
+    async function loadWeek() {
+        if (!weekSessionId) return;
+        weekBusy = true;
+        const { data } = await supabaseBrowser.rpc('att_week', { p_session_id: weekSessionId });
+        weekData = data as WeekData;
+        weekBusy = false;
+    }
+    async function loadTrend() {
+        trendBusy = true;
+        const comm = trendCommunity === 'all' ? null : trendCommunity;
+        const grp = trendGroup === 'all' ? null : trendGroup;
+        const fn = trendMode === 'weekly' ? 'att_weekly_trend' : 'att_monthly_trend';
+        const args =
+            trendMode === 'weekly'
+                ? { p_weeks: 16, p_community_id: comm, p_group_id: grp }
+                : { p_community_id: comm, p_group_id: grp };
+        const { data } = await supabaseBrowser.rpc(fn, args);
+        trendData = (data ?? []) as TrendPoint[];
+        trendBusy = false;
+    }
+    async function loadFull() {
+        fullBusy = true;
+        const comm = fullCommunity === 'all' ? null : fullCommunity;
+        const { data } = await supabaseBrowser.rpc('att_full', { p_community_id: comm });
+        fullData = data as FullData;
+        fullBusy = false;
+    }
+
+    function switchView(v: 'week' | 'trend' | 'full') {
+        view = v;
+        if (v === 'trend' && trendData.length === 0) loadTrend();
+        if (v === 'full' && !fullData) loadFull();
+    }
 </script>
 
 <svelte:head><title>출석 통계 - 부평동부교회</title></svelte:head>
 
 <div class="w-full max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
     <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">출석 통계 대시보드</h1>
-    <p class="text-gray-500 mb-6 text-sm sm:text-base">전체 공동체·소그룹 출석 현황입니다.</p>
+    <p class="text-gray-500 mb-6 text-sm sm:text-base">공동체·소그룹 출석 현황을 다양한 기준으로 살펴봅니다.</p>
 
     <AttendanceNav canManage={true} />
 
@@ -163,72 +189,179 @@
             <a href="/attendance" class="inline-block mt-6 px-6 py-2.5 rounded-full bg-primary-900 text-white font-bold text-sm">출석 체크로</a>
         </div>
     {:else}
-        <!-- 전체 요약 -->
-        <div class="rounded-2xl bg-primary-900 text-white p-6 mb-6 flex items-center justify-between">
-            <div>
-                <div class="text-sm font-medium text-white/70">전체 출석률 (기록된 주차 기준)</div>
-                <div class="text-4xl font-black mt-1">{pct(overall.rate)}%</div>
-            </div>
-            <div class="text-right text-sm text-white/80">
-                <div>전체 인원 <span class="font-bold text-white">{overall.members}</span>명</div>
-                <div>소그룹 <span class="font-bold text-white">{groups.length}</span>개</div>
-            </div>
+        <!-- 보기 모드 -->
+        <div class="flex gap-1 mb-6 bg-gray-100 rounded-2xl p-1 w-fit">
+            <button onclick={() => switchView('week')} class="px-4 py-2 rounded-xl text-sm font-bold transition-colors {view === 'week' ? 'bg-white text-primary-800 shadow-sm' : 'text-gray-500 hover:text-gray-800'}">주차별</button>
+            <button onclick={() => switchView('trend')} class="px-4 py-2 rounded-xl text-sm font-bold transition-colors {view === 'trend' ? 'bg-white text-primary-800 shadow-sm' : 'text-gray-500 hover:text-gray-800'}">추이</button>
+            <button onclick={() => switchView('full')} class="px-4 py-2 rounded-xl text-sm font-bold transition-colors {view === 'full' ? 'bg-white text-primary-800 shadow-sm' : 'text-gray-500 hover:text-gray-800'}">전체 통계</button>
         </div>
 
-        <!-- 공동체별 -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-10">
-            {#each communityStats as cs}
-                <div class="rounded-2xl bg-white border border-gray-100 p-5">
-                    <div class="font-black text-gray-900 text-lg">{cs.community.name}</div>
-                    <div class="text-3xl font-black text-primary-700 mt-2">{pct(cs.rate)}%</div>
-                    <div class="text-xs text-gray-500 mt-2">{cs.groups.length}개 그룹 · {cs.members}명</div>
+        <!-- ===== 주차별 ===== -->
+        {#if view === 'week'}
+            <div class="flex items-center gap-3 mb-5 flex-wrap">
+                <label for="wk" class="text-sm font-bold text-gray-700">주차</label>
+                <select id="wk" class="px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
+                    value={weekSessionId} onchange={(e) => { weekSessionId = Number((e.target as HTMLSelectElement).value); loadWeek(); }}>
+                    {#each sessions as s, i}
+                        <option value={s.id}>{fmtDate(s.session_date)}{i === 0 ? ' (최근)' : ''}</option>
+                    {/each}
+                </select>
+                {#if weekBusy}<span class="text-xs text-gray-400">불러오는 중…</span>{/if}
+            </div>
+
+            {#if weekData}
+                <div class="rounded-2xl bg-primary-900 text-white p-6 mb-6 flex items-center justify-between">
+                    <div>
+                        <div class="text-sm font-medium text-white/70">{fmtDate(weekData.session_date)} 출석</div>
+                        <div class="text-4xl font-black mt-1">{weekData.overall.present}<span class="text-xl text-white/60">명</span></div>
+                    </div>
+                    <div class="text-right text-sm text-white/80">
+                        <div>전체 인원 <span class="font-bold text-white">{weekData.overall.members}</span>명</div>
+                        <div>출석률 <span class="font-bold text-white">{weekData.overall.rate}%</span></div>
+                    </div>
                 </div>
-            {/each}
-        </div>
 
-        <!-- 주차별 추이 -->
-        <section class="mb-10">
-            <h2 class="text-lg font-black text-gray-900 mb-4">주차별 전체 출석률</h2>
-            {#if weekly.length === 0}
-                <p class="text-gray-400 text-sm">아직 진행된 주차가 없습니다.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+                    {#each weekData.communities as c}
+                        <div class="rounded-2xl bg-white border border-gray-100 p-5">
+                            <div class="font-black text-gray-900 text-lg">{c.name}</div>
+                            <div class="text-3xl font-black text-primary-700 mt-2">{c.rate}%</div>
+                            <div class="text-xs text-gray-500 mt-2">{c.present}/{c.members}명</div>
+                        </div>
+                    {/each}
+                </div>
+
+                <div class="flex items-center justify-between mb-3 flex-wrap gap-2">
+                    <h2 class="text-base font-black text-gray-900">소그룹별</h2>
+                    <select class="px-3 py-2 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
+                        value={weekFilter} onchange={(e) => { const v=(e.target as HTMLSelectElement).value; weekFilter = v==='all'?'all':Number(v); }}>
+                        <option value="all">전체 공동체</option>
+                        {#each communities as c}<option value={c.id}>{c.name}</option>{/each}
+                    </select>
+                </div>
+                {#each weekByCommunity as cc}
+                    <div class="rounded-2xl border border-gray-100 bg-white overflow-hidden mb-3">
+                        <div class="flex items-center justify-between px-4 py-2.5 bg-primary-50">
+                            <span class="font-black text-primary-900">{cc.community.name}</span>
+                            <span class="text-xs font-bold text-primary-800">{cc.present}/{cc.members}명 · {cc.rate}%</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-4 py-1.5 bg-gray-50/70 text-[11px] font-bold text-gray-400">
+                            <span>소그룹</span><span class="text-right w-14">인원</span><span class="text-right w-14">출석</span><span class="text-right w-16">출석률</span>
+                        </div>
+                        {#each cc.groups as g}
+                            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-4 py-2.5 border-t border-gray-50 items-center text-sm">
+                                <span class="font-medium text-gray-800">{g.name}</span>
+                                <span class="text-right w-14 text-gray-600">{g.members}</span>
+                                <span class="text-right w-14 text-gray-600">{g.present}</span>
+                                <span class="text-right w-16 font-bold {g.present === 0 ? 'text-gray-300' : 'text-primary-700'}">{g.rate}%</span>
+                            </div>
+                        {/each}
+                    </div>
+                {/each}
+                <p class="text-xs text-gray-400 mt-2">※ 출석률 0%(회색)는 해당 주차를 아직 입력하지 않은 그룹일 수 있습니다.</p>
+            {/if}
+
+        <!-- ===== 추이 ===== -->
+        {:else if view === 'trend'}
+            <div class="flex items-center gap-2 mb-5 flex-wrap">
+                <div class="flex gap-1 bg-gray-100 rounded-xl p-1">
+                    <button onclick={() => { trendMode='weekly'; loadTrend(); }} class="px-3 py-1.5 rounded-lg text-sm font-bold {trendMode==='weekly'?'bg-white text-primary-800 shadow-sm':'text-gray-500'}">주간</button>
+                    <button onclick={() => { trendMode='monthly'; loadTrend(); }} class="px-3 py-1.5 rounded-lg text-sm font-bold {trendMode==='monthly'?'bg-white text-primary-800 shadow-sm':'text-gray-500'}">월별</button>
+                </div>
+                <select class="px-3 py-2 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
+                    value={trendCommunity} onchange={(e) => { const v=(e.target as HTMLSelectElement).value; trendCommunity = v==='all'?'all':Number(v); trendGroup='all'; loadTrend(); }}>
+                    <option value="all">전체 공동체</option>
+                    {#each communities as c}<option value={c.id}>{c.name}</option>{/each}
+                </select>
+                <select class="px-3 py-2 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
+                    value={trendGroup} onchange={(e) => { const v=(e.target as HTMLSelectElement).value; trendGroup = v==='all'?'all':Number(v); loadTrend(); }}>
+                    <option value="all">전체 소그룹</option>
+                    {#each trendGroupOptions as g}<option value={g.id}>{g.name}</option>{/each}
+                </select>
+                {#if trendBusy}<span class="text-xs text-gray-400">불러오는 중…</span>{/if}
+            </div>
+
+            <h2 class="text-base font-black text-gray-900 mb-3">{trendScopeLabel} · {trendMode === 'weekly' ? '주간' : '월별'} 출석률 추이</h2>
+            {#if trendData.length === 0}
+                <p class="text-gray-400 text-sm">데이터가 없습니다.</p>
             {:else}
                 <div class="rounded-2xl border border-gray-100 bg-white p-4 overflow-x-auto">
-                    <div class="flex items-end gap-2 h-44 min-w-fit">
-                        {#each weekly as w}
-                            <div class="flex flex-col items-center gap-1 w-10 shrink-0">
-                                <span class="text-[10px] font-bold text-gray-500">{pct(w.rate)}%</span>
-                                <div class="w-6 bg-gray-100 rounded-t-md flex items-end" style="height:120px">
-                                    <div class="w-full bg-primary-500 rounded-t-md" style="height:{Math.max(w.rate * 120, w.count ? 4 : 0)}px"></div>
+                    <div class="flex items-end gap-2 min-w-fit" style="height:200px">
+                        {#each trendData as t}
+                            <div class="flex flex-col items-center gap-1 w-12 shrink-0 justify-end">
+                                <span class="text-[10px] font-bold text-gray-500">{t.rate}%</span>
+                                <div class="w-7 bg-gray-100 rounded-t-md flex items-end" style="height:150px">
+                                    <div class="w-full bg-primary-500 rounded-t-md transition-all" style="height:{Math.max(t.rate * 1.5, t.present ? 4 : 0)}px"></div>
                                 </div>
-                                <span class="text-[9px] text-gray-400 text-center leading-tight">{w.session.session_date.slice(5).replace('-', '/')}</span>
+                                <span class="text-[9px] text-gray-400 text-center leading-tight">{t.date ? shortDate(t.date) : monthLabel(t.ym ?? '')}</span>
                             </div>
                         {/each}
                     </div>
                 </div>
-            {/if}
-        </section>
-
-        <!-- 소그룹별 상세 -->
-        {#each communityStats as cs}
-            <section class="mb-8">
-                <h2 class="text-base font-black text-gray-900 mb-3">{cs.community.name} <span class="text-gray-400 font-medium text-sm">· {cs.groups.length}개 그룹</span></h2>
-                <div class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
-                    <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-4 py-2 bg-gray-50 text-[11px] font-bold text-gray-500">
-                        <span>소그룹</span><span class="text-right w-14">인원</span><span class="text-right w-20">전체출석</span><span class="text-right w-24">최근주차</span>
-                    </div>
-                    {#each [...cs.groups].sort((a, b) => groupRate(b.id) - groupRate(a.id)) as g}
-                        {@const gl = groupLast(g.id)}
-                        <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-4 py-2.5 border-t border-gray-50 items-center text-sm">
-                            <span class="font-medium text-gray-800">{g.name}</span>
-                            <span class="text-right w-14 text-gray-600">{memberCount[g.id] ?? 0}</span>
-                            <span class="text-right w-20 font-bold text-primary-700">{pct(groupRate(g.id))}%</span>
-                            <span class="text-right w-24 text-gray-600">
-                                {#if gl}{pct(gl.rate)}% <span class="text-[10px] text-gray-400">({gl.date.slice(5).replace('-', '/')})</span>{:else}-{/if}
-                            </span>
+                <div class="rounded-2xl border border-gray-100 bg-white divide-y divide-gray-50 mt-4">
+                    {#each [...trendData].reverse() as t}
+                        <div class="flex items-center justify-between px-4 py-2.5 text-sm">
+                            <span class="font-medium text-gray-800">{t.date ? fmtDate(t.date) : monthLabel(t.ym ?? '')}</span>
+                            <span class="text-gray-500">{t.present}/{t.members}명</span>
+                            <span class="font-bold text-primary-700 w-14 text-right">{t.rate}%</span>
                         </div>
                     {/each}
                 </div>
-            </section>
-        {/each}
+                <p class="text-xs text-gray-400 mt-2">※ 출석률은 그 기간에 출석을 <b>기록한 그룹</b>의 인원 기준입니다.</p>
+            {/if}
+
+        <!-- ===== 전체 통계 ===== -->
+        {:else}
+            <div class="flex items-center gap-3 mb-5 flex-wrap">
+                <select class="px-3 py-2 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
+                    value={fullCommunity} onchange={(e) => { const v=(e.target as HTMLSelectElement).value; fullCommunity = v==='all'?'all':Number(v); loadFull(); }}>
+                    <option value="all">전체 공동체</option>
+                    {#each communities as c}<option value={c.id}>{c.name}</option>{/each}
+                </select>
+                <button onclick={loadFull} class="px-4 py-2 rounded-xl bg-gray-900 text-white font-bold text-sm hover:bg-gray-700">새로고침</button>
+                {#if fullBusy}<span class="text-xs text-gray-400">집계 중…</span>{/if}
+            </div>
+
+            {#if fullData}
+                <div class="rounded-2xl bg-primary-900 text-white p-6 mb-6 flex items-center justify-between">
+                    <div>
+                        <div class="text-sm font-medium text-white/70">전체 누적 출석률 (기록된 주차 기준)</div>
+                        <div class="text-4xl font-black mt-1">{fullData.overall.rate}%</div>
+                    </div>
+                    <div class="text-right text-sm text-white/80">누적 출석 <span class="font-bold text-white">{fullData.overall.present}</span>건</div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+                    {#each fullData.communities as c}
+                        <div class="rounded-2xl bg-white border border-gray-100 p-5">
+                            <div class="font-black text-gray-900 text-lg">{c.name}</div>
+                            <div class="text-3xl font-black text-primary-700 mt-2">{c.rate}%</div>
+                            <div class="text-xs text-gray-500 mt-2">{c.members}명</div>
+                        </div>
+                    {/each}
+                </div>
+                <h2 class="text-base font-black text-gray-900 mb-3">소그룹별 누적</h2>
+                {#each fullByCommunity as cc}
+                    <div class="rounded-2xl border border-gray-100 bg-white overflow-hidden mb-3">
+                        <div class="flex items-center justify-between px-4 py-2.5 bg-primary-50">
+                            <span class="font-black text-primary-900">{cc.community.name}</span>
+                            <span class="text-xs font-bold text-primary-800">{cc.members}명 · {cc.rate}%</span>
+                        </div>
+                        <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-4 py-1.5 bg-gray-50/70 text-[11px] font-bold text-gray-400">
+                            <span>소그룹</span><span class="text-right w-14">인원</span><span class="text-right w-16">기록주차</span><span class="text-right w-16">출석률</span>
+                        </div>
+                        {#each cc.groups as g}
+                            <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-4 py-2.5 border-t border-gray-50 items-center text-sm">
+                                <span class="font-medium text-gray-800">{g.name}</span>
+                                <span class="text-right w-14 text-gray-600">{g.members}</span>
+                                <span class="text-right w-16 text-gray-600">{g.recorded}주</span>
+                                <span class="text-right w-16 font-bold text-primary-700">{g.rate}%</span>
+                            </div>
+                        {/each}
+                    </div>
+                {/each}
+            {:else if !fullBusy}
+                <p class="text-gray-400 text-sm">전체 통계를 불러오려면 위 버튼을 누르세요.</p>
+            {/if}
+        {/if}
     {/if}
 </div>
