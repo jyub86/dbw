@@ -25,6 +25,7 @@
 
     let loading = $state(true);
     let denied = $state(false);
+    let errorMsg = $state('');
     let view = $state<'week' | 'trend' | 'full'>('week');
 
     let sessions = $state<Sess[]>([]); // 과거 주차 (최신순)
@@ -137,15 +138,30 @@
         loading = false;
     });
 
+    // 응답 순서 보장용 토큰 (늦게 도착한 옛 요청이 최신 상태를 덮어쓰지 않도록)
+    let weekSeq = 0;
+    let trendSeq = 0;
+    let fullSeq = 0;
+
     async function loadWeek() {
         if (!weekSessionId) return;
+        const seq = ++weekSeq;
         weekBusy = true;
-        const { data } = await supabaseBrowser.rpc('att_week', { p_session_id: weekSessionId });
-        weekData = data as WeekData;
+        errorMsg = '';
+        const { data, error } = await supabaseBrowser.rpc('att_week', { p_session_id: weekSessionId });
+        if (seq !== weekSeq) return; // 더 새로운 요청이 진행 중 → 폐기
         weekBusy = false;
+        if (error || data == null) {
+            errorMsg = '주차 통계를 불러오지 못했습니다.';
+            weekData = null;
+            return;
+        }
+        weekData = data as WeekData;
     }
     async function loadTrend() {
+        const seq = ++trendSeq;
         trendBusy = true;
+        errorMsg = '';
         const comm = trendCommunity === 'all' ? null : trendCommunity;
         const grp = trendGroup === 'all' ? null : trendGroup;
         const fn = trendMode === 'weekly' ? 'att_weekly_trend' : 'att_monthly_trend';
@@ -153,20 +169,35 @@
             trendMode === 'weekly'
                 ? { p_weeks: 16, p_community_id: comm, p_group_id: grp }
                 : { p_community_id: comm, p_group_id: grp };
-        const { data } = await supabaseBrowser.rpc(fn, args);
-        trendData = (data ?? []) as TrendPoint[];
+        const { data, error } = await supabaseBrowser.rpc(fn, args);
+        if (seq !== trendSeq) return;
         trendBusy = false;
+        if (error) {
+            errorMsg = '추이를 불러오지 못했습니다.';
+            trendData = [];
+            return;
+        }
+        trendData = (data ?? []) as TrendPoint[];
     }
     async function loadFull() {
+        const seq = ++fullSeq;
         fullBusy = true;
+        errorMsg = '';
         const comm = fullCommunity === 'all' ? null : fullCommunity;
-        const { data } = await supabaseBrowser.rpc('att_full', { p_community_id: comm });
-        fullData = data as FullData;
+        const { data, error } = await supabaseBrowser.rpc('att_full', { p_community_id: comm });
+        if (seq !== fullSeq) return;
         fullBusy = false;
+        if (error || data == null) {
+            errorMsg = '전체 통계를 불러오지 못했습니다.';
+            fullData = null;
+            return;
+        }
+        fullData = data as FullData;
     }
 
     function switchView(v: 'week' | 'trend' | 'full') {
         view = v;
+        errorMsg = '';
         if (v === 'trend' && trendData.length === 0) loadTrend();
         if (v === 'full' && !fullData) loadFull();
     }
@@ -196,8 +227,15 @@
             <button onclick={() => switchView('full')} class="px-4 py-2 rounded-xl text-sm font-bold transition-colors {view === 'full' ? 'bg-white text-primary-800 shadow-sm' : 'text-gray-500 hover:text-gray-800'}">전체 통계</button>
         </div>
 
+        {#if errorMsg}
+            <div class="mb-5 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">{errorMsg}</div>
+        {/if}
+
         <!-- ===== 주차별 ===== -->
         {#if view === 'week'}
+            {#if sessions.length === 0}
+                <p class="py-16 text-center text-gray-400">아직 진행된 주차가 없습니다.</p>
+            {:else}
             <div class="flex items-center gap-3 mb-5 flex-wrap">
                 <label for="wk" class="text-sm font-bold text-gray-700">주차</label>
                 <select id="wk" class="px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
@@ -259,6 +297,9 @@
                     </div>
                 {/each}
                 <p class="text-xs text-gray-400 mt-2">※ 출석률 0%(회색)는 해당 주차를 아직 입력하지 않은 그룹일 수 있습니다.</p>
+            {:else if !weekBusy}
+                <p class="py-10 text-center text-gray-400">표시할 데이터가 없습니다.</p>
+            {/if}
             {/if}
 
         <!-- ===== 추이 ===== -->
