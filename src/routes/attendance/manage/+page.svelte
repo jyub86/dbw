@@ -15,7 +15,7 @@
         user_id: string;
         custom_users: { name: string | null; office: string | null; phone: string | null } | null;
     };
-    type Profile = { id: string; name: string | null; office: string | null; phone: string | null };
+    type Profile = { id: string; name: string | null; office: string | null; phone: string | null; active?: boolean };
     type Manager = { user_id: string; note: string | null; custom_users: { name: string | null; office: string | null } | null };
 
     let loading = $state(true);
@@ -125,13 +125,14 @@
             else mgrResults = [];
             return;
         }
+        // active 필터 없음: 미가입(placeholder, active=false) 프로필도 교체/추가 대상이 될 수 있음
         const { data } = await supabaseBrowser
             .from('custom_users')
-            .select('id, name, office, phone')
+            .select('id, name, office, phone, active')
             .ilike('name', `%${term}%`)
-            .eq('active', true)
+            .order('active', { ascending: false })
             .order('name')
-            .limit(20);
+            .limit(30);
         if (into === 'picker') pickerResults = (data ?? []) as Profile[];
         else mgrResults = (data ?? []) as Profile[];
     }
@@ -271,7 +272,7 @@
                     <div class="max-h-56 overflow-y-auto divide-y divide-gray-100 bg-white rounded-lg">
                         {#each mgrResults as r}
                             <button type="button" onclick={() => addManager(r.id)} class="w-full text-left px-3 py-2 hover:bg-primary-50 text-sm flex justify-between">
-                                <span class="font-medium">{r.name}</span>
+                                <span class="font-medium">{r.name}{#if r.active === false}<span class="ml-1 text-[10px] text-gray-400 font-normal">(미가입)</span>{/if}</span>
                                 <span class="text-gray-400 text-xs">{r.office} · {r.phone || '번호없음'}</span>
                             </button>
                         {/each}
@@ -313,7 +314,7 @@
             <div class="max-h-64 overflow-y-auto divide-y divide-gray-100 border border-gray-100 rounded-xl">
                 {#each pickerResults as r}
                     <button type="button" onclick={() => pickProfile(r.id)} class="w-full text-left px-3 py-2.5 hover:bg-primary-50 text-sm flex justify-between items-center">
-                        <span class="font-medium text-gray-800">{r.name}</span>
+                        <span class="font-medium text-gray-800">{r.name}{#if r.active === false}<span class="ml-1 text-[10px] text-gray-400 font-normal">(미가입)</span>{/if}</span>
                         <span class="text-gray-400 text-xs">{r.office} · {r.phone || '번호없음'}</span>
                     </button>
                 {/each}
