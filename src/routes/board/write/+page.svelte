@@ -7,6 +7,7 @@
 
     let title = $state('');
     let content = $state('');
+    // svelte-ignore state_referenced_locally
     let categoryId = $state<number>(data.categories[0]?.id ?? 7);
     let submitting = $state(false);
     let submitLabel = $state('등록하기');
@@ -54,7 +55,7 @@
             .eq('auth_id', session.user.id)
             .single();
 
-        userLevel = (userInfo?.roles as { level: number } | null)?.level ?? 0;
+        userLevel = (userInfo?.roles as unknown as { level: number } | null)?.level ?? 0;
         authChecked = true;
     });
 
@@ -247,9 +248,9 @@
         <!-- 이미지 첨부 -->
         <div>
             <div class="flex items-center justify-between mb-3">
-                <label class="text-sm font-bold text-gray-700">
+                <span class="text-sm font-bold text-gray-700">
                     이미지 첨부 <span class="text-gray-400 font-normal">({images.length}/{MAX_IMAGES})</span>
-                </label>
+                </span>
                 {#if images.length > 0 && images.length < MAX_IMAGES}
                     <button type="button" onclick={() => fileInput?.click()}
                         class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border-2 border-gray-200 text-gray-600 hover:border-primary-400 hover:text-primary-700 transition-colors">
@@ -296,7 +297,7 @@
                         {#each images as img, i}
                             <div class="relative group aspect-square rounded-xl overflow-hidden border-2 border-gray-100 bg-gray-50">
                                 <img src={img.previewUrl} alt={`첨부 이미지 ${i + 1}`} class="w-full h-full object-cover" />
-                                <button type="button" onclick={() => removeImage(i)}
+                                <button type="button" onclick={() => removeImage(i)} aria-label="이미지 삭제"
                                     class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -321,9 +322,9 @@
 
         <!-- 외부 URL 첨부 -->
         <div>
-            <label class="block text-sm font-bold text-gray-700 mb-3">
+            <span class="block text-sm font-bold text-gray-700 mb-3">
                 URL 첨부 <span class="text-gray-400 font-normal">— 이미지 또는 YouTube 영상</span>
-            </label>
+            </span>
             <div class="flex gap-2 mb-3">
                 <input type="url" bind:value={urlInput} onkeydown={handleUrlKeydown} placeholder="https://..."
                     class="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 transition-colors text-base" />
@@ -361,7 +362,7 @@
                                 </div>
                             {/if}
                             <span class="flex-1 text-sm text-gray-600 truncate min-w-0">{item.url}</span>
-                            <button type="button" onclick={() => removeUrl(i)}
+                            <button type="button" onclick={() => removeUrl(i)} aria-label="URL 삭제"
                                 class="shrink-0 w-7 h-7 rounded-full text-gray-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>

@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		id: post.id,
 		title: post.title,
 		category_id: post.category_id,
-		author: (post.custom_users as { name: string } | null)?.name ?? '알 수 없음',
+		author: (post.custom_users as unknown as { name: string } | null)?.name ?? '알 수 없음',
 		date: new Date(post.created_at).toLocaleDateString('ko-KR', {
 			year: 'numeric', month: '2-digit', day: '2-digit'
 		}),

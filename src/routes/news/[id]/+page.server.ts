@@ -20,7 +20,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			isHtml: typeof data.content === 'string' && data.content.trimStart().startsWith('<'),
 			media_urls: (data.media_urls as string[]) ?? [],
 			attachments: (data.attachments as { name: string; url: string }[]) ?? [],
-			category: (data.categories as { name: string })?.name ?? '',
+			category: (data.categories as unknown as { name: string })?.name ?? '',
 			user_id: data.user_id as string,
 			date: new Date(data.created_at).toLocaleDateString('ko-KR', {
 				year: 'numeric',

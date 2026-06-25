@@ -4,6 +4,7 @@
     import { supabaseBrowser } from '$lib/supabase-browser';
 
     let { data } = $props();
+    // svelte-ignore state_referenced_locally
     const { post } = data;
 
     let canEdit = $state(false);
@@ -14,7 +15,7 @@
         if (!session) return;
         const { data: userInfo } = await supabaseBrowser
             .from('custom_users').select('roles(level)').eq('auth_id', session.user.id).single();
-        const level = (userInfo?.roles as { level: number } | null)?.level ?? 0;
+        const level = (userInfo?.roles as unknown as { level: number } | null)?.level ?? 0;
         canEdit = level >= 50;
     });
 

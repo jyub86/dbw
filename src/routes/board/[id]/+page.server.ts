@@ -22,9 +22,9 @@ export const load: PageServerLoad = async ({ params }) => {
 			title: data.title,
 			content: data.content,
 			media_urls: (data.media_urls as string[]) ?? [],
-			category: (data.categories as { name: string })?.name ?? '',
-			author: (data.custom_users as { name: string; profile_picture: string | null } | null)?.name ?? '알 수 없음',
-			authorProfile: (data.custom_users as { name: string; profile_picture: string | null } | null)?.profile_picture ?? null,
+			category: (data.categories as unknown as { name: string })?.name ?? '',
+			author: (data.custom_users as unknown as { name: string; profile_picture: string | null } | null)?.name ?? '알 수 없음',
+			authorProfile: (data.custom_users as unknown as { name: string; profile_picture: string | null } | null)?.profile_picture ?? null,
 			user_id: data.user_id as string,
 			date: new Date(data.created_at).toLocaleDateString('ko-KR', {
 				year: 'numeric', month: '2-digit', day: '2-digit'

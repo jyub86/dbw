@@ -85,6 +85,7 @@
 <section aria-label="배너 슬라이드쇼" class="relative w-full aspect-video bg-gray-900 overflow-hidden md:-mt-24">
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <div
+        role="group"
         aria-label="슬라이드 드래그 영역"
         class="absolute inset-0 select-none cursor-grab active:cursor-grabbing"
         onmousedown={onPointerDown}

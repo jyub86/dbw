@@ -4,6 +4,7 @@
     import { supabaseBrowser } from '$lib/supabase-browser';
 
     let { data } = $props();
+    // svelte-ignore state_referenced_locally
     const { post } = data;
 
     let isAuthor = $state(false);

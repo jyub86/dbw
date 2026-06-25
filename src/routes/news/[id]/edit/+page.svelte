@@ -5,8 +5,11 @@
 
     let { data } = $props();
 
+    // svelte-ignore state_referenced_locally
     let title = $state(data.post.title);
+    // svelte-ignore state_referenced_locally
     let content = $state(data.post.content);
+    // svelte-ignore state_referenced_locally
     let categoryId = $state<number>(data.post.category_id);
     let submitting = $state(false);
     let submitLabel = $state('저장하기');
@@ -17,8 +20,10 @@
     const PDF_ALLOWED_CATEGORY_IDS = [2, 12]; // 교회소식, 교육자료
 
     // 기존 미디어 URL
+    // svelte-ignore state_referenced_locally
     let existingUrls = $state<string[]>([...data.post.media_urls]);
     // 기존 PDF 첨부
+    // svelte-ignore state_referenced_locally
     let existingAttachments = $state<{ name: string; url: string }[]>([...data.post.attachments]);
 
     // 새 이미지 첨부
@@ -50,7 +55,7 @@
         if (!session) { goto('/login'); return; }
         const { data: userInfo } = await supabaseBrowser
             .from('custom_users').select('roles(level)').eq('auth_id', session.user.id).single();
-        const level = (userInfo?.roles as { level: number } | null)?.level ?? 0;
+        const level = (userInfo?.roles as unknown as { level: number } | null)?.level ?? 0;
         if (level < MANAGER_LEVEL) { goto(`/news/${data.post.id}`); return; }
 
         authChecked = true;
@@ -241,9 +246,9 @@
         <!-- 기존 미디어 -->
         {#if existingUrls.length > 0}
         <div>
-            <label class="block text-sm font-bold text-gray-700 mb-3">
+            <span class="block text-sm font-bold text-gray-700 mb-3">
                 첨부된 미디어 <span class="text-gray-400 font-normal">— 삭제할 항목을 제거하세요</span>
-            </label>
+            </span>
             <div class="space-y-2">
                 {#each existingUrls as url, i}
                     <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100 group">
@@ -260,7 +265,7 @@
                             </div>
                         {/if}
                         <span class="flex-1 text-sm text-gray-600 truncate min-w-0">{url}</span>
-                        <button type="button" onclick={() => existingUrls = existingUrls.filter((_, j) => j !== i)}
+                        <button type="button" aria-label="URL 삭제" onclick={() => existingUrls = existingUrls.filter((_, j) => j !== i)}
                             class="shrink-0 w-7 h-7 rounded-full text-gray-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -275,9 +280,9 @@
         <!-- 기존 PDF -->
         {#if existingAttachments.length > 0}
         <div>
-            <label class="block text-sm font-bold text-gray-700 mb-3">
+            <span class="block text-sm font-bold text-gray-700 mb-3">
                 첨부된 PDF <span class="text-gray-400 font-normal">— 삭제할 항목을 제거하세요</span>
-            </label>
+            </span>
             <div class="space-y-2">
                 {#each existingAttachments as att, i}
                     <div class="flex items-center gap-3 p-3 bg-red-50 rounded-xl border border-red-100 group">
@@ -287,7 +292,7 @@
                             </svg>
                         </div>
                         <span class="flex-1 text-sm font-medium text-gray-800 truncate min-w-0">{att.name}</span>
-                        <button type="button" onclick={() => existingAttachments = existingAttachments.filter((_, j) => j !== i)}
+                        <button type="button" aria-label="첨부파일 삭제" onclick={() => existingAttachments = existingAttachments.filter((_, j) => j !== i)}
                             class="shrink-0 w-7 h-7 rounded-full text-gray-400 hover:bg-red-200 hover:text-red-600 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -302,9 +307,9 @@
         <!-- 새 이미지 추가 -->
         <div>
             <div class="flex items-center justify-between mb-3">
-                <label class="text-sm font-bold text-gray-700">
+                <span class="text-sm font-bold text-gray-700">
                     이미지 추가 <span class="text-gray-400 font-normal">({newImages.length}/{MAX_NEW_IMAGES})</span>
-                </label>
+                </span>
                 {#if newImages.length > 0 && newImages.length < MAX_NEW_IMAGES}
                     <button type="button" onclick={() => fileInput?.click()}
                         class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border-2 border-gray-200 text-gray-600 hover:border-primary-400 hover:text-primary-700 transition-colors">
@@ -343,7 +348,7 @@
                         {#each newImages as img, i}
                             <div class="relative group aspect-square rounded-xl overflow-hidden border-2 border-gray-100 bg-gray-50">
                                 <img src={img.previewUrl} alt={`새 이미지 ${i + 1}`} class="w-full h-full object-cover" />
-                                <button type="button" onclick={() => removeNewImage(i)}
+                                <button type="button" aria-label="이미지 삭제" onclick={() => removeNewImage(i)}
                                     class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-500">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -367,9 +372,9 @@
 
         <!-- 새 URL 추가 -->
         <div>
-            <label class="block text-sm font-bold text-gray-700 mb-3">
+            <span class="block text-sm font-bold text-gray-700 mb-3">
                 URL 추가 <span class="text-gray-400 font-normal">— 이미지 또는 YouTube 영상</span>
-            </label>
+            </span>
             <div class="flex gap-2 mb-3">
                 <input type="url" bind:value={urlInput} onkeydown={handleUrlKeydown} placeholder="https://..."
                     class="flex-1 px-4 py-3 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 transition-colors text-base" />
@@ -396,7 +401,7 @@
                                 </div>
                             {/if}
                             <span class="flex-1 text-sm text-gray-600 truncate min-w-0">{item.url}</span>
-                            <button type="button" onclick={() => newUrls = newUrls.filter((_, j) => j !== i)}
+                            <button type="button" aria-label="URL 삭제" onclick={() => newUrls = newUrls.filter((_, j) => j !== i)}
                                 class="shrink-0 w-7 h-7 rounded-full text-gray-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
@@ -412,9 +417,9 @@
         {#if PDF_ALLOWED_CATEGORY_IDS.includes(categoryId)}
         <div>
             <div class="flex items-center justify-between mb-3">
-                <label class="text-sm font-bold text-gray-700">
+                <span class="text-sm font-bold text-gray-700">
                     PDF 추가 <span class="text-gray-400 font-normal">({newPdfs.length}/{MAX_NEW_PDFS}) · 교회소식 전용</span>
-                </label>
+                </span>
                 {#if newPdfs.length > 0 && newPdfs.length < MAX_NEW_PDFS}
                     <button type="button" onclick={() => pdfInput?.click()}
                         class="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-bold border-2 border-gray-200 text-gray-600 hover:border-primary-400 hover:text-primary-700 transition-colors">
@@ -461,7 +466,7 @@
                                     <p class="text-sm font-medium text-gray-800 truncate">{pdf.name}</p>
                                     <p class="text-xs text-gray-400">{formatFileSize(pdf.file.size)}</p>
                                 </div>
-                                <button type="button" onclick={() => newPdfs = newPdfs.filter((_, j) => j !== i)}
+                                <button type="button" aria-label="첨부파일 삭제" onclick={() => newPdfs = newPdfs.filter((_, j) => j !== i)}
                                     class="shrink-0 w-7 h-7 rounded-full text-gray-400 hover:bg-red-200 hover:text-red-600 flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"/>
