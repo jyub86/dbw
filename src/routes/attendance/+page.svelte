@@ -37,6 +37,9 @@
     let groupNotes = $state<Record<number, string>>({});
     let savingGroupNote = $state(false);
 
+    // 출석 체크 목록 정렬 (기본: 출석률 높은순)
+    let sortBy = $state<'rate-desc' | 'rate-asc' | 'name'>('rate-desc');
+
     const today = todayISO();
 
     const selectedGroup = $derived(groups.find((g) => g.id === selectedGroupId) ?? null);
@@ -63,6 +66,18 @@
             const cnt = pastSessions.filter((s) => isPresent(s.id, m.id)).length;
             const total = pastSessions.length || 1;
             return { member: m, count: cnt, total: pastSessions.length, rate: cnt / total };
+        })
+    );
+    // 출석 체크용: 정렬된 멤버 목록
+    const rateById = $derived(new Map(memberStats.map((ms) => [ms.member.id, ms.rate])));
+    const sortedMembers = $derived(
+        [...members].sort((a, b) => {
+            if (sortBy === 'name')
+                return (a.custom_users?.name ?? '').localeCompare(b.custom_users?.name ?? '', 'ko');
+            if (sortBy === 'rate-asc')
+                return (rateById.get(a.id) ?? 0) - (rateById.get(b.id) ?? 0) || a.sort_order - b.sort_order;
+            // 기본: 출석률 높은순
+            return (rateById.get(b.id) ?? 0) - (rateById.get(a.id) ?? 0) || a.sort_order - b.sort_order;
         })
     );
     // 인원별 특이사항 모아보기 (주차순)
@@ -325,22 +340,34 @@
         <section class="mb-10">
             <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
                 <h2 class="text-lg font-black text-gray-900">출석 체크</h2>
-                <select
-                    class="px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
-                    value={selectedSessionId}
-                    onchange={(e) => (selectedSessionId = Number((e.target as HTMLSelectElement).value))}
-                >
-                    {#each sessions as s}
-                        <option value={s.id}>
-                            {fmtDate(s.session_date)}{s.session_date > today ? ' (예정)' : ''}
-                        </option>
-                    {/each}
-                </select>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <select
+                        aria-label="정렬"
+                        class="px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
+                        bind:value={sortBy}
+                    >
+                        <option value="rate-desc">출석률 높은순</option>
+                        <option value="rate-asc">출석률 낮은순</option>
+                        <option value="name">이름순</option>
+                    </select>
+                    <select
+                        aria-label="주차 선택"
+                        class="px-4 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm"
+                        value={selectedSessionId}
+                        onchange={(e) => (selectedSessionId = Number((e.target as HTMLSelectElement).value))}
+                    >
+                        {#each sessions as s}
+                            <option value={s.id}>
+                                {fmtDate(s.session_date)}{s.session_date > today ? ' (예정)' : ''}
+                            </option>
+                        {/each}
+                    </select>
+                </div>
             </div>
 
             {#if selectedSession}
                 <div class="rounded-2xl border border-gray-100 overflow-hidden">
-                    {#each members as m, i}
+                    {#each sortedMembers as m, i (m.id)}
                         {@const checked = isPresent(selectedSession.id, m.id)}
                         {@const nkey = `${m.id}:${selectedSession.id}`}
                         <div class="flex items-center gap-3 px-4 py-3 {i % 2 ? 'bg-gray-50/50' : 'bg-white'} border-b border-gray-50 last:border-0">
@@ -357,7 +384,9 @@
                             <div class="shrink-0 w-24 sm:w-28">
                                 <span class="font-bold text-gray-900">{m.custom_users?.name}</span>
                                 {#if m.role === 'leader'}<span class="ml-1 text-[10px] font-bold text-primary-700 align-middle">리더</span>{/if}
-                                <div class="text-[11px] text-gray-400">{m.custom_users?.office ?? ''}</div>
+                                <div class="text-[11px] text-gray-400">
+                                    {m.custom_users?.office ?? ''}<span class="text-gray-300"> · 출석 {pct(rateById.get(m.id) ?? 0)}%</span>
+                                </div>
                             </div>
                             <input
                                 type="text"
