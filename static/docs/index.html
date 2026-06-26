@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>부평동부교회 문서함</title>
+  <style>
+    :root { --ink:#1f2937; --muted:#6b7280; --brand:#4a3c31; --line:#ececec; --bg:#faf9f7; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink);
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, 'Apple SD Gothic Neo', sans-serif;
+      line-height:1.65; }
+    .wrap { max-width: 860px; margin:0 auto; padding: 48px 20px 96px; }
+    header.page { margin-bottom: 36px; }
+    header.page h1 { font-size: 1.9rem; font-weight: 800; margin:0 0 6px; letter-spacing:-0.01em; }
+    header.page p { margin:0; color:var(--muted); }
+    .cards { display:grid; gap:14px; margin: 22px 0 40px; }
+    a.card { display:flex; align-items:center; gap:14px; text-decoration:none; color:inherit;
+      background:#fff; border:1px solid var(--line); border-radius:16px; padding:18px 20px;
+      transition: border-color .15s, transform .05s; }
+    a.card:hover { border-color: var(--brand); }
+    a.card:active { transform: translateY(1px); }
+    .card .emoji { font-size:1.6rem; }
+    .card .t { font-weight:700; }
+    .card .d { color:var(--muted); font-size:.9rem; }
+    .card .go { margin-left:auto; color:var(--muted); }
+    h2.section { font-size:1.05rem; font-weight:800; color:var(--brand);
+      margin: 44px 0 8px; padding-bottom:8px; border-bottom:2px solid var(--line); }
+    .doc { background:#fff; border:1px solid var(--line); border-radius:16px; padding: 8px 26px 26px; margin-top:16px; }
+    .doc .src { display:block; text-align:right; font-size:.8rem; color:var(--muted); margin: 14px 0 -6px; }
+    .doc .src a { color:var(--muted); }
+    /* 렌더된 마크다운 */
+    .md h1 { font-size:1.5rem; font-weight:800; margin:1.2em 0 .5em; }
+    .md h2 { font-size:1.2rem; font-weight:800; margin:1.4em 0 .5em; border-bottom:1px solid var(--line); padding-bottom:.3em; }
+    .md h3 { font-size:1.05rem; font-weight:700; margin:1.2em 0 .4em; }
+    .md p, .md li { color:#374151; }
+    .md code { background:#f3f4f6; padding:.1em .4em; border-radius:6px; font-size:.9em; }
+    .md pre { background:#f6f6f4; border:1px solid var(--line); border-radius:10px; padding:14px; overflow:auto; }
+    .md table { border-collapse:collapse; width:100%; margin:1em 0; font-size:.92rem; }
+    .md th, .md td { border:1px solid var(--line); padding:8px 10px; text-align:left; }
+    .md th { background:#f6f6f4; }
+    .md blockquote { border-left:3px solid var(--brand); margin:1em 0; padding:.2em 1em; color:var(--muted); }
+    .md a { color:var(--brand); }
+    footer { margin-top:60px; color:#9ca3af; font-size:.8rem; text-align:center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="page">
+      <h1>부평동부교회 문서함</h1>
+      <p>발표 자료와 기능 문서를 한곳에 모았습니다.</p>
+    </header>
+
+    <h2 class="section">발표 자료</h2>
+    <div class="cards">
+      <a class="card" href="attendance-guide.html">
+        <span class="emoji">📊</span>
+        <span>
+          <span class="t">출석부 사용 안내 (슬라이드)</span><br />
+          <span class="d">리더 대상 출석부 소개·사용법 프레젠테이션</span>
+        </span>
+        <span class="go">열기 →</span>
+      </a>
+    </div>
+
+    <h2 class="section">문서</h2>
+    <div class="doc">
+      <div class="md" id="md-attendance">불러오는 중…</div>
+      <span class="src"><a href="attendance.md">원문(attendance.md)</a></span>
+    </div>
+    <div class="doc">
+      <div class="md" id="md-events">불러오는 중…</div>
+      <span class="src"><a href="events.md">원문(events.md)</a></span>
+    </div>
+
+    <footer>부평동부교회 · 내부 문서 (검색 비공개)</footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    async function render(file, elId) {
+      const el = document.getElementById(elId);
+      try {
+        const res = await fetch(file, { cache: 'no-cache' });
+        if (!res.ok) throw new Error(res.status);
+        const text = await res.text();
+        el.innerHTML = marked.parse(text);
+      } catch (e) {
+        el.innerHTML = '<p style="color:#9ca3af">문서를 불러오지 못했습니다. <a href="' + file + '">' + file + '</a></p>';
+      }
+    }
+    render('attendance.md', 'md-attendance');
+    render('events.md', 'md-events');
+  </script>
+</body>
+</html>
