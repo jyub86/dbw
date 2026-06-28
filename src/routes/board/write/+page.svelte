@@ -15,6 +15,8 @@
     let authChecked = $state(false);
     let userLevel = $state(0);
     let authUserId = $state('');
+    let infoPublic = $state(false); // 정보 공개 동의 여부 (게시판 글쓰기 게이트)
+    let enabling = $state(false);
 
     // 매니저 이상 카테고리 (1401 MEDIA)
     const MANAGER_LEVEL = 50;
@@ -51,13 +53,26 @@
 
         const { data: userInfo } = await supabaseBrowser
             .from('custom_users')
-            .select('roles(level)')
+            .select('roles(level), is_info_public')
             .eq('auth_id', session.user.id)
             .single();
 
         userLevel = (userInfo?.roles as unknown as { level: number } | null)?.level ?? 0;
+        infoPublic = userInfo?.is_info_public ?? false;
         authChecked = true;
     });
+
+    // 정보 공개에 동의하고 바로 글쓰기로 전환
+    async function enableInfoPublic() {
+        enabling = true;
+        const { error: e } = await supabaseBrowser
+            .from('custom_users')
+            .update({ is_info_public: true })
+            .eq('auth_id', authUserId);
+        enabling = false;
+        if (e) { error = '처리에 실패했습니다. 다시 시도해주세요.'; return; }
+        infoPublic = true;
+    }
 
     // ── URL 유틸 ─────────────────────────────────────────────
     function getYouTubeId(url: string): string | null {
@@ -219,6 +234,7 @@
 
     <h1 class="text-3xl md:text-4xl font-black text-gray-900 mb-10">글쓰기</h1>
 
+    {#if infoPublic}
     <form onsubmit={handleSubmit} class="space-y-7">
         <!-- 분류 -->
         <div>
@@ -387,5 +403,22 @@
             </a>
         </div>
     </form>
+    {:else}
+        <!-- 정보 공개 미동의 → 게시판 글쓰기 차단 -->
+        <div class="rounded-2xl border border-gray-100 bg-white p-8 text-center max-w-xl">
+            <p class="text-gray-900 font-bold mb-2">게시판 글쓰기에는 '정보 공개' 동의가 필요해요</p>
+            <p class="text-gray-500 text-sm leading-relaxed mb-6">
+                게시판에 글을 쓰면 작성자의 <b>이름·직분</b>이 함께 표시됩니다. 동의하시면 바로 글을 쓸 수 있어요.
+            </p>
+            {#if error}<p class="text-red-500 text-sm mb-4">{error}</p>{/if}
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick={enableInfoPublic} disabled={enabling}
+                    class="px-6 py-3 rounded-full bg-primary-900 text-white font-bold text-sm hover:bg-primary-800 transition-colors disabled:opacity-50">
+                    {enabling ? '처리 중…' : '동의하고 글쓰기'}
+                </button>
+                <a href="/board" class="px-6 py-3 rounded-full border-2 border-gray-200 text-gray-700 font-bold text-sm hover:border-gray-400 transition-colors">취소</a>
+            </div>
+        </div>
+    {/if}
 </div>
 {/if}
