@@ -4,6 +4,7 @@
 	import { page } from "$app/stores";
 	import { goto } from "$app/navigation";
 	import { supabaseBrowser } from "$lib/supabase-browser";
+	import { isProfileComplete } from "$lib/profile";
 	import Header from "$lib/components/Header.svelte";
 	import Footer from "$lib/components/Footer.svelte";
 	import ScrollToTop from "$lib/components/ScrollToTop.svelte";
@@ -23,26 +24,12 @@
 		} = await supabaseBrowser.auth.getSession();
 		if (!session) return;
 
-		// 명단 행 확인 — 없으면 생성. (웹 로그인은 그동안 custom_users 행을 안 만들었음)
-		let { data: me } = await supabaseBrowser
-			.from("custom_users")
-			.select("name, phone")
-			.eq("auth_id", session.user.id)
-			.maybeSingle();
-		if (!me) {
-			const { error } = await supabaseBrowser
-				.from("custom_users")
-				.insert({ auth_id: session.user.id, active: true });
-			if (error && error.code !== "23505") return; // 생성 실패 시 중단(다음 기회에 재시도)
-			me = { name: null, phone: null };
-		}
-
-		// 이름/전화가 비어 있으면 입력 페이지로 유도 (예외 경로 제외).
-		// 입력(UPDATE) 시 merge_user_data 트리거가 동일 이름+전화 더미와 병합.
+		// 행이 없거나 이름/전화가 비어 있으면 입력 페이지로 유도 (예외 경로 제외).
+		// 행 생성은 /profile/complete 에서 (미완료 이탈 시 빈 활성행이 남지 않도록),
+		// 입력 시 UPDATE 로 merge_user_data 트리거가 동일 이름+전화 더미와 병합.
 		const path = window.location.pathname;
 		if (PROFILE_EXEMPT.some((p) => path.startsWith(p))) return;
-		const incomplete = !me.name?.trim() || !me.phone?.trim();
-		if (incomplete) goto("/profile/complete");
+		if (!(await isProfileComplete(session.user.id))) goto("/profile/complete");
 	}
 
 	onMount(() => {

@@ -65,12 +65,15 @@
     // 정보 공개에 동의하고 바로 글쓰기로 전환
     async function enableInfoPublic() {
         enabling = true;
-        const { error: e } = await supabaseBrowser
+        const { data, error: e } = await supabaseBrowser
             .from('custom_users')
             .update({ is_info_public: true })
-            .eq('auth_id', authUserId);
+            .eq('auth_id', authUserId)
+            .select('id');
         enabling = false;
         if (e) { error = '처리에 실패했습니다. 다시 시도해주세요.'; return; }
+        // 명단 행이 없으면(0행) 프로필 입력부터
+        if (!data || data.length === 0) { goto('/profile/complete'); return; }
         infoPublic = true;
     }
 

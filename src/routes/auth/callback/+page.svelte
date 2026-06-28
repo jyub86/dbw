@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { supabaseBrowser } from '$lib/supabase-browser';
+	import { isProfileComplete } from '$lib/profile';
 	import { goto } from '$app/navigation';
 
 	let status = $state<'loading' | 'error'>('loading');
@@ -15,6 +16,15 @@
 				errorMsg = error.message;
 				return;
 			}
+		}
+		// 프로필(이름·전화) 미완성이면 입력 페이지로. 여기서 목적지를 정해
+		// 레이아웃 가드의 redirect 와 경쟁(서로 다른 곳으로 이동)하지 않게 한다.
+		const {
+			data: { session }
+		} = await supabaseBrowser.auth.getSession();
+		if (session && !(await isProfileComplete(session.user.id))) {
+			goto('/profile/complete');
+			return;
 		}
 		goto('/');
 	});

@@ -26,13 +26,16 @@
 		// 기존 행이 있으면 값 미리 채우기
 		const { data: me } = await supabaseBrowser
 			.from('custom_users')
-			.select('name, phone')
+			.select('name, phone, is_info_public, privacy_consented_at')
 			.eq('auth_id', authId)
 			.maybeSingle();
 
 		// 카카오 닉네임이 본명과 다를 가능성이 높아 일부러 미리 채우지 않음(본명을 직접 입력하도록).
 		name = '';
 		phone = me?.phone?.trim() || '';
+		// 기존 동의 상태 반영 — 재제출 시 정보공개가 공개→비공개로 뒤집혀 글/댓글이 숨겨지는 것 방지
+		agreeInfoPublic = me?.is_info_public ?? false;
+		agreePrivacy = !!me?.privacy_consented_at;
 
 		// 이미 둘 다 채워져 있으면 굳이 여기 있을 필요 없음
 		if (me?.name?.trim() && me?.phone?.trim()) {
