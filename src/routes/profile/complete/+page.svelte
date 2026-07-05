@@ -80,9 +80,9 @@
 			privacy_consented_at: new Date().toISOString()
 		};
 
-		// 행이 없으면 먼저 생성. (welcome_new_user 트리거가 NEW.name 으로 메시지를 만들기 때문에
-		// name 을 채운 채로 insert 해야 함. merge_user_data 는 UPDATE 에만 작동하므로
-		// insert 후 아래 UPDATE 에서 병합이 일어남.)
+		// 행이 없으면 이름/전화 없이 빈 행부터 생성한다. (welcome_new_user 는 null 이름 안전화됨)
+		// 그래야 아래 UPDATE 에서 name/phone 이 null→값 으로 "실제 변경"되어
+		// merge_user_data(이름/전화가 바뀐 UPDATE 에서만 동작)가 더미와 병합한다.
 		const { data: existing } = await supabaseBrowser
 			.from('custom_users')
 			.select('id')
@@ -92,7 +92,7 @@
 		if (!existing) {
 			const { error: insErr } = await supabaseBrowser
 				.from('custom_users')
-				.insert({ auth_id: authId, active: true, ...profileData });
+				.insert({ auth_id: authId, active: true });
 			// 동시성으로 이미 생성됐을 수 있음 → 무시하고 UPDATE 진행
 			if (insErr && insErr.code !== '23505') {
 				errorMsg = '저장에 실패했습니다. 다시 시도해주세요.';
@@ -101,7 +101,7 @@
 			}
 		}
 
-		// UPDATE → merge_user_data 트리거가 동일 이름+전화 더미(active=false)와 병합
+		// UPDATE(name/phone 실제 변경) → merge_user_data 트리거가 동일 이름+전화 더미(active=false)와 병합
 		const { error: updErr } = await supabaseBrowser
 			.from('custom_users')
 			.update(profileData)
