@@ -25,6 +25,7 @@
 
     let loading = $state(true);
     let denied = $state(false);
+    let canManage = $state(false); // 관리자/교역자 여부 (탭 노출용)
     let errorMsg = $state('');
     let view = $state<'week' | 'trend' | 'full'>('week');
 
@@ -94,11 +95,12 @@
     onMount(async () => {
         const { hasSession, access } = await loadAccess();
         if (!hasSession) return goto('/login');
-        if (!access || !access.canManage) {
+        if (!access || !access.canViewStats) {
             denied = true;
             loading = false;
             return;
         }
+        canManage = access.canManage;
         const [{ data: ss }, { data: cs }, { data: gs }] = await Promise.all([
             supabaseBrowser
                 .from('attendance_sessions')
@@ -227,7 +229,7 @@
     <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">출석 통계 대시보드</h1>
     <p class="text-gray-500 mb-6 text-sm sm:text-base">공동체·소그룹 출석 현황을 다양한 기준으로 살펴봅니다.</p>
 
-    <AttendanceNav canManage={true} />
+    <AttendanceNav canCheck={canManage} canViewStats={true} {canManage} />
 
     {#if loading}
         <div class="py-20 text-center text-gray-400">불러오는 중…</div>

@@ -1,11 +1,15 @@
 <script lang="ts">
     import { page } from '$app/stores';
 
-    let { canManage = false }: { canManage?: boolean } = $props();
+    let {
+        canCheck = true,
+        canViewStats = false,
+        canManage = false
+    }: { canCheck?: boolean; canViewStats?: boolean; canManage?: boolean } = $props();
 
     const tabs = $derived([
-        { name: '출석 체크', href: '/attendance', show: true },
-        { name: '통계 대시보드', href: '/attendance/dashboard', show: canManage },
+        { name: '출석 체크', href: '/attendance', show: canCheck },
+        { name: '통계 대시보드', href: '/attendance/dashboard', show: canViewStats },
         { name: '명단 관리', href: '/attendance/manage', show: canManage }
     ].filter((t) => t.show));
 

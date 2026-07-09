@@ -43,6 +43,12 @@
     let mgrQuery = $state('');
     let mgrResults = $state<Profile[]>([]);
 
+    // 통계 열람자 지정 (통계 대시보드만 열람)
+    let statViewers = $state<Manager[]>([]);
+    let svPickerOpen = $state(false);
+    let svQuery = $state('');
+    let svResults = $state<Profile[]>([]);
+
     onMount(async () => {
         const { hasSession, access } = await loadAccess();
         if (!hasSession) {
@@ -68,7 +74,10 @@
                 a.sort_order - b.sort_order
         );
         if (groups.length) await selectGroup(groups[0].id);
-        if (access.canManage) await loadManagers();
+        if (access.canManage) {
+            await loadManagers();
+            await loadStatViewers();
+        }
         loading = false;
     });
 
@@ -118,11 +127,12 @@
         pickerResults = [];
         pickerOpen = true;
     }
-    async function searchProfiles(q: string, into: 'picker' | 'mgr') {
+    async function searchProfiles(q: string, into: 'picker' | 'mgr' | 'sv') {
         const term = q.trim();
         if (term.length < 1) {
             if (into === 'picker') pickerResults = [];
-            else mgrResults = [];
+            else if (into === 'mgr') mgrResults = [];
+            else svResults = [];
             return;
         }
         // active 필터 없음: 미가입(placeholder, active=false) 프로필도 교체/추가 대상이 될 수 있음
@@ -133,8 +143,10 @@
             .order('active', { ascending: false })
             .order('name')
             .limit(30);
-        if (into === 'picker') pickerResults = (data ?? []) as Profile[];
-        else mgrResults = (data ?? []) as Profile[];
+        const rows = (data ?? []) as Profile[];
+        if (into === 'picker') pickerResults = rows;
+        else if (into === 'mgr') mgrResults = rows;
+        else svResults = rows;
     }
 
     async function pickProfile(pid: string) {
@@ -193,6 +205,27 @@
         if (error) msg = '해제 실패 (관리자만 가능)';
         await loadManagers();
     }
+
+    // ── 통계 열람자 지정 ───────────────────────────────
+    async function loadStatViewers() {
+        const { data } = await supabaseBrowser
+            .from('attendance_stat_viewers')
+            .select('user_id, note, custom_users(name, office)');
+        statViewers = (data ?? []) as unknown as Manager[];
+    }
+    async function addStatViewer(pid: string) {
+        const { error } = await supabaseBrowser.from('attendance_stat_viewers').insert({ user_id: pid });
+        msg = error ? '통계 열람자 지정 실패 (관리자만 가능)' : '통계 열람자로 지정되었습니다.';
+        svPickerOpen = false;
+        svQuery = '';
+        svResults = [];
+        await loadStatViewers();
+    }
+    async function removeStatViewer(pid: string) {
+        const { error } = await supabaseBrowser.from('attendance_stat_viewers').delete().eq('user_id', pid);
+        if (error) msg = '해제 실패 (관리자만 가능)';
+        await loadStatViewers();
+    }
 </script>
 
 <svelte:head><title>명단 관리 - 부평동부교회</title></svelte:head>
@@ -201,7 +234,7 @@
     <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">명단 관리</h1>
     <p class="text-gray-500 mb-6 text-sm sm:text-base">소그룹 구성원·리더와 교역자 권한을 관리합니다.</p>
 
-    <AttendanceNav canManage={true} />
+    <AttendanceNav canCheck={true} canViewStats={true} canManage={true} />
 
     {#if msg}
         <div class="mb-5 bg-primary-50 border border-primary-100 text-primary-800 text-sm rounded-xl px-4 py-3">{msg}</div>
@@ -293,6 +326,51 @@
                         </div>
                         {#if isAdmin}
                             <button type="button" onclick={() => removeManager(mg.user_id)} class="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-red-200 text-red-500 hover:bg-red-50">해제</button>
+                        {/if}
+                    </div>
+                {/each}
+            </div>
+        </section>
+
+        <!-- 통계 열람자 지정 -->
+        <section class="mt-12">
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="text-lg font-black text-gray-900">통계 열람자 지정</h2>
+                {#if isAdmin}
+                    <button type="button" onclick={() => { svPickerOpen = !svPickerOpen; svQuery=''; svResults=[]; }}
+                        class="px-4 py-2 rounded-xl bg-gray-900 text-white font-bold text-sm hover:bg-gray-700">+ 열람자 추가</button>
+                {/if}
+            </div>
+            <p class="text-xs text-gray-400 mb-3">지정된 열람자는 <b>소그룹 통계 대시보드만</b> 볼 수 있습니다. 출석 체크·명단·특이사항(메모)은 볼 수 없습니다. {isAdmin ? '' : '(추가/해제는 관리자만 가능)'}</p>
+
+            {#if svPickerOpen}
+                <div class="rounded-2xl border border-gray-200 p-4 mb-4 bg-gray-50">
+                    <input type="text" placeholder="이름으로 검색" bind:value={svQuery} oninput={() => searchProfiles(svQuery, 'sv')}
+                        class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-primary-500 mb-2" />
+                    <div class="max-h-56 overflow-y-auto divide-y divide-gray-100 bg-white rounded-lg">
+                        {#each svResults as r}
+                            <button type="button" onclick={() => addStatViewer(r.id)} class="w-full text-left px-3 py-2 hover:bg-primary-50 text-sm flex justify-between">
+                                <span class="font-medium">{r.name}{#if r.active === false}<span class="ml-1 text-[10px] text-gray-400 font-normal">(미가입)</span>{/if}</span>
+                                <span class="text-gray-400 text-xs">{r.office} · {r.phone || '번호없음'}</span>
+                            </button>
+                        {/each}
+                        {#if svQuery && svResults.length === 0}<div class="px-3 py-3 text-sm text-gray-400">검색 결과 없음</div>{/if}
+                    </div>
+                </div>
+            {/if}
+
+            <div class="rounded-2xl border border-gray-100 overflow-hidden">
+                {#if statViewers.length === 0}
+                    <div class="px-4 py-5 text-sm text-gray-400 text-center">지정된 통계 열람자가 없습니다.</div>
+                {/if}
+                {#each statViewers as sv}
+                    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-50 last:border-0">
+                        <div>
+                            <span class="font-bold text-gray-900">{sv.custom_users?.name ?? '(이름없음)'}</span>
+                            <span class="text-xs text-gray-400 ml-2">{sv.custom_users?.office ?? ''}{sv.note ? ` · ${sv.note}` : ''}</span>
+                        </div>
+                        {#if isAdmin}
+                            <button type="button" onclick={() => removeStatViewer(sv.user_id)} class="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-red-200 text-red-500 hover:bg-red-50">해제</button>
                         {/if}
                     </div>
                 {/each}

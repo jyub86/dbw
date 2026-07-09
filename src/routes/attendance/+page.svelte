@@ -20,6 +20,7 @@
     let errorMsg = $state('');
     let myId = $state('');
     let canManage = $state(false);
+    let canViewStats = $state(false);
 
     let groups = $state<Group[]>([]);
     let selectedGroupId = $state<number | null>(null);
@@ -121,6 +122,7 @@
         }
         myId = access.userId;
         canManage = access.canManage;
+        canViewStats = access.canViewStats;
 
         // RLS: 리더는 본인 소그룹, 교역자/관리자는 전체
         const { data: gs, error } = await supabaseBrowser
@@ -142,6 +144,11 @@
         );
 
         if (groups.length === 0) {
+            // 소그룹이 없지만 통계 열람 권한이 있으면 대시보드로 (통계 열람 전용 사용자)
+            if (canViewStats) {
+                goto('/attendance/dashboard');
+                return;
+            }
             loading = false;
             return;
         }
@@ -284,7 +291,7 @@
     <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">소그룹 출석부</h1>
     <p class="text-gray-500 mb-6 text-sm sm:text-base">소그룹 리더가 출석과 특이사항을 기록합니다.</p>
 
-    <AttendanceNav {canManage} />
+    <AttendanceNav {canViewStats} {canManage} />
 
     {#if errorMsg}
         <div class="mb-6 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl px-4 py-3">{errorMsg}</div>

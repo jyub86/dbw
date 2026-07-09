@@ -45,7 +45,7 @@
 			.single();
 		profilePicture = data?.profile_picture ?? null;
 
-		// 출석부 메뉴 노출: 소그룹 리더 / 지정 교역자 / 관리자(level>=100)
+		// 출석부 메뉴 노출: 소그룹 리더 / 지정 교역자 / 통계 열람자 / 관리자(level>=100)
 		const level = (data?.roles as unknown as { level: number } | null)?.level ?? 0;
 		let allowed = level >= 100;
 		if (data?.id && !allowed) {
@@ -61,6 +61,13 @@
 					.select("user_id", { count: "exact", head: true })
 					.eq("user_id", data.id);
 				allowed = (mc ?? 0) > 0;
+			}
+			if (!allowed) {
+				const { count: sc } = await supabaseBrowser
+					.from("attendance_stat_viewers")
+					.select("user_id", { count: "exact", head: true })
+					.eq("user_id", data.id);
+				allowed = (sc ?? 0) > 0;
 			}
 		}
 		canSeeAttendance = allowed;

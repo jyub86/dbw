@@ -5,7 +5,9 @@ export type Access = {
     level: number;
     isAdmin: boolean; // roles.level >= 100
     isManager: boolean; // attendance_managers 등록 (지정 교역자)
+    isStatViewer: boolean; // attendance_stat_viewers 등록 (통계 열람 전용)
     canManage: boolean; // 명단/통계 관리 가능 (admin 또는 manager)
+    canViewStats: boolean; // 통계 대시보드 열람 가능 (admin/manager/열람자)
 };
 
 /** 현재 로그인 사용자의 출석부 권한을 로드. session 없으면 access=null. */
@@ -32,9 +34,24 @@ export async function loadAccess(): Promise<{ hasSession: boolean; access: Acces
         .eq('user_id', me.id);
     const isManager = (count ?? 0) > 0;
 
+    // 통계 열람 전용 지정 여부 (RLS: 본인 행은 조회 가능)
+    const { count: svCount } = await supabaseBrowser
+        .from('attendance_stat_viewers')
+        .select('user_id', { count: 'exact', head: true })
+        .eq('user_id', me.id);
+    const isStatViewer = (svCount ?? 0) > 0;
+
     return {
         hasSession: true,
-        access: { userId: me.id, level, isAdmin, isManager, canManage: isAdmin || isManager }
+        access: {
+            userId: me.id,
+            level,
+            isAdmin,
+            isManager,
+            isStatViewer,
+            canManage: isAdmin || isManager,
+            canViewStats: isAdmin || isManager || isStatViewer
+        }
     };
 }
 
