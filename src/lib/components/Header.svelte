@@ -8,7 +8,9 @@
 	let profilePicture = $state<string | null>(null);
 	let isLoggedIn = $state(false);
 	let dropdownOpen = $state(false);
+	let isAdmin = $state(false);
 	let canSeeAttendance = $state(false);
+	let canSeeEducation = $state(false);
 
 	async function logout() {
 		dropdownOpen = false;
@@ -24,9 +26,11 @@
 		{ name: "교회 일정", href: "/events" },
 		{ name: "커뮤니티", href: "/board" },
 	];
-	const menus = $derived(
-		canSeeAttendance ? [...baseMenus, { name: "출석부", href: "/attendance" }] : baseMenus,
-	);
+	const menus = $derived([
+		...baseMenus,
+		...(canSeeAttendance ? [{ name: "출석부", href: "/attendance" }] : []),
+		...(canSeeEducation ? [{ name: "교육부서", href: "/education" }] : []),
+	]);
 
 	function toggleNav() {
 		navOpen = !navOpen;
@@ -47,7 +51,8 @@
 
 		// 출석부 메뉴 노출: 소그룹 리더 / 지정 교역자 / 통계 열람자 / 관리자(level>=100)
 		const level = (data?.roles as unknown as { level: number } | null)?.level ?? 0;
-		let allowed = level >= 100;
+		isAdmin = level >= 100;
+		let allowed = isAdmin;
 		if (data?.id && !allowed) {
 			const { count } = await supabaseBrowser
 				.from("small_group_members")
@@ -71,6 +76,17 @@
 			}
 		}
 		canSeeAttendance = allowed;
+
+		// 교육부서 메뉴 노출: 관리자(level>=100) 또는 보고서 담당자
+		let eduAllowed = isAdmin;
+		if (data?.id && !eduAllowed) {
+			const { count: ec } = await supabaseBrowser
+				.from("education_report_editors")
+				.select("user_id", { count: "exact", head: true })
+				.eq("user_id", data.id);
+			eduAllowed = (ec ?? 0) > 0;
+		}
+		canSeeEducation = eduAllowed;
 	}
 
 	onMount(() => {
@@ -88,7 +104,7 @@
 		const { data: { subscription } } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
 			isLoggedIn = !!session;
 			if (session) loadProfile(session.user.id);
-			else { profilePicture = null; canSeeAttendance = false; }
+			else { profilePicture = null; isAdmin = false; canSeeAttendance = false; canSeeEducation = false; }
 		});
 
 		const handleClickOutside = (e: MouseEvent) => {
@@ -168,6 +184,11 @@
 									class="absolute right-0 top-12 w-36 bg-white rounded-2xl shadow-xl border border-gray-100 py-1 z-50"
 									onmouseleave={() => dropdownOpen = false}
 								>
+									{#if isAdmin}
+										<a href="/logs" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
+											변경 로그
+										</a>
+									{/if}
 									<button onclick={logout} class="w-full text-left px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 rounded-b-2xl">
 										로그아웃
 									</button>
@@ -245,6 +266,15 @@
 			style="transition-delay: 500ms;"
 		>
 			{#if isLoggedIn}
+				{#if isAdmin}
+					<a
+						href="/logs"
+						onclick={toggleNav}
+						class="inline-block px-10 py-3.5 mr-2 rounded-full font-bold text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+					>
+						변경 로그
+					</a>
+				{/if}
 				<button
 					onclick={async () => { await logout(); toggleNav(); }}
 					class="inline-block px-10 py-3.5 rounded-full font-bold text-base border-2 border-red-200 text-red-500 hover:bg-red-50 transition-colors"
