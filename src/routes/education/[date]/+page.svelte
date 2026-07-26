@@ -103,8 +103,33 @@
 		}
 		existed = byDept.size > 0;
 		updatedAt = maxUpd;
+
+		// 전 주일 재적 캐리오버: 재적/교사재적이 비어 있으면 값이 있는 가장 최근 주의 값을 기본값으로 사용(수정 가능).
+		const prevEnrolled = new Map<string, number>();
+		const prevTeacher = new Map<string, number>();
+		const { data: prior } = await supabaseBrowser
+			.from('education_reports')
+			.select('department, enrolled, teacher_enrolled')
+			.lt('report_date', date)
+			.order('report_date', { ascending: false });
+		for (const r of (prior ?? []) as {
+			department: string;
+			enrolled: number | null;
+			teacher_enrolled: number | null;
+		}[]) {
+			if (r.enrolled != null && !prevEnrolled.has(r.department)) prevEnrolled.set(r.department, r.enrolled);
+			if (r.teacher_enrolled != null && !prevTeacher.has(r.department))
+				prevTeacher.set(r.department, r.teacher_enrolled);
+		}
+
 		const next: Record<string, Fields> = {};
-		for (const d of DEPARTMENTS) next[d] = fromRow(byDept.get(d) ?? blankRow(date, d));
+		for (const d of DEPARTMENTS) {
+			const f = fromRow(byDept.get(d) ?? blankRow(date, d));
+			if (f.enrolled === null && prevEnrolled.has(d)) f.enrolled = prevEnrolled.get(d) ?? null;
+			if (f.teacher_enrolled === null && prevTeacher.has(d))
+				f.teacher_enrolled = prevTeacher.get(d) ?? null;
+			next[d] = f;
+		}
 		form = next;
 		original = structuredClone(next);
 	}
@@ -293,7 +318,8 @@
 			{/if}
 		{:else}
 			<!-- 편집: 부서별 카드 -->
-			<div class="mt-6 space-y-4">
+			<p class="mt-6 mb-3 text-xs text-gray-400">재적·교사재적은 전 주일 값이 기본으로 채워집니다. 변동이 있으면 수정하세요.</p>
+			<div class="space-y-4">
 				{#each DEPARTMENTS as d}
 					<div class="rounded-2xl border border-gray-200 p-4 sm:p-5">
 						<h3 class="font-black text-gray-900 mb-3">{d}</h3>

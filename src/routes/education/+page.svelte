@@ -2,7 +2,17 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { supabaseBrowser } from '$lib/supabase-browser';
-	import { loadEducationAccess, fmtShort, fmtFullDate, todayISO } from '$lib/education';
+	import {
+		loadEducationAccess,
+		fmtShort,
+		fmtFullDate,
+		sundayList,
+		thisSunday,
+		halfKey,
+		halfLabel,
+		currentHalfKey
+	} from '$lib/education';
+	import EducationNav from '$lib/components/EducationNav.svelte';
 
 	type WeekSummary = {
 		date: string;
@@ -20,13 +30,31 @@
 	let msg = $state('');
 
 	let weeks = $state<WeekSummary[]>([]);
-	let newDate = $state(todayISO());
+	let newDate = $state(thisSunday());
+	const sundayOptions = sundayList(6, 12); // 미래 12주 → 과거 6주
+
+	// 반기별 접힘/펼침 (현재 반기만 기본 펼침)
+	let openHalves = $state<Record<string, boolean>>({});
 
 	// 담당자 지정 (관리자만)
 	let editors = $state<Editor[]>([]);
 	let edPickerOpen = $state(false);
 	let edQuery = $state('');
 	let edResults = $state<Profile[]>([]);
+
+	type HalfGroup = { key: string; label: string; weeks: WeekSummary[] };
+	const halfGroups = $derived.by<HalfGroup[]>(() => {
+		const map = new Map<string, WeekSummary[]>();
+		for (const w of weeks) {
+			const k = halfKey(w.date);
+			const arr = map.get(k);
+			if (arr) arr.push(w);
+			else map.set(k, [w]);
+		}
+		return [...map.entries()]
+			.map(([key, ws]) => ({ key, label: halfLabel(ws[0].date), weeks: ws }))
+			.sort((a, b) => (a.key < b.key ? 1 : -1));
+	});
 
 	onMount(async () => {
 		const { hasSession, access } = await loadEducationAccess();
@@ -42,6 +70,7 @@
 		isAdmin = access.isAdmin;
 
 		await loadWeeks();
+		openHalves = { [currentHalfKey()]: true }; // 현재 반기만 펼침
 		if (isAdmin) await loadEditors();
 		loading = false;
 	});
@@ -121,6 +150,8 @@
 	<h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">교육부서 보고서</h1>
 	<p class="text-gray-500 mb-6 text-sm sm:text-base">주간 부서별 출석현황과 교육·행사를 기록합니다.</p>
 
+	<EducationNav />
+
 	{#if msg}
 		<div class="mb-5 bg-primary-50 border border-primary-100 text-primary-800 text-sm rounded-xl px-4 py-3">{msg}</div>
 	{/if}
@@ -133,37 +164,52 @@
 			<a href="/" class="inline-block mt-6 px-6 py-2.5 rounded-full bg-primary-900 text-white font-bold text-sm">홈으로</a>
 		</div>
 	{:else}
-		<!-- 새 보고서 작성 -->
+		<!-- 새 보고서 작성 (주일만 선택) -->
 		<div class="mb-8 flex items-end gap-3 flex-wrap rounded-2xl border border-gray-100 bg-gray-50 px-4 py-4">
 			<div>
-				<label for="nd" class="block text-xs font-bold text-gray-600 mb-1.5">보고 날짜 (주일)</label>
-				<input id="nd" type="date" bind:value={newDate}
-					class="px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm" />
+				<label for="nd" class="block text-xs font-bold text-gray-600 mb-1.5">보고 주일 선택</label>
+				<select id="nd" bind:value={newDate}
+					class="px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white font-medium text-sm">
+					{#each sundayOptions as s}
+						<option value={s}>{fmtFullDate(s)}{s === thisSunday() ? ' (이번 주)' : ''}</option>
+					{/each}
+				</select>
 			</div>
 			<button type="button" onclick={openNew}
 				class="px-5 py-2.5 rounded-xl bg-primary-900 text-white font-bold text-sm hover:bg-primary-800">보고서 작성/열기</button>
 		</div>
 
-		<!-- 주간 목록 -->
+		<!-- 주간 목록 (반기별) -->
 		{#if weeks.length === 0}
 			<div class="py-16 text-center text-gray-400 text-sm">아직 작성된 보고서가 없습니다.</div>
 		{:else}
-			<div class="grid gap-3 sm:grid-cols-2">
-				{#each weeks as w}
-					<a href={`/education/${w.date}`}
-						class="group rounded-2xl border border-gray-100 hover:border-primary-300 hover:shadow-sm transition-all px-5 py-4 bg-white">
-						<div class="flex items-baseline justify-between">
-							<span class="text-lg font-black text-gray-900">{fmtShort(w.date)}</span>
-							<span class="text-[11px] text-gray-400">{fmtFullDate(w.date)}</span>
+			{#each halfGroups as g}
+				<div class="mb-4">
+					<button type="button" onclick={() => (openHalves[g.key] = !openHalves[g.key])}
+						class="w-full flex items-center justify-between px-4 py-3 rounded-2xl border border-gray-100 bg-white hover:border-primary-300 transition-colors">
+						<span class="font-black text-gray-900">{g.label}</span>
+						<span class="text-sm text-gray-400 font-bold">{g.weeks.length}주 <span class="ml-1 text-gray-300">{openHalves[g.key] ? '▲' : '▼'}</span></span>
+					</button>
+					{#if openHalves[g.key]}
+						<div class="grid gap-3 sm:grid-cols-2 mt-3">
+							{#each g.weeks as w}
+								<a href={`/education/${w.date}`}
+									class="group rounded-2xl border border-gray-100 hover:border-primary-300 hover:shadow-sm transition-all px-5 py-4 bg-white">
+									<div class="flex items-baseline justify-between">
+										<span class="text-lg font-black text-gray-900">{fmtShort(w.date)}</span>
+										<span class="text-[11px] text-gray-400">{fmtFullDate(w.date)}</span>
+									</div>
+									<div class="mt-2 flex items-center gap-4 text-sm">
+										<span class="text-gray-500">학생 <b class="text-gray-900">{w.attend}</b>/{w.enrolled}</span>
+										<span class="text-primary-700 font-bold">{rate(w)}%</span>
+										<span class="text-gray-400 text-xs">교사 {w.teacherAttend}/{w.teacherEnrolled}</span>
+									</div>
+								</a>
+							{/each}
 						</div>
-						<div class="mt-2 flex items-center gap-4 text-sm">
-							<span class="text-gray-500">학생 <b class="text-gray-900">{w.attend}</b>/{w.enrolled}</span>
-							<span class="text-primary-700 font-bold">{rate(w)}%</span>
-							<span class="text-gray-400 text-xs">교사 {w.teacherAttend}/{w.teacherEnrolled}</span>
-						</div>
-					</a>
-				{/each}
-			</div>
+					{/if}
+				</div>
+			{/each}
 		{/if}
 
 		<!-- 담당자 지정 (관리자만) -->

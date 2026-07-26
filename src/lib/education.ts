@@ -98,3 +98,49 @@ export function fmtShort(iso: string): string {
 
 // 한국시간(Asia/Seoul) 기준 오늘 날짜 'YYYY-MM-DD'.
 export const todayISO = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Seoul' });
+
+// ── 날짜(요일) 헬퍼 ─────────────────────────────
+/** iso 'YYYY-MM-DD' 의 요일 (0=일 … 6=토). 로컬 자정 기준이라 UTC 밀림 없음. */
+export function isoDow(iso: string): number {
+	const [y, m, d] = iso.split('-').map(Number);
+	return new Date(y, m - 1, d).getDay();
+}
+export const isSunday = (iso: string) => isoDow(iso) === 0;
+
+/** iso 에 days(음수 가능)를 더한 'YYYY-MM-DD'. */
+export function addDays(iso: string, days: number): string {
+	const [y, m, d] = iso.split('-').map(Number);
+	const dt = new Date(y, m - 1, d);
+	dt.setDate(dt.getDate() + days);
+	const mm = String(dt.getMonth() + 1).padStart(2, '0');
+	const dd = String(dt.getDate()).padStart(2, '0');
+	return `${dt.getFullYear()}-${mm}-${dd}`;
+}
+
+/** 오늘(KST)이 포함된 주의 일요일. */
+export function thisSunday(): string {
+	const t = todayISO();
+	return addDays(t, -isoDow(t));
+}
+
+/** 일요일 목록: 이번 주일 기준 fwd주 뒤 → back주 앞 (미래→과거 순). */
+export function sundayList(back: number, fwd: number): string[] {
+	const base = thisSunday();
+	const out: string[] = [];
+	for (let i = fwd; i >= -back; i--) out.push(addDays(base, i * 7));
+	return out;
+}
+
+// ── 반기(상/하) 헬퍼 ─────────────────────────────
+/** 정렬용 키: '2026-H2' (1~6월=H1, 7~12월=H2). */
+export function halfKey(iso: string): string {
+	const [y, m] = iso.split('-').map(Number);
+	return `${y}-H${m <= 6 ? 1 : 2}`;
+}
+/** 표시용: '2026년 하반기'. */
+export function halfLabel(iso: string): string {
+	const [y, m] = iso.split('-').map(Number);
+	return `${y}년 ${m <= 6 ? '상반기' : '하반기'}`;
+}
+/** 오늘(KST) 기준 현재 반기 키. */
+export const currentHalfKey = () => halfKey(todayISO());
