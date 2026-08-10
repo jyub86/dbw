@@ -31,7 +31,9 @@
 
 	let weeks = $state<WeekSummary[]>([]);
 	let newDate = $state(thisSunday());
-	const sundayOptions = sundayList(6, 12); // 미래 12주 → 과거 6주
+	// 실제 출석은 금주까지만 기록 가능하므로 미래 주일은 제공하지 않는다.
+	// (앞으로의 교육·행사 계획은 계획 탭에서 입력)
+	const sundayOptions = sundayList(6, 0); // 이번 주 → 과거 6주
 
 	// 반기별 접힘/펼침 (현재 반기만 기본 펼침)
 	let openHalves = $state<Record<string, boolean>>({});
@@ -76,9 +78,12 @@
 	});
 
 	async function loadWeeks() {
+		// 계획 탭이 같은 테이블에 미래 주(report_date)를 미리 만들어 두므로,
+		// 보고서 목록에는 금주(이번 주일)까지만 노출한다.
 		const { data } = await supabaseBrowser
 			.from('education_reports')
 			.select('report_date, enrolled, attend, teacher_enrolled, teacher_attend')
+			.lte('report_date', thisSunday())
 			.order('report_date', { ascending: false });
 		const map = new Map<string, WeekSummary>();
 		for (const r of data ?? []) {
