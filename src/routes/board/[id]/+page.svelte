@@ -45,7 +45,7 @@
     <title>{post.title} - 부평동부교회</title>
 </svelte:head>
 
-<div class="w-full max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
     <!-- 뒤로가기 -->
     <a href="/board" class="inline-flex items-center gap-2 text-gray-500 hover:text-primary-600 font-medium mb-10 transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

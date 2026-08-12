@@ -208,7 +208,7 @@
 
 <svelte:head><title>교육부서 보고서 {date} - 부평동부교회</title></svelte:head>
 
-<div class="w-full max-w-4xl mx-auto px-4 sm:px-8 py-8 sm:py-12">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-8 sm:py-12">
 	<a href="/education" class="text-sm text-gray-400 hover:text-primary-600 font-medium">← 목록으로</a>
 
 	{#if loading}
@@ -247,10 +247,10 @@
 		{#if !editing}
 			<!-- ◎ 출석현황 -->
 			<h2 class="text-base font-black text-gray-900 mt-6 mb-2">◎ 출석현황</h2>
-			<div class="overflow-x-auto rounded-2xl border border-gray-100">
+			<div class="overflow-x-auto rounded-2xl border border-gray-300">
 				<table class="w-full text-sm border-collapse min-w-[640px]">
 					<thead>
-						<tr class="bg-gray-50 text-gray-500 text-xs">
+						<tr class="bg-gray-50 text-gray-500 text-xs divide-x divide-gray-300 border-b border-gray-300">
 							<th class="px-3 py-2.5 text-left font-bold">부서</th>
 							<th class="px-3 py-2.5 font-bold">재적</th>
 							<th class="px-3 py-2.5 font-bold">출석</th>
@@ -262,17 +262,17 @@
 					</thead>
 					<tbody>
 						{#each DEPARTMENTS as d}
-							<tr class="border-t border-gray-100">
+							<tr class="border-t border-gray-200 divide-x divide-gray-200">
 								<td class="px-3 py-2.5 font-bold text-gray-900 whitespace-nowrap">{d}</td>
 								<td class="px-3 py-2.5 text-center text-gray-700">{numShow(form[d].enrolled)}</td>
 								<td class="px-3 py-2.5 text-center text-gray-900 font-semibold">{numShow(form[d].attend)}</td>
 								<td class="px-3 py-2.5 text-center text-gray-500">{numShow(form[d].attend_online)}</td>
 								<td class="px-3 py-2.5 text-center text-gray-700">{numShow(form[d].teacher_enrolled)}</td>
 								<td class="px-3 py-2.5 text-center text-gray-700">{numShow(form[d].teacher_attend)}</td>
-								<td class="px-3 py-2.5 text-gray-600 whitespace-pre-wrap text-xs">{form[d].attendance_note}</td>
+								<td class="px-3 py-2.5 text-gray-600 whitespace-pre-wrap">{form[d].attendance_note}</td>
 							</tr>
 						{/each}
-						<tr class="border-t-2 border-gray-200 bg-gray-50 font-bold text-gray-900">
+						<tr class="border-t-2 border-gray-400 divide-x divide-gray-200 bg-gray-50 font-bold text-gray-900">
 							<td class="px-3 py-2.5">총계</td>
 							<td class="px-3 py-2.5 text-center">{totals.enrolled}</td>
 							<td class="px-3 py-2.5 text-center">{totals.attend}</td>
@@ -287,23 +287,25 @@
 
 			<!-- ◎ 교육 및 행사 -->
 			<h2 class="text-base font-black text-gray-900 mt-8 mb-2">◎ 교육 및 행사</h2>
-			<div class="overflow-x-auto rounded-2xl border border-gray-100">
-				<table class="w-full text-sm border-collapse min-w-[640px]">
+			<div class="overflow-x-auto rounded-2xl border border-gray-300">
+				<!-- table-fixed + 명시 너비. '이번 주'·'다음 주'는 짧은 항목 위주라 좁게,
+				     문장이 들어가는 '비고 및 건의사항'에 남은 폭을 몰아준다. -->
+				<table class="w-full text-sm border-collapse table-fixed min-w-[720px]">
 					<thead>
-						<tr class="bg-gray-50 text-gray-500 text-xs">
-							<th class="px-3 py-2.5 text-left font-bold w-20">부서</th>
-							<th class="px-3 py-2.5 text-left font-bold">이번 주</th>
-							<th class="px-3 py-2.5 text-left font-bold">다음 주</th>
+						<tr class="bg-gray-50 text-gray-500 text-xs divide-x divide-gray-300 border-b border-gray-300">
+							<th class="px-3 py-2.5 text-left font-bold w-[80px]">부서</th>
+							<th class="px-3 py-2.5 text-left font-bold w-[20%]">이번 주</th>
+							<th class="px-3 py-2.5 text-left font-bold w-[20%]">다음 주</th>
 							<th class="px-3 py-2.5 text-left font-bold">비고 및 건의사항</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each DEPARTMENTS as d}
-							<tr class="border-t border-gray-100 align-top">
+							<tr class="border-t border-gray-200 divide-x divide-gray-200 align-top">
 								<td class="px-3 py-2.5 font-bold text-gray-900 whitespace-nowrap">{d}</td>
-								<td class="px-3 py-2.5 text-gray-700 whitespace-pre-wrap">{form[d].this_week}</td>
-								<td class="px-3 py-2.5 text-gray-700 whitespace-pre-wrap">{form[d].next_week}</td>
-								<td class="px-3 py-2.5 text-gray-600 whitespace-pre-wrap text-xs">{form[d].event_note}</td>
+								<td class="px-3 py-2.5 text-gray-700 whitespace-pre-wrap break-words">{form[d].this_week}</td>
+								<td class="px-3 py-2.5 text-gray-700 whitespace-pre-wrap break-words">{form[d].next_week}</td>
+								<td class="px-3 py-2.5 text-gray-600 whitespace-pre-wrap break-words">{form[d].event_note}</td>
 							</tr>
 						{/each}
 					</tbody>

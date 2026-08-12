@@ -139,7 +139,7 @@
 
 <svelte:head><title>교육부서 계획 - 부평동부교회</title></svelte:head>
 
-<div class="w-full max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-14">
 	<h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">교육·행사 미리 계획</h1>
 	<p class="text-gray-500 mb-6 text-sm sm:text-base">앞으로의 교육·행사 계획을 주별로 미리 입력합니다. (출석 숫자는 각 주 보고서에서 입력)</p>
 

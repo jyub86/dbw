@@ -227,7 +227,7 @@
 </svelte:head>
 
 {#if authChecked}
-<div class="w-full max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
     <a href="/board" class="inline-flex items-center gap-2 text-gray-500 hover:text-primary-600 font-medium mb-10 transition-colors">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>

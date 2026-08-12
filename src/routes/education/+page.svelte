@@ -151,7 +151,7 @@
 
 <svelte:head><title>교육부서 보고서 - 부평동부교회</title></svelte:head>
 
-<div class="w-full max-w-4xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-14">
 	<h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">교육부서 보고서</h1>
 	<p class="text-gray-500 mb-6 text-sm sm:text-base">주간 부서별 출석현황과 교육·행사를 기록합니다.</p>
 

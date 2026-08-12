@@ -2,7 +2,7 @@
     <title>이용약관 - 부평동부교회</title>
 </svelte:head>
 
-<div class="max-w-4xl mx-auto px-6 sm:px-8 py-16">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">이용약관</h1>
     <p class="text-gray-500 mb-12">부평동부교회 홈페이지 이용약관</p>
 

@@ -227,7 +227,7 @@
 
 <svelte:head><title>교회 일정 - 부평동부교회</title></svelte:head>
 
-<div class="w-full max-w-4xl mx-auto px-4 sm:px-8 py-10 sm:py-14">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-14">
     <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h1 class="text-2xl sm:text-3xl font-black text-gray-900">교회 일정</h1>
         {#if canEdit}

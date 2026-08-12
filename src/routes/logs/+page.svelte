@@ -112,7 +112,7 @@
 
 <svelte:head><title>변경 로그 - 부평동부교회</title></svelte:head>
 
-<div class="w-full max-w-3xl mx-auto px-4 sm:px-8 py-10 sm:py-14">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-14">
 	<h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">변경 로그</h1>
 	<p class="text-gray-500 mb-6 text-sm sm:text-base">누가 언제 무엇을 수정했는지 기록입니다. (관리자 전용)</p>
 

@@ -230,7 +230,7 @@
 
 <svelte:head><title>명단 관리 - 부평동부교회</title></svelte:head>
 
-<div class="w-full max-w-5xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-14">
     <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">명단 관리</h1>
     <p class="text-gray-500 mb-6 text-sm sm:text-base">소그룹 구성원·리더와 교역자 권한을 관리합니다.</p>
 

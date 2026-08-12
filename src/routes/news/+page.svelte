@@ -67,7 +67,7 @@
     </div>
 </div>
 
-<div class="w-full max-w-6xl mx-auto px-6 sm:px-8 lg:px-12 py-12 md:py-20">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 md:py-20">
     <!-- 카테고리 + 검색 -->
     <div class="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 md:mb-12">
         <!-- 모바일: select -->

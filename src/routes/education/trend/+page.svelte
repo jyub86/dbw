@@ -66,7 +66,7 @@
 
 <svelte:head><title>교육부서 추이 - 부평동부교회</title></svelte:head>
 
-<div class="w-full max-w-4xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-14">
 	<h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">교육부서 추이</h1>
 	<p class="text-gray-500 mb-6 text-sm sm:text-base">부서별 주간 출석률 변화를 살펴봅니다.</p>
 

@@ -32,7 +32,7 @@
     </div>
 </div>
 
-<div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 md:py-5">
+<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 md:py-5">
     <!-- Sub Navigation - Mobile: Select dropdown -->
     <div class="md:hidden mb-8">
         <select
@@ -62,7 +62,7 @@
     </div>
 
     <!-- Content Area -->
-    <div class="max-w-6xl mx-auto min-h-[60vh]">
+    <div class="w-full min-h-[60vh]">
 
         <!-- 열매공동체 -->
         {#if activeTab === "yeolmae"}
