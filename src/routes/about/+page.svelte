@@ -299,13 +299,6 @@
             phone: "",
             image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/yousuna.jpg",
         },
-        {
-            name: "최사라",
-            role: "교육전도사",
-            duty: "영아부",
-            phone: "",
-            image: "https://nfivyduwknskpfhuyzeg.supabase.co/storage/v1/object/public/utils/choisara.jpg",
-        },
         // 직원
         {
             name: "이명애",
