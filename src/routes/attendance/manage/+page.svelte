@@ -35,6 +35,10 @@
     let pickerTarget = $state<number | null>(null); // replace 대상 member.id
     let pickerQuery = $state('');
     let pickerResults = $state<Profile[]>([]);
+    // 새 프로필 생성 시 고르는 구분(custom_users.office). DB 제약 없는 자유 텍스트.
+    const OFFICES = ['성도', '집사', '시무집사', '권사', '장로', '목사', '전도사', '사모'];
+    // 자녀돌봄 등 미성년 명단용 — 직분이 아니라 연령 구분이라 그룹을 나눠 표시한다.
+    const CHILD_OFFICES = ['영아', '유치', '초등', '중등'];
     let newOffice = $state('성도');
 
     // 교역자 지정
@@ -406,7 +410,12 @@
                     <p class="text-xs font-bold text-gray-600 mb-2">없으면 새 프로필 생성</p>
                     <div class="flex gap-2">
                         <select bind:value={newOffice} class="px-3 py-2 rounded-lg border border-gray-200 text-sm bg-white">
-                            {#each ['성도', '집사', '시무집사', '권사', '장로', '목사', '전도사', '사모'] as o}<option value={o}>{o}</option>{/each}
+                            <optgroup label="직분">
+                                {#each OFFICES as o}<option value={o}>{o}</option>{/each}
+                            </optgroup>
+                            <optgroup label="자녀">
+                                {#each CHILD_OFFICES as o}<option value={o}>{o}</option>{/each}
+                            </optgroup>
                         </select>
                         <button type="button" onclick={createAndAdd} class="flex-1 px-3 py-2 rounded-lg bg-primary-900 text-white text-sm font-bold hover:bg-primary-800">
                             "{pickerQuery.trim()}" 생성 후 추가
