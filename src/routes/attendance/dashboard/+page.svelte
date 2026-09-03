@@ -10,8 +10,13 @@
     type GroupStat = {
         id: number; community_id?: number; community: string; name: string;
         present: number; members: number; recorded?: number; rate: number;
+        counts?: boolean; // false = 공동체 합계에서 제외되는 그룹 (예: 자녀돌봄)
     };
-    type CommStat = { id: number; name: string; present?: number; members: number; rate: number };
+    // side_present/side_members = 합계에서 제외된 그룹들의 출석/등록 인원 (별도 병기용)
+    type CommStat = {
+        id: number; name: string; present?: number; members: number; rate: number;
+        side_present?: number; side_members?: number;
+    };
     type WeekData = {
         session_id: number; session_date: string;
         overall: { present: number; members: number; rate: number };
@@ -82,6 +87,14 @@
               ? (communities.find((c) => c.id === trendCommunity)?.name ?? '')
               : '전체'
     );
+
+    // 합계에서 제외된 그룹(자녀돌봄 등)의 이름 — 공동체 옆 병기 라벨로 사용
+    function sideLabel(communityId: number, gs: GroupStat[]): string {
+        return gs
+            .filter((g) => g.community_id === communityId && g.counts === false)
+            .map((g) => g.name)
+            .join('·');
+    }
 
     function monthLabel(ym: string) {
         const [, m] = ym.split('-');
@@ -203,11 +216,14 @@
 <!-- 공동체별 소그룹 표 (주차별=출석 / 전체=기록주차) -->
 {#snippet communityTable(blocks: { community: Community; stat: CommStat | undefined; groups: GroupStat[] }[], mode: 'week' | 'full')}
     {#each blocks as cc}
+        {@const sideName = sideLabel(cc.community.id, cc.groups)}
+        {@const sideCount = (mode === 'week' ? cc.stat?.side_present : cc.stat?.side_members) ?? 0}
         <div class="rounded-2xl border border-gray-100 bg-white overflow-hidden mb-3">
             <div class="flex items-center justify-between px-4 py-2.5 bg-primary-50">
                 <span class="font-black text-primary-900">{cc.community.name}</span>
                 <span class="text-xs font-bold text-primary-800">
                     {#if mode === 'week'}{cc.stat?.present ?? 0}/{cc.stat?.members ?? 0}명 · {cc.stat?.rate ?? 0}%{:else}{cc.stat?.members ?? 0}명 · {cc.stat?.rate ?? 0}%{/if}
+                    {#if sideName}<span class="ml-1 font-medium text-primary-600/80">({sideName} {sideCount}명)</span>{/if}
                 </span>
             </div>
             <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-4 py-1.5 bg-gray-50/70 text-[11px] font-bold text-gray-400">
@@ -215,10 +231,14 @@
             </div>
             {#each cc.groups as g}
                 <div class="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-4 py-2.5 border-t border-gray-50 items-center text-sm">
-                    <span class="font-medium text-gray-800">{g.name}</span>
+                    <span class="font-medium text-gray-800">
+                        {g.name}
+                        {#if g.counts === false}<span class="ml-1.5 align-middle text-[10px] font-bold text-gray-400 bg-gray-100 rounded px-1.5 py-0.5">집계 제외</span>{/if}
+                    </span>
                     <span class="text-right w-14 text-gray-600">{g.members}</span>
                     <span class="text-right w-16 text-gray-600">{mode === 'week' ? g.present : (g.recorded ?? 0) + '주'}</span>
-                    <span class="text-right w-16 font-bold {mode === 'week' && g.present === 0 ? 'text-gray-300' : 'text-primary-700'}">{g.rate}%</span>
+                    <!-- 합계 제외 그룹은 출석률이 공동체 지표와 무관하므로 표시하지 않는다 -->
+                    <span class="text-right w-16 font-bold {g.counts === false ? 'text-gray-300' : mode === 'week' && g.present === 0 ? 'text-gray-300' : 'text-primary-700'}">{g.counts === false ? '—' : g.rate + '%'}</span>
                 </div>
             {/each}
         </div>
@@ -281,10 +301,14 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
                     {#each weekData.communities as c}
+                        {@const sideName = sideLabel(c.id, weekData.groups)}
                         <div class="rounded-2xl bg-white border border-gray-100 p-5">
                             <div class="font-black text-gray-900 text-lg">{c.name}</div>
                             <div class="text-3xl font-black text-primary-700 mt-2">{c.rate}%</div>
-                            <div class="text-xs text-gray-500 mt-2">{c.present}/{c.members}명</div>
+                            <div class="text-xs text-gray-500 mt-2">
+                                {c.present}/{c.members}명
+                                {#if sideName}<span class="text-gray-400">({sideName} {c.side_present ?? 0}명)</span>{/if}
+                            </div>
                         </div>
                     {/each}
                 </div>
