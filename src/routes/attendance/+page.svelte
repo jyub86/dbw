@@ -6,7 +6,11 @@
     import AttendanceNav from '$lib/components/AttendanceNav.svelte';
 
     type Community = { name: string; sort_order: number };
-    type Group = { id: number; name: string; sort_order: number; communities: Community | null };
+    // counts_in_total=false = 공동체 합계에서 빠지는 그룹(자녀돌봄). 인솔 리더는 출석 대상이 아니다.
+    type Group = {
+        id: number; name: string; sort_order: number;
+        counts_in_total: boolean; communities: Community | null;
+    };
     type Member = {
         id: number;
         role: string;
@@ -127,7 +131,7 @@
         // RLS: 리더는 본인 소그룹, 교역자/관리자는 전체
         const { data: gs, error } = await supabaseBrowser
             .from('small_groups')
-            .select('id, name, sort_order, communities(name, sort_order)')
+            .select('id, name, sort_order, counts_in_total, communities(name, sort_order)')
             .eq('active', true)
             .order('sort_order');
         if (error) {
@@ -177,7 +181,11 @@
                 .eq('active', true)
                 .order('sort_order')
         ]);
-        members = (mem ?? []) as unknown as Member[];
+        // 합계 제외 그룹(자녀돌봄)은 인솔 리더를 출석 목록에서 숨긴다. 통계에서도 제외되므로 체크할 대상이 아니다.
+        // DB의 리더 지정 자체는 그대로 둬야 RLS 접근 권한이 유지되므로, 여기서 화면만 걸러낸다.
+        const rows = (mem ?? []) as unknown as Member[];
+        const g = groups.find((x) => x.id === gid);
+        members = g?.counts_in_total === false ? rows.filter((m) => m.role !== 'leader') : rows;
         sessions = (sess ?? []) as unknown as Session[];
 
         // 기본 선택 = 오늘 이전의 가장 최근 주차
