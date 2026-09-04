@@ -96,7 +96,13 @@
             .select('id, role, sort_order, active, user_id, custom_users(name, office, phone)')
             .eq('small_group_id', selectedGroupId)
             .order('sort_order');
-        members = (data ?? []) as unknown as Member[];
+        // 리더 → 일반 구성원 → 제외된 인원 순. 같은 구간 안에서는 기존 sort_order 유지.
+        members = ((data ?? []) as unknown as Member[]).sort(
+            (a, b) =>
+                Number(!a.active) - Number(!b.active) ||
+                Number(a.role !== 'leader') - Number(b.role !== 'leader') ||
+                a.sort_order - b.sort_order
+        );
     }
 
     async function makeLeader(memberId: number) {

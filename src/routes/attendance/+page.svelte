@@ -77,6 +77,9 @@
     const rateById = $derived(new Map(memberStats.map((ms) => [ms.member.id, ms.rate])));
     const sortedMembers = $derived(
         [...members].sort((a, b) => {
+            // 리더는 선택한 정렬 기준과 무관하게 항상 맨 위
+            const lead = Number(a.role !== 'leader') - Number(b.role !== 'leader');
+            if (lead !== 0) return lead;
             if (sortBy === 'name')
                 return (a.custom_users?.name ?? '').localeCompare(b.custom_users?.name ?? '', 'ko');
             if (sortBy === 'rate-asc')
