@@ -319,6 +319,7 @@
                 </div>
                 {@render communityTable(weekByCommunity, 'week')}
                 <p class="text-xs text-gray-400 mt-2">※ 출석률 0%(회색)는 해당 주차를 아직 입력하지 않은 그룹일 수 있습니다.</p>
+                <p class="text-xs text-gray-400 mt-1">※ '집계 제외' 그룹은 공동체 합계에 넣지 않으며, 인솔 리더는 인원에서 빼고 셉니다. (명단 인원과 다를 수 있습니다)</p>
             {:else if !weekBusy}
                 <p class="py-10 text-center text-gray-400">표시할 데이터가 없습니다.</p>
             {/if}
