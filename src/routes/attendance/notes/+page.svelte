@@ -217,6 +217,21 @@
         return { mn, gn };
     }
 
+    // 검색은 '불러온 범위' 안에서만 동작한다. 이름으로 찾을 때는 보통 전체 기간을
+    // 보고 싶으므로, 검색어를 넣으면 남은 주차를 자동으로 모두 불러온다.
+    // (loadMore(true) 후에는 hasMore 가 false 라 다시 호출되지 않는다)
+    let searchTimer: ReturnType<typeof setTimeout> | undefined;
+    let autoLoaded = $state(false);
+    function onQueryInput() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => {
+            if (query.trim() && hasMore) {
+                autoLoaded = true;
+                loadMore(true);
+            }
+        }, 400);
+    }
+
     async function loadMore(all = false) {
         if (loadingMore || !hasMore) return;
         loadingMore = true;
@@ -336,7 +351,7 @@
             </div>
             <div class="flex-1 min-w-[180px]">
                 <label for="fq" class="block text-[11px] font-bold text-gray-600 mb-1">이름 · 내용 검색</label>
-                <input id="fq" type="text" placeholder="이름 또는 내용 (예: 이충우)" bind:value={query}
+                <input id="fq" type="text" placeholder="이름 또는 내용 (예: 이충우)" bind:value={query} oninput={onQueryInput}
                     class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white text-sm" />
             </div>
             <button type="button" onclick={resetFilters}
@@ -347,6 +362,7 @@
             <p class="text-sm text-gray-500">
                 <b class="text-gray-900">{totalCount}</b>건 · {totalGroups}개 소그룹
                 <span class="text-gray-400">· 최근 {loadedCount}주 조회{#if hasMore} (전체 {sessions.length}주){/if}</span>
+                {#if autoLoaded && !hasMore}<span class="text-primary-600">· 검색을 위해 전체 기간을 불러왔습니다</span>{/if}
             </p>
             {#if loadingMore}<span class="text-xs text-gray-400">불러오는 중…</span>{/if}
         </div>
