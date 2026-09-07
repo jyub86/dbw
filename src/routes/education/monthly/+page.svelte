@@ -227,7 +227,7 @@
 
 <svelte:head><title>교육위원회 월간 보고서 - 부평동부교회</title></svelte:head>
 
-<div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-14 print:max-w-none print:p-0">
+<div class="monthly-page w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10 sm:py-14">
     <div class="print:hidden">
         <h1 class="text-2xl sm:text-3xl font-black text-gray-900 mb-1">교육위원회 월간 보고서</h1>
         <p class="text-gray-500 mb-6 text-sm sm:text-base">주차별 보고서를 한 달치로 모아 회의 양식으로 출력합니다.</p>
@@ -434,6 +434,10 @@
     }
     .report-sheet :global(table.sheet) {
         border-collapse: collapse;
+        /* auto 레이아웃이면 내용이 열을 밀어 표가 100% 를 넘겨 우측 테두리가 잘린다.
+           th 에 준 퍼센트 너비를 그대로 지키도록 고정한다. */
+        table-layout: fixed;
+        width: 100%;
     }
     .report-sheet :global(table.sheet th),
     .report-sheet :global(table.sheet td) {
@@ -469,10 +473,19 @@
         :global(body) {
             background: #fff;
         }
-        /* 레이아웃 여백은 +layout.svelte 의 print:pt-0 / print:min-h-0 이 처리한다 */
+        /* 레이아웃 여백은 +layout.svelte 의 print:pt-0 / print:min-h-0 이 처리한다.
+           페이지 좌우 여백은 @page 가 담당하므로 래퍼 패딩은 완전히 없앤다.
+           (Tailwind 는 px-* 를 p-* 뒤에 출력해 print:p-0 이 lg:px-12 를 못 덮는다) */
+        .monthly-page {
+            padding: 0 !important;
+            margin: 0 !important;
+            max-width: none !important;
+        }
         .report-sheet {
-            width: auto;
+            width: 100%;
+            max-width: 100%;
             border: 0;
+            padding: 0;
         }
     }
 </style>
