@@ -51,7 +51,8 @@
 	{/if}
 </svelte:head>
 
-<div class="min-h-screen flex flex-col pt-20">
+<!-- print:pt-0 — 인쇄 시 고정 헤더용 여백을 걷어낸다 (예: 교육위원회 월간 보고서 출력) -->
+<div class="min-h-screen flex flex-col pt-20 print:pt-0 print:min-h-0">
 	<Header />
 
 	<main class="grow flex flex-col w-full">

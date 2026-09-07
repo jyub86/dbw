@@ -131,6 +131,56 @@ export function sundayList(back: number, fwd: number): string[] {
 	return out;
 }
 
+// ── 월간 보고서(교육위원회 PDF) ─────────────────
+/** 양식의 '행사보고 및 예정' 행 순서. 교육부서 5개 + 주차 보고서에 없는 항목. */
+export const MONTHLY_ROWS = [...DEPARTMENTS, '장학부', '교육위원회'] as const;
+
+/** 주차별 보고서에 없어서 월 단위로 직접 입력받는 항목. */
+export type EducationMonthlyRow = {
+	year_month: string;
+	department: string;
+	manager_name: string | null;
+	new_friends: number | null;
+	report_text: string | null;
+	plan_text: string | null;
+	suggestion: string | null;
+};
+
+/** 'YYYY-MM-DD' | Date → 'YYYY-MM' */
+export const ymOf = (iso: string) => iso.slice(0, 7);
+/** 'YYYY-MM' 의 이전 달 */
+export const prevYm = (ym: string) => (isYm(ym) ? addMonths(ym, -1) : ym);
+/** 'YYYY-MM' 형식인지 검사. */
+export const isYm = (ym: string) => /^\d{4}-\d{2}$/.test(ym);
+/** 'YYYY-MM' → '9월' (형식이 아니면 빈 문자열 — NaN월 방지) */
+export const monthOnly = (ym: string) => (isYm(ym) ? `${Number(ym.slice(5, 7))}월` : '');
+/** 'YYYY-MM' → '2026년 9월' */
+export const ymLabel = (ym: string) => (isYm(ym) ? `${ym.slice(0, 4)}년 ${monthOnly(ym)}` : '');
+/** 'YYYY-MM' 에 months(음수 가능)를 더한 값. */
+export function addMonths(ym: string, months: number): string {
+	const [y, m] = ym.split('-').map(Number);
+	const t = m + months;
+	const yy = y + Math.floor((t - 1) / 12);
+	const mm = ((((t - 1) % 12) + 12) % 12) + 1;
+	return `${yy}-${String(mm).padStart(2, '0')}`;
+}
+/**
+ * 회의월 선택지 (최근이 앞). fwd 는 미래 달 수 —
+ * 다음 달 회의 자료를 미리 준비할 수 있도록 기본 1개월을 포함한다.
+ */
+export function ymList(back: number, fwd = 1): string[] {
+	const base = ymOf(todayISO());
+	const out: string[] = [];
+	for (let i = fwd; i >= -back; i--) out.push(addMonths(base, i));
+	return out;
+}
+/** 'YYYY-MM' 의 시작일과 다음 달 시작일 (쿼리 범위용) */
+export function ymRange(ym: string): { from: string; to: string } {
+	const [y, m] = ym.split('-').map(Number);
+	const to = m === 12 ? `${y + 1}-01-01` : `${y}-${String(m + 1).padStart(2, '0')}-01`;
+	return { from: `${ym}-01`, to };
+}
+
 // ── 반기(상/하) 헬퍼 ─────────────────────────────
 /** 정렬용 키: '2026-H2' (1~6월=H1, 7~12월=H2). */
 export function halfKey(iso: string): string {

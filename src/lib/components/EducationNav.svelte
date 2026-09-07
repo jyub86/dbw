@@ -3,6 +3,7 @@
 
 	const tabs = [
 		{ name: '보고서', href: '/education' },
+		{ name: '월간 보고서', href: '/education/monthly' },
 		{ name: '추이', href: '/education/trend' },
 		{ name: '계획', href: '/education/plan' }
 	];
@@ -16,7 +17,8 @@
 				current === '/education' ||
 				(current.startsWith('/education/') &&
 					!current.startsWith('/education/trend') &&
-					!current.startsWith('/education/plan'))
+					!current.startsWith('/education/plan') &&
+					!current.startsWith('/education/monthly'))
 			);
 		}
 		return current.startsWith(href);
