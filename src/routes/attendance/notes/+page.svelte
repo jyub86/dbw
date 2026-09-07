@@ -74,6 +74,13 @@
         const q = query.trim().toLowerCase();
         return !q || text.toLowerCase().includes(q);
     }
+    // 구성원 메모는 내용과 **대상자 이름**을 함께 검색한다.
+    // 소그룹을 몰라도 이름만으로 그 사람 기록을 모아볼 수 있어야 하기 때문.
+    function hitNote(n: MemberNote) {
+        const q = query.trim().toLowerCase();
+        if (!q) return true;
+        return n.note.toLowerCase().includes(q) || who(n).name.toLowerCase().includes(q);
+    }
     function passes(gid: number, sid: number) {
         const g = groupById.get(gid);
         if (!g) return false;
@@ -105,7 +112,7 @@
                 const gn = groupNotes.find((x) => x.small_group_id === g.id && x.session_id === s.id);
                 const gnText = gn && hit(gn.note) ? gn.note : null;
                 const items = memberNotes
-                    .filter((n) => n.small_group_id === g.id && n.session_id === s.id && hit(n.note))
+                    .filter((n) => n.small_group_id === g.id && n.session_id === s.id && hitNote(n))
                     .map((n) => ({ ...who(n), note: n.note }))
                     .sort((a, b) => a.name.localeCompare(b.name, 'ko'));
                 if (!gnText && items.length === 0) continue;
@@ -135,7 +142,7 @@
         const map = new Map<number, PersonBlock>();
         for (const n of memberNotes) {
             if (!passes(n.small_group_id, n.session_id)) continue;
-            if (!hit(n.note)) continue;
+            if (!hitNote(n)) continue;
             const date = dateOf.get(n.session_id);
             if (!date) continue; // 불러오지 않은 주차
             let p = map.get(n.member_id);
@@ -177,7 +184,7 @@
     const totalGroups = $derived(
         new Set(
             memberNotes
-                .filter((n) => passes(n.small_group_id, n.session_id) && hit(n.note) && dateOf.has(n.session_id))
+                .filter((n) => passes(n.small_group_id, n.session_id) && hitNote(n) && dateOf.has(n.session_id))
                 .map((n) => n.small_group_id)
                 .concat(
                     groupNotes
@@ -328,8 +335,8 @@
                 </select>
             </div>
             <div class="flex-1 min-w-[180px]">
-                <label for="fq" class="block text-[11px] font-bold text-gray-600 mb-1">검색</label>
-                <input id="fq" type="text" placeholder="내용으로 검색" bind:value={query}
+                <label for="fq" class="block text-[11px] font-bold text-gray-600 mb-1">이름 · 내용 검색</label>
+                <input id="fq" type="text" placeholder="이름 또는 내용 (예: 이충우)" bind:value={query}
                     class="w-full px-3 py-2 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white text-sm" />
             </div>
             <button type="button" onclick={resetFilters}
