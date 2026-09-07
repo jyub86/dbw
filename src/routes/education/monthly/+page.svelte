@@ -481,9 +481,12 @@
             margin: 0 !important;
             max-width: none !important;
         }
+        /* @page 여백 12mm → 내용 폭 186mm. 182mm 로 잡아 좌우 2mm 여유를 두면
+           프린터/브라우저의 반올림 때문에 우측 1px 테두리가 잘리는 일이 없다.
+           (mx-auto 로 가운데 정렬되어 여유가 양쪽에 나뉜다) */
         .report-sheet {
-            width: 100%;
-            max-width: 100%;
+            width: 182mm;
+            max-width: 182mm;
             border: 0;
             padding: 0;
         }

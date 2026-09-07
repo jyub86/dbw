@@ -22,3 +22,17 @@
 footer {
   padding-bottom: max(2rem, env(safe-area-inset-bottom));
 }
+
+/*
+ * 인쇄 시 overflow 해제.
+ * 위 base 의 overflow-x:hidden 은 화면에서 가로 스크롤을 막으려는 것인데,
+ * 인쇄에서는 클리핑 박스로 작동해 페이지 우측에 살짝 걸치는 표 테두리를 잘라낸다.
+ * scrollbar-gutter 도 인쇄에선 폭만 갉아먹는다. (교육위원회 월간 보고서 출력)
+ */
+@media print {
+  html,
+  body {
+    overflow: visible !important;
+    scrollbar-gutter: auto !important;
+  }
+}
