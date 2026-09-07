@@ -76,7 +76,8 @@
     });
 
     // ── 행사 자동 초안 ───────────────────────────
-    // 주차별 '이번 주'를 줄 단위로 펼쳐 중복 제거 후 '+' 를 붙인다.
+    // 주차별 '이번 주'를 줄 단위로 펼쳐 중복 제거 후 항목 기호를 붙인다.
+    const BULLET = '-';
     function draft(weeks: WeekRow[], dept: string): string {
         const seen = new Set<string>();
         const lines: string[] = [];
@@ -85,7 +86,7 @@
                 const s = raw.trim();
                 if (!s || seen.has(s)) continue;
                 seen.add(s);
-                lines.push(`+${s}`);
+                lines.push(`${BULLET}${s}`);
             }
         }
         return lines.join('\n');
