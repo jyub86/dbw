@@ -388,8 +388,8 @@
                                 {d}
                                 {#if form[d].manager_name.trim()}<br /><span class="text-xs">({form[d].manager_name.trim()})</span>{/if}
                             </td>
-                            <td class="text-left align-top pl-2 whitespace-pre-wrap break-words text-xs">{form[d].report_text}</td>
-                            <td class="text-left align-top pl-2 whitespace-pre-wrap break-words text-xs">{form[d].plan_text}</td>
+                            <td class="tl whitespace-pre-wrap break-words text-xs">{form[d].report_text}</td>
+                            <td class="tl whitespace-pre-wrap break-words text-xs">{form[d].plan_text}</td>
                         </tr>
                     {/each}
                 </tbody>
@@ -411,7 +411,7 @@
                         {#each suggestionRows as d}
                             <tr>
                                 <td class="text-center">{d}</td>
-                                <td class="text-left align-top pl-2 whitespace-pre-wrap break-words text-xs">{form[d].suggestion}</td>
+                                <td class="tl whitespace-pre-wrap break-words text-xs">{form[d].suggestion}</td>
                             </tr>
                         {/each}
                     {/if}
@@ -446,6 +446,13 @@
     }
     .report-sheet :global(table.sheet th) {
         font-weight: 700;
+    }
+    /* 위 기본 규칙(가운데 정렬)이 Tailwind 의 text-left 를 특정도로 눌러버리므로
+       좌측 정렬이 필요한 칸은 같은 층위의 클래스로 지정한다. (원본 양식이 좌측 정렬) */
+    .report-sheet :global(table.sheet td.tl) {
+        text-align: left;
+        vertical-align: top;
+        padding-left: 6px;
     }
     /* 표가 페이지 경계에서 잘리지 않도록 */
     .report-sheet :global(table.sheet tr) {
