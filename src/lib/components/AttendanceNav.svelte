@@ -10,6 +10,8 @@
     const tabs = $derived([
         { name: '출석 체크', href: '/attendance', show: canCheck },
         { name: '통계 대시보드', href: '/attendance/dashboard', show: canViewStats },
+        // 전체 소그룹 특이사항 — 교역자/관리자만 (통계 열람자는 RLS 로도 막힘)
+        { name: '특이사항', href: '/attendance/notes', show: canManage },
         { name: '명단 관리', href: '/attendance/manage', show: canManage }
     ].filter((t) => t.show));
 
