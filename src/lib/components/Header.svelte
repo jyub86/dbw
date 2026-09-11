@@ -11,6 +11,7 @@
 	let isAdmin = $state(false);
 	let canSeeAttendance = $state(false);
 	let canSeeEducation = $state(false);
+	let canSeeParking = $state(false);
 
 	async function logout() {
 		dropdownOpen = false;
@@ -30,6 +31,8 @@
 		...baseMenus,
 		...(canSeeAttendance ? [{ name: "출석부", href: "/attendance" }] : []),
 		...(canSeeEducation ? [{ name: "교육부서", href: "/education" }] : []),
+		// '주차' 만 쓰면 이 앱에서 흔한 '주차(week)' 와 헷갈려 '주차 관리' 로 둔다.
+		...(canSeeParking ? [{ name: "주차 관리", href: "/parking" }] : []),
 	]);
 
 	function toggleNav() {
@@ -87,6 +90,18 @@
 			eduAllowed = (ec ?? 0) > 0;
 		}
 		canSeeEducation = eduAllowed;
+
+		// 주차 관리 메뉴 노출: 관리자(level>=100) 또는 지정된 주차 담당자.
+		// 관리자는 아래 조회를 건너뛴다.
+		let parkAllowed = isAdmin;
+		if (data?.id && !parkAllowed) {
+			const { count: pc } = await supabaseBrowser
+				.from("parking_managers")
+				.select("user_id", { count: "exact", head: true })
+				.eq("user_id", data.id);
+			parkAllowed = (pc ?? 0) > 0;
+		}
+		canSeeParking = parkAllowed;
 	}
 
 	onMount(() => {
@@ -184,8 +199,8 @@
 									class="absolute right-0 top-12 w-36 bg-white rounded-2xl shadow-xl border border-gray-100 py-1 z-50"
 									onmouseleave={() => dropdownOpen = false}
 								>
-									<!-- 주차 담당자 화면(/parking)은 /parking/my 안에서 링크로 연결한다.
-									     Header 에서 담당자 여부까지 조회하면 모든 페이지에 쿼리가 하나 더 붙는다. -->
+									<!-- '내 차량'(본인 등록)은 개인 설정이라 드롭다운에,
+									     '주차 관리'(담당자 업무 화면)는 메인 메뉴에 둔다. -->
 									<a href="/parking/my" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
 										내 차량
 									</a>
