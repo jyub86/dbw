@@ -271,11 +271,18 @@
 			style="transition-delay: 500ms;"
 		>
 			{#if isLoggedIn}
+				<a
+					href="/parking/my"
+					onclick={toggleNav}
+					class="inline-block px-10 py-3.5 mb-2 mr-2 rounded-full font-bold text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+				>
+					내 차량
+				</a>
 				{#if isAdmin}
 					<a
 						href="/logs"
 						onclick={toggleNav}
-						class="inline-block px-10 py-3.5 mr-2 rounded-full font-bold text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+						class="inline-block px-10 py-3.5 mb-2 mr-2 rounded-full font-bold text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
 					>
 						변경 로그
 					</a>
