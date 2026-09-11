@@ -184,8 +184,13 @@
 									class="absolute right-0 top-12 w-36 bg-white rounded-2xl shadow-xl border border-gray-100 py-1 z-50"
 									onmouseleave={() => dropdownOpen = false}
 								>
+									<!-- 주차 담당자 화면(/parking)은 /parking/my 안에서 링크로 연결한다.
+									     Header 에서 담당자 여부까지 조회하면 모든 페이지에 쿼리가 하나 더 붙는다. -->
+									<a href="/parking/my" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
+										내 차량
+									</a>
 									{#if isAdmin}
-										<a href="/logs" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
+										<a href="/logs" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
 											변경 로그
 										</a>
 									{/if}
