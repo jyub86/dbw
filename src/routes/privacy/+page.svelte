@@ -4,7 +4,8 @@
 
 <div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">개인정보처리방침</h1>
-    <p class="text-gray-500 mb-12">공고일자: 2020년 10월 20일 &nbsp;|&nbsp; 시행일자: 2020년 11월 1일</p>
+    <!-- 시행일자는 '12. 고지의 의무'(최소 7일 전 공지)에 따라 공고일 + 7일로 잡는다. -->
+    <p class="text-gray-500 mb-12">공고일자: 2026년 9월 11일 &nbsp;|&nbsp; 시행일자: 2026년 9월 18일</p>
 
     <div class="prose prose-gray max-w-none space-y-10">
 
