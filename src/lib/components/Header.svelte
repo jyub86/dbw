@@ -119,7 +119,7 @@
 		const { data: { subscription } } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
 			isLoggedIn = !!session;
 			if (session) loadProfile(session.user.id);
-			else { profilePicture = null; isAdmin = false; canSeeAttendance = false; canSeeEducation = false; }
+			else { profilePicture = null; isAdmin = false; canSeeAttendance = false; canSeeEducation = false; canSeeParking = false; }
 		});
 
 		const handleClickOutside = (e: MouseEvent) => {
@@ -149,7 +149,7 @@
 			</div>
 
 			<!-- Desktop Nav (Center) -->
-			<nav class="hidden md:flex md:flex-1 justify-center space-x-6 lg:space-x-8">
+			<nav class="hidden xl:flex xl:flex-1 justify-center space-x-6 xl:space-x-8">
 				{#each menus as menu}
 					<a
 						href={menu.href}
@@ -177,7 +177,7 @@
 
 			<!-- Right Actions / Mobile Toggle -->
 			<div class="shrink-0 flex justify-end relative z-50 ml-4">
-				<div class="hidden md:flex items-center">
+				<div class="hidden xl:flex items-center">
 						{#if isLoggedIn}
 						<div class="relative profile-dropdown">
 							<button
@@ -231,7 +231,7 @@
 				<button
 					type="button"
 					onclick={toggleNav}
-					class="md:hidden inline-flex items-center justify-center p-2 rounded-full text-gray-900 hover:bg-gray-100 transition-colors focus:outline-none"
+					class="xl:hidden inline-flex items-center justify-center p-2 rounded-full text-gray-900 hover:bg-gray-100 transition-colors focus:outline-none"
 				>
 					<span class="sr-only">Open menu</span>
 					<div
@@ -261,7 +261,7 @@
 
 	<!-- Premium Mobile Menu Fullscreen Overlay -->
 	<div
-		class="fixed inset-0 bg-white z-40 transition-all duration-500 ease-in-out md:hidden flex flex-col justify-center px-8 overflow-y-auto {navOpen
+		class="fixed inset-0 bg-white z-40 transition-all duration-500 ease-in-out xl:hidden flex flex-col justify-center px-8 overflow-y-auto {navOpen
 			? 'opacity-100 visible'
 			: 'opacity-0 invisible'}"
 	>
