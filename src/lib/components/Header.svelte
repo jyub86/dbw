@@ -205,6 +205,9 @@
 										내 차량
 									</a>
 									{#if isAdmin}
+										<a href="/export" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+											자료 내보내기
+										</a>
 										<a href="/logs" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
 											변경 로그
 										</a>
@@ -294,6 +297,13 @@
 					내 차량
 				</a>
 				{#if isAdmin}
+					<a
+						href="/export"
+						onclick={toggleNav}
+						class="inline-block px-10 py-3.5 mb-2 mr-2 rounded-full font-bold text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+					>
+						자료 내보내기
+					</a>
 					<a
 						href="/logs"
 						onclick={toggleNav}
