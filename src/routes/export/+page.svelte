@@ -16,13 +16,21 @@
         | 'education'       // 교육부서 주간 보고서
         | 'education_month'; // 교육위원회 월간 보고서
 
-    const KINDS: { key: Kind; name: string; desc: string }[] = [
-        { key: 'attendance', name: '출석 기록', desc: '주차 × 인원 단위. 누가 언제 출석했는지' },
-        { key: 'attendance_sum', name: '출석 요약', desc: '주차 × 소그룹 단위. 인원·출석·출석률' },
-        { key: 'notes', name: '특이사항 · 기타 의견', desc: '구성원 메모와 소그룹 기타 의견' },
-        { key: 'education', name: '교육부서 주간 보고서', desc: '주차 × 부서. 출석현황과 교육·행사' },
-        { key: 'education_month', name: '교육위원회 월간 보고서', desc: '월 × 부서. 담당자·새친구·행사' }
+    // area: 이 자료가 속한 권한 영역. export_users 에 지정된 영역만 받을 수 있다.
+    type Area = 'attendance' | 'education';
+    const KINDS: { key: Kind; name: string; desc: string; area: Area }[] = [
+        { key: 'attendance', name: '출석 기록', desc: '주차 × 인원 단위. 누가 언제 출석했는지', area: 'attendance' },
+        { key: 'attendance_sum', name: '출석 요약', desc: '주차 × 소그룹 단위. 인원·출석·출석률', area: 'attendance' },
+        { key: 'notes', name: '특이사항 · 기타 의견', desc: '구성원 메모와 소그룹 기타 의견', area: 'attendance' },
+        { key: 'education', name: '교육부서 주간 보고서', desc: '주차 × 부서. 출석현황과 교육·행사', area: 'education' },
+        { key: 'education_month', name: '교육위원회 월간 보고서', desc: '월 × 부서. 담당자·새친구·행사', area: 'education' }
     ];
+
+    type Profile = { id: string; name: string | null; office: string | null; phone: string | null; active?: boolean };
+    type ExportUser = {
+        user_id: string; can_attendance: boolean; can_education: boolean; note: string | null;
+        custom_users: Embed<{ name: string | null; office: string | null }>;
+    };
 
     let loading = $state(true);
     let denied = $state(false);
@@ -30,9 +38,31 @@
     let msg = $state('');
     let errorMsg = $state('');
 
+    let isAdmin = $state(false);
+    let canAttendance = $state(false);
+    let canEducation = $state(false);
+
     let kind = $state<Kind>('attendance');
     let from = $state('');
     let to = $state(todayISO());
+
+    // 지정 관리 (관리자만)
+    let users = $state<ExportUser[]>([]);
+    let pickerOpen = $state(false);
+    let pickerQuery = $state('');
+    let pickerResults = $state<Profile[]>([]);
+
+    // 내가 받을 수 있는 자료만 보여준다.
+    const kinds = $derived(
+        KINDS.filter((k) => (k.area === 'attendance' ? canAttendance : canEducation))
+    );
+
+    async function loadUsers() {
+        const { data } = await supabaseBrowser
+            .from('export_users')
+            .select('user_id, can_attendance, can_education, note, custom_users(name, office)');
+        users = (data ?? []) as unknown as ExportUser[];
+    }
 
     onMount(async () => {
         const {
@@ -41,15 +71,34 @@
         if (!session) return goto('/login');
         const { data: me } = await supabaseBrowser
             .from('custom_users')
-            .select('roles(level)')
+            .select('id, roles(level)')
             .eq('auth_id', session.user.id)
             .single();
         const level = (me?.roles as unknown as { level: number } | null)?.level ?? 0;
-        if (level < 100) {
+        isAdmin = level >= 100;
+
+        if (isAdmin) {
+            canAttendance = true;
+            canEducation = true;
+            await loadUsers();
+        } else if (me?.id) {
+            // export_users RLS: 본인 행만 조회됨
+            const { data: row } = await supabaseBrowser
+                .from('export_users')
+                .select('can_attendance, can_education')
+                .eq('user_id', me.id)
+                .maybeSingle();
+            canAttendance = row?.can_attendance ?? false;
+            canEducation = row?.can_education ?? false;
+        }
+
+        if (!canAttendance && !canEducation) {
             denied = true;
             loading = false;
             return;
         }
+        // 받을 수 있는 자료 중 첫 번째를 기본 선택
+        kind = kinds[0]?.key ?? 'attendance';
         // 기본 범위: 올해 1월 1일 ~ 오늘
         from = `${todayISO().slice(0, 4)}-01-01`;
         loading = false;
@@ -57,8 +106,61 @@
 
     const valid = $derived(!!from && !!to && from <= to);
 
+    async function searchProfiles(term: string) {
+        const t = term.trim();
+        if (!t) {
+            pickerResults = [];
+            return;
+        }
+        const { data } = await supabaseBrowser
+            .from('custom_users')
+            .select('id, name, office, phone, active')
+            .ilike('name', `%${t}%`)
+            .order('active', { ascending: false })
+            .order('name')
+            .limit(30);
+        pickerResults = (data ?? []) as Profile[];
+    }
+    async function addUser(pid: string, area: Area) {
+        const { error } = await supabaseBrowser.from('export_users').upsert(
+            {
+                user_id: pid,
+                can_attendance: area === 'attendance',
+                can_education: area === 'education'
+            },
+            { onConflict: 'user_id' }
+        );
+        msg = error ? '지정 실패 (관리자만 가능)' : '내보내기 권한을 지정했습니다.';
+        pickerOpen = false;
+        pickerQuery = '';
+        pickerResults = [];
+        await loadUsers();
+    }
+    /** 영역 하나를 켜고 끈다. 둘 다 꺼지면 행을 지운다(CHECK 제약). */
+    async function toggleArea(u: ExportUser, area: Area) {
+        const next = {
+            can_attendance: area === 'attendance' ? !u.can_attendance : u.can_attendance,
+            can_education: area === 'education' ? !u.can_education : u.can_education
+        };
+        const { error } = next.can_attendance || next.can_education
+            ? await supabaseBrowser.from('export_users').update(next).eq('user_id', u.user_id)
+            : await supabaseBrowser.from('export_users').delete().eq('user_id', u.user_id);
+        if (error) msg = '변경 실패 (관리자만 가능)';
+        await loadUsers();
+    }
+    async function removeUser(pid: string) {
+        const { error } = await supabaseBrowser.from('export_users').delete().eq('user_id', pid);
+        if (error) msg = '해제 실패 (관리자만 가능)';
+        await loadUsers();
+    }
+
     async function run() {
         if (!valid || busy) return;
+        // 권한 밖 자료는 만들지 않는다 (목록에서도 숨기지만 한 번 더 막는다)
+        if (!kinds.some((k) => k.key === kind)) {
+            errorMsg = '이 자료를 내보낼 권한이 없습니다.';
+            return;
+        }
         busy = kind;
         msg = '';
         errorMsg = '';
@@ -347,7 +449,7 @@
     {:else if denied}
         <div class="py-20 text-center">
             <p class="text-gray-500 font-medium">접근 권한이 없습니다.</p>
-            <p class="text-gray-400 text-sm mt-2">관리자만 사용할 수 있습니다.</p>
+            <p class="text-gray-400 text-sm mt-2">관리자가 지정한 사람만 사용할 수 있습니다.</p>
             <a href="/" class="inline-block mt-6 px-6 py-2.5 rounded-full bg-primary-900 text-white font-bold text-sm">홈으로</a>
         </div>
     {:else}
@@ -388,7 +490,7 @@
 
         <!-- 자료 선택 -->
         <div class="rounded-2xl border border-gray-200 overflow-hidden mb-6">
-            {#each KINDS as k}
+            {#each kinds as k}
                 <label class="flex items-start gap-3 px-4 py-3 border-b border-gray-50 last:border-0 cursor-pointer hover:bg-gray-50">
                     <input type="radio" name="kind" value={k.key} bind:group={kind} class="mt-1" />
                     <span>
@@ -407,5 +509,64 @@
         <p class="mt-4 text-xs text-gray-400">
             ※ 엑셀에서 바로 열립니다. '출석 요약'의 인원은 <b>현재 명단</b> 기준이라 과거 주차는 참고값입니다.
         </p>
+
+        <!-- 내보내기 권한 지정 (관리자만) -->
+        {#if isAdmin}
+            <section class="mt-14">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-lg font-black text-gray-900">내보내기 권한 지정</h2>
+                    <button type="button" onclick={() => { pickerOpen = !pickerOpen; pickerQuery = ''; pickerResults = []; }}
+                        class="px-4 py-2 rounded-xl bg-gray-900 text-white font-bold text-sm hover:bg-gray-700">+ 사람 추가</button>
+                </div>
+                <p class="text-xs text-gray-400 mb-3">
+                    지정된 사람은 해당 영역의 자료를 <b>개인정보가 담긴 파일로</b> 내려받을 수 있습니다. (지정/해제는 관리자만 가능)
+                </p>
+
+                {#if pickerOpen}
+                    <div class="rounded-2xl border border-gray-200 p-4 mb-4 bg-gray-50">
+                        <input type="text" placeholder="이름으로 검색" bind:value={pickerQuery} oninput={() => searchProfiles(pickerQuery)}
+                            class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-primary-500 mb-2" />
+                        <div class="max-h-56 overflow-y-auto divide-y divide-gray-100 bg-white rounded-lg">
+                            {#each pickerResults as r}
+                                <div class="flex items-center gap-2 px-3 py-2 text-sm">
+                                    <span class="font-medium flex-1 min-w-0 truncate">
+                                        {r.name}{#if r.active === false}<span class="ml-1 text-[10px] text-gray-400 font-normal">(미가입)</span>{/if}
+                                        <span class="text-gray-400 text-xs ml-1">{r.office ?? ''}</span>
+                                    </span>
+                                    <button type="button" onclick={() => addUser(r.id, 'attendance')}
+                                        class="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-gray-200 text-gray-600 hover:border-primary-400 hover:text-primary-700 shrink-0">출석</button>
+                                    <button type="button" onclick={() => addUser(r.id, 'education')}
+                                        class="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-gray-200 text-gray-600 hover:border-primary-400 hover:text-primary-700 shrink-0">교육</button>
+                                </div>
+                            {/each}
+                            {#if pickerQuery && pickerResults.length === 0}<div class="px-3 py-3 text-sm text-gray-400">검색 결과 없음</div>{/if}
+                        </div>
+                    </div>
+                {/if}
+
+                <div class="rounded-2xl border border-gray-100 overflow-hidden">
+                    {#if users.length === 0}
+                        <div class="px-4 py-5 text-sm text-gray-400 text-center">
+                            지정된 사람이 없습니다. (관리자는 지정 없이도 전체를 내보낼 수 있습니다)
+                        </div>
+                    {/if}
+                    {#each users as u (u.user_id)}
+                        {@const o = one(u.custom_users)}
+                        <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-50 last:border-0 flex-wrap">
+                            <div class="flex-1 min-w-0">
+                                <span class="font-bold text-gray-900">{o?.name ?? '(이름없음)'}</span>
+                                <span class="text-xs text-gray-400 ml-2">{o?.office ?? ''}{u.note ? ` · ${u.note}` : ''}</span>
+                            </div>
+                            <button type="button" onclick={() => toggleArea(u, 'attendance')}
+                                class="px-2.5 py-1.5 rounded-lg text-xs font-bold border {u.can_attendance ? 'bg-primary-900 text-white border-primary-900' : 'border-gray-200 text-gray-400'}">출석</button>
+                            <button type="button" onclick={() => toggleArea(u, 'education')}
+                                class="px-2.5 py-1.5 rounded-lg text-xs font-bold border {u.can_education ? 'bg-primary-900 text-white border-primary-900' : 'border-gray-200 text-gray-400'}">교육</button>
+                            <button type="button" onclick={() => removeUser(u.user_id)}
+                                class="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-red-200 text-red-500 hover:bg-red-50">해제</button>
+                        </div>
+                    {/each}
+                </div>
+            </section>
+        {/if}
     {/if}
 </div>

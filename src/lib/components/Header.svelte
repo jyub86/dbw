@@ -12,6 +12,7 @@
 	let canSeeAttendance = $state(false);
 	let canSeeEducation = $state(false);
 	let canSeeParking = $state(false);
+	let canSeeExport = $state(false);
 
 	async function logout() {
 		dropdownOpen = false;
@@ -102,6 +103,17 @@
 			parkAllowed = (pc ?? 0) > 0;
 		}
 		canSeeParking = parkAllowed;
+
+		// 자료 내보내기 메뉴 노출: 관리자 또는 export_users 에 지정된 사람
+		let exportAllowed = isAdmin;
+		if (data?.id && !exportAllowed) {
+			const { count: xc } = await supabaseBrowser
+				.from("export_users")
+				.select("user_id", { count: "exact", head: true })
+				.eq("user_id", data.id);
+			exportAllowed = (xc ?? 0) > 0;
+		}
+		canSeeExport = exportAllowed;
 	}
 
 	onMount(() => {
@@ -119,7 +131,7 @@
 		const { data: { subscription } } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
 			isLoggedIn = !!session;
 			if (session) loadProfile(session.user.id);
-			else { profilePicture = null; isAdmin = false; canSeeAttendance = false; canSeeEducation = false; canSeeParking = false; }
+			else { profilePicture = null; isAdmin = false; canSeeAttendance = false; canSeeEducation = false; canSeeParking = false; canSeeExport = false; }
 		});
 
 		const handleClickOutside = (e: MouseEvent) => {
@@ -204,10 +216,12 @@
 									<a href="/parking/my" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
 										내 차량
 									</a>
-									{#if isAdmin}
+									{#if canSeeExport}
 										<a href="/export" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
 											자료 내보내기
 										</a>
+									{/if}
+									{#if isAdmin}
 										<a href="/logs" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
 											변경 로그
 										</a>
@@ -296,7 +310,7 @@
 				>
 					내 차량
 				</a>
-				{#if isAdmin}
+				{#if canSeeExport}
 					<a
 						href="/export"
 						onclick={toggleNav}
@@ -304,6 +318,8 @@
 					>
 						자료 내보내기
 					</a>
+				{/if}
+				{#if isAdmin}
 					<a
 						href="/logs"
 						onclick={toggleNav}
