@@ -439,7 +439,7 @@ erDiagram
    - 권한(`staff`)과 권한 이력, 접속기록, 변경기록
    - 권한 확인 헬퍼, MFA 설정
    - 검증: `supabase/tests/registry_foundation_test.sql` 57개 통과 (2026-10-10, 운영 DB 롤백 트랜잭션)
-2. 마이그레이션 ② `supabase/migrations/20261011_registry_core.sql` — **작성·검증 완료, 운영 미적용**
+2. 마이그레이션 ② `supabase/migrations/20261011_registry_core.sql` — **2026-10-10 운영 적용**
    - 교적·세대·이력·코드표·동의·병합 충돌 테이블, 현재 상태·신급·직분·목장을 계산하는 `registry.summary`
    - 화면용 함수 25개(`registry_*`): 검색, 카드, 확인 목록, 비슷한 사람 찾기, 새가족 등록, 기존 사람 교적 등록, 잘못 만든 교적 지우기,
      인적사항 수정, 상태·신급·직분 추가/삭제, 메모, 동의, 세대 편집, 계정 연결, 병합 충돌 목록
@@ -450,11 +450,11 @@ erDiagram
      - `account_delete_prepare()`: 서비스 롤 전용. 교적·목장·출석 기록이 있으면 연결만 끊고, 없으면 삭제한다
      - 기존 트리거 함수 `update_active_status_when_update_user_info`의 search_path 를 `public`으로 고정했다
        (search_path 를 비운 함수 안에서 불리면 `posts`를 못 찾고 실패하던 문제. 테스트에서 발견)
-3. 초기 교적 생성 `supabase/migrations/20261011_registry_seed.sql` — **작성·검증 완료, 운영 미적용** (§8)
+3. 초기 교적 생성 `supabase/migrations/20261011_registry_seed.sql` — **2026-10-10 운영 적용** (§8)
    - 검증: `supabase/tests/registry_core_test.sql` 121개 통과 (2026-10-11, ②+초기 생성을 운영 DB 롤백 트랜잭션으로)
    - 결과: 교적 526명, 등록 이벤트 526건(날짜 미상), 직분 이력 370건(서리집사 210·권사 110·시무집사 28·장로 20·전도사 2),
      확인 목록 59명(목장 없음 50·목장에서 빠짐 1·교인 인증 전 8). 기존 출석 통계 값은 그대로
-   - **적용 순서:** ② 적용 → `delete-account` 새 버전 배포(Flutter 저장소, `account_delete_prepare` 호출) → 초기 생성 적용
+   - 적용 순서: ② 적용 → `delete-account` v5 배포(Flutter 저장소, `account_delete_prepare` 호출) → 초기 생성 적용. 적용 후 테스트 121개 다시 통과
    - 출석부 '새 프로필 추가'를 미가입으로 바꾸고 기존 81명을 정리하는 일은 웹 화면 작업과 함께 한다
 4. 웹 화면
    - 목록·검색, 교적 카드, 새가족 등록, 세대 편집
