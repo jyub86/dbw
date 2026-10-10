@@ -13,6 +13,7 @@
 	let canSeeEducation = $state(false);
 	let canSeeParking = $state(false);
 	let canSeeExport = $state(false);
+	let registryHref = $state<string | null>(null);
 
 	async function logout() {
 		dropdownOpen = false;
@@ -32,6 +33,7 @@
 		...(canSeeEducation ? [{ name: "교육부서", href: "/education" }] : []),
 		// '주차' 만 쓰면 이 앱에서 흔한 '주차(week)' 와 헷갈려 '주차 관리' 로 둔다.
 		...(canSeeParking ? [{ name: "주차 관리", href: "/parking" }] : []),
+		...(registryHref ? [{ name: "교적", href: registryHref }] : []),
 		...(canSeeExport ? [{ name: "자료 내보내기", href: "/export" }] : []),
 		...(isAdmin ? [{ name: "변경 로그", href: "/logs" }] : []),
 	]);
@@ -151,6 +153,11 @@
 			exportAllowed = (xc ?? 0) > 0;
 		}
 		canSeeExport = exportAllowed;
+
+		// 교적 메뉴 노출: 교적 권한자 → 교인 목록, 교적 권한 없는 사이트 관리자 → 권한 관리 화면
+		const { data: reg } = await supabaseBrowser.rpc("registry_me");
+		const r = reg as { is_staff?: boolean; is_admin?: boolean } | null;
+		registryHref = r?.is_staff ? "/registry" : r?.is_admin ? "/registry/admin" : null;
 	}
 
 	onMount(() => {
@@ -168,7 +175,7 @@
 		const { data: { subscription } } = supabaseBrowser.auth.onAuthStateChange((_event, session) => {
 			isLoggedIn = !!session;
 			if (session) loadProfile(session.user.id);
-			else { isAdmin = false; canSeeAttendance = false; canSeeEducation = false; canSeeParking = false; canSeeExport = false; }
+			else { isAdmin = false; canSeeAttendance = false; canSeeEducation = false; canSeeParking = false; canSeeExport = false; registryHref = null; }
 		});
 
 		const handleClickOutside = (e: MouseEvent) => {
