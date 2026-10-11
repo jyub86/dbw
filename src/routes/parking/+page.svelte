@@ -147,16 +147,14 @@
         !!addTarget && addPlateNorm.length >= 4 && !!addConsentOn && addConfirmed && !addBusy
     );
 
+    // custom_users 직접 조회는 쓸 수 없다 — 프로필 조회가 좁혀져 있어서(소그룹·게시글·본인 등)
+    // 주차 담당자에겐 교인 대부분이 안 보인다(실측: 633명 중 117명). 정작 등록해 줘야 할
+    // 어르신을 못 찾는다. 이 기능에 필요한 최소 필드만 여는 RPC 를 쓴다.
     async function searchAddTargets(term: string) {
         const t = term.trim();
         if (!t) { addResults = []; return; }
-        const { data } = await supabaseBrowser
-            .from('custom_users')
-            .select('id, name, office, phone, active')
-            .ilike('name', `%${t}%`)
-            .order('active', { ascending: false })
-            .order('name')
-            .limit(30);
+        const { data, error } = await supabaseBrowser.rpc('parking_search_members', { q: t });
+        if (error) { errorMsg = '교인 검색에 실패했습니다.'; addResults = []; return; }
         addResults = (data ?? []) as Profile[];
     }
     function resetAdd() {
