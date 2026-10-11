@@ -4,7 +4,13 @@
     import { supabaseBrowser } from '$lib/supabase-browser';
     import { loadParkingAccess, normalizePlate, looksLikePlate } from '$lib/parking';
 
-    type Vehicle = { id: number; plate: string; memo: string | null; created_at: string };
+    type Embed<T> = T | T[] | null;
+    type Vehicle = {
+        id: number; plate: string; memo: string | null; created_at: string; consent_on: string | null;
+        registered_by_user: Embed<{ name: string | null }>;   // 대리 등록자 (본인 등록이면 null)
+    };
+    const one = <T,>(v: Embed<T>): T | null => (Array.isArray(v) ? (v[0] ?? null) : (v ?? null));
+    const fmtDay = (iso: string) => (iso || '').slice(0, 10).replaceAll('-', '.');
 
     let loading = $state(true);
     let denied = $state(false);
@@ -27,7 +33,10 @@
     async function load() {
         const { data, error } = await supabaseBrowser
             .from('member_vehicles')
-            .select('id, plate, memo, created_at')
+            .select('id, plate, memo, created_at, consent_on, registered_by_user:custom_users!member_vehicles_registered_by_fkey(name)')
+            // 반드시 본인 것만. RLS 는 주차 담당자·관리자에게 전체 조회를 허용하므로
+            // 필터가 없으면 '내 차량' 화면에 남의 차량까지 떠서 삭제 버튼까지 노출된다.
+            .eq('user_id', myId)
             .order('created_at');
         if (error) {
             errorMsg = '차량 목록을 불러오지 못했습니다.';
@@ -151,9 +160,17 @@
         {:else}
             <div class="rounded-2xl border border-gray-200 overflow-hidden">
                 {#each vehicles as v (v.id)}
-                    <div class="flex items-center gap-3 px-4 py-3 border-b border-gray-50 last:border-0">
+                    {@const by = one(v.registered_by_user)}
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-3 border-b border-gray-50 last:border-0">
                         <span class="font-black text-gray-900 tracking-wide">{v.plate}</span>
                         {#if v.memo}<span class="text-sm text-gray-500">{v.memo}</span>{/if}
+                        <span class="text-xs text-gray-400">{fmtDay(v.created_at)} 등록</span>
+                        {#if by}
+                            <!-- 본인이 올리지 않은 기록이므로 누가 올렸는지 반드시 알려 준다 -->
+                            <span class="text-[11px] font-bold text-primary-700 bg-primary-50 px-1.5 py-0.5 rounded">
+                                {by.name ?? '담당자'} 님이 대신 등록{#if v.consent_on} · 동의 {fmtDay(v.consent_on)}{/if}
+                            </span>
+                        {/if}
                         <button type="button" onclick={() => remove(v)}
                             class="ml-auto px-2.5 py-1.5 rounded-lg text-xs font-bold border border-red-200 text-red-500 hover:bg-red-50">삭제</button>
                     </div>
