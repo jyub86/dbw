@@ -277,12 +277,21 @@
 	</div>
 
 	<!-- Premium Mobile Menu Fullscreen Overlay -->
+	<!--
+	  바깥 div = 스크롤 담당, 안쪽 div = 가운데 정렬 담당. 한 요소에 둘을 같이 주면
+	  (justify-center + overflow-y-auto) 내용이 화면보다 길 때 위쪽이 잘리고 스크롤로도
+	  닿지 않는다. 메뉴 항목이 늘어 내용이 808px 가 된 지금 작은 폰에서 실제로 그랬다.
+	  pt-28(112px) 은 고정 헤더 자리 — 헤더가 z-50 으로 이 위에 그려지므로(닫기 버튼이
+	  헤더 안에 있어 가려지면 안 된다) 그만큼 비워 두지 않으면 첫 항목이 로고와 겹친다.
+	  모바일 헤더는 로고 h-10 + py-6 = 88px 이라 24px 여유가 남는다.
+	-->
 	<div
-		class="fixed inset-0 bg-white z-40 transition-all duration-500 ease-in-out xl:hidden flex flex-col justify-center px-8 overflow-y-auto {navOpen
+		class="fixed inset-0 bg-white z-40 transition-all duration-500 ease-in-out xl:hidden overflow-y-auto {navOpen
 			? 'opacity-100 visible'
 			: 'opacity-0 invisible'}"
 	>
-		<nav class="flex flex-col space-y-8 text-center mt-12">
+	<div class="min-h-full flex flex-col justify-center px-8 pt-28 pb-12">
+		<nav class="flex flex-col space-y-8 text-center">
 			{#each menus as menu, i}
 				<a
 					href={menu.href}
@@ -353,5 +362,6 @@
 			<p class="text-gray-500 font-medium">인천광역시 부평구 시장로 64</p>
 			<p class="text-gray-500 font-medium mt-2">032-515-1401</p>
 		</div>
+	</div>
 	</div>
 </header>
