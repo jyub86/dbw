@@ -211,9 +211,12 @@
 									class="absolute right-0 top-12 w-36 bg-white rounded-2xl shadow-xl border border-gray-100 py-1 z-50"
 									onmouseleave={() => dropdownOpen = false}
 								>
-									<!-- '내 차량'(본인 등록)은 개인 설정이라 드롭다운에,
+									<!-- '내 정보'·'내 차량'(본인 등록)은 개인 설정이라 드롭다운에,
 									     '주차 관리'(담당자 업무 화면)는 메인 메뉴에 둔다. -->
-									<a href="/parking/my" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
+									<a href="/profile" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
+										내 정보
+									</a>
+									<a href="/parking/my" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
 										내 차량
 									</a>
 									{#if canSeeExport}
@@ -312,6 +315,13 @@
 			style="transition-delay: 500ms;"
 		>
 			{#if isLoggedIn}
+				<a
+					href="/profile"
+					onclick={toggleNav}
+					class="inline-block px-10 py-3.5 mb-2 mr-2 rounded-full font-bold text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
+				>
+					내 정보
+				</a>
 				<a
 					href="/parking/my"
 					onclick={toggleNav}
