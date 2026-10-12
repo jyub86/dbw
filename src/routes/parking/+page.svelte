@@ -9,7 +9,7 @@
     type Embed<T> = T | T[] | null;
     type Owner = { name: string | null; office: string | null; phone: string | null };
     type Hit = {
-        id: number; plate: string; memo: string | null; consent_on: string | null; created_at: string;
+        id: number; plate: string; memo: string | null; consent_on: string | null; consent_method: string | null; created_at: string;
         custom_users: Embed<Owner>;
         registered_by_user: Embed<{ name: string | null }>;   // 대리 등록자 (본인 등록이면 null)
     };
@@ -60,7 +60,7 @@
         searching = true;
         const { data, error } = await supabaseBrowser
             .from('member_vehicles')
-            .select('id, plate, memo, consent_on, created_at, custom_users!member_vehicles_user_id_fkey(name, office, phone), registered_by_user:custom_users!member_vehicles_registered_by_fkey(name)')
+            .select('id, plate, memo, consent_on, consent_method, created_at, custom_users!member_vehicles_user_id_fkey(name, office, phone), registered_by_user:custom_users!member_vehicles_registered_by_fkey(name)')
             .ilike('plate_norm', `%${norm}%`)
             .limit(30);
         if (mine !== seq) return; // 늦게 온 옛 요청 폐기
@@ -130,21 +130,26 @@
     };
 
     // ── 대리 등록 ────────────────────────────────
-    // 앱 사용이 어려운 어르신 대신 등록한다. 남의 개인정보라 서면 동의가 근거이고,
-    // 누가·언제 받았는지를 행에 함께 남긴다(DB CHECK 로도 강제된다).
+    // 앱 사용이 어려운 어르신 대신 등록한다. 남의 개인정보라 동의가 근거이고,
+    // 누가·언제·어떤 방법으로 받았는지를 행에 함께 남긴다(DB CHECK 로도 강제된다).
+    // 동의 방법은 서면만이 아니다 — 개인정보 보호법 시행령 제17조 제2항이 6가지를 허용하고
+    // 2호가 "전화로 동의 내용을 알리고 동의의 의사표시를 확인하는 방법"이다.
+    // 서면만 받게 하면 정작 앱을 못 쓰는 분을 대신 등록한다는 기능 목적이 막힌다.
     let addQuery = $state('');
     let addResults = $state<Profile[]>([]);
     let addTarget = $state<Profile | null>(null);
     let addPlate = $state('');
     let addMemo = $state('');
     let addConsentOn = $state(todayISO());
+    let addConsentMethod = $state('전화');
     let addConfirmed = $state(false);
     let addBusy = $state(false);
 
     const addPlateNorm = $derived(normalizePlate(addPlate));
     const addWarn = $derived(addPlateNorm.length >= 4 && !looksLikePlate(addPlate));
     const canSubmitAdd = $derived(
-        !!addTarget && addPlateNorm.length >= 4 && !!addConsentOn && addConfirmed && !addBusy
+        !!addTarget && addPlateNorm.length >= 4 && !!addConsentOn && !!addConsentMethod
+            && addConfirmed && !addBusy
     );
 
     // custom_users 직접 조회는 쓸 수 없다 — 프로필 조회가 좁혀져 있어서(소그룹·게시글·본인 등)
@@ -159,7 +164,8 @@
     }
     function resetAdd() {
         addTarget = null; addQuery = ''; addResults = [];
-        addPlate = ''; addMemo = ''; addConsentOn = todayISO(); addConfirmed = false;
+        addPlate = ''; addMemo = ''; addConsentOn = todayISO();
+        addConsentMethod = '전화'; addConfirmed = false;
     }
     async function submitAdd() {
         if (!canSubmitAdd || !addTarget) return;
@@ -170,7 +176,8 @@
             plate: addPlate.trim(),
             memo: addMemo.trim() || null,
             registered_by: myId,
-            consent_on: addConsentOn
+            consent_on: addConsentOn,
+            consent_method: addConsentMethod
         });
         addBusy = false;
         if (error) {
@@ -275,7 +282,7 @@
                             </span>
                             {#if by}
                                 <span class="text-[11px] font-bold text-primary-700 bg-primary-50 px-1.5 py-0.5 rounded">
-                                    대리 {by.name ?? ''}{#if h.consent_on} · 동의 {fmtDay(h.consent_on)}{/if}
+                                    대리 {by.name ?? ''}{#if h.consent_on} · {h.consent_method ?? ''} 동의 {fmtDay(h.consent_on)}{/if}
                                 </span>
                             {/if}
                             {#if o?.phone}
@@ -290,10 +297,11 @@
         {:else if view === 'add'}
             <!-- 대리 등록 — 앱 사용이 어려운 분을 대신해 등록 -->
             <div class="mb-5 rounded-2xl border border-amber-100 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                <b>서면 동의서를 받은 경우에만 등록하세요.</b>
+                <b>본인 동의를 받은 경우에만 등록하세요.</b>
                 <span class="text-amber-800">
-                    본인이 아닌 사람의 차량번호를 대신 등록하는 것이라, 누가 등록했고 동의서를 언제 받았는지가 함께 기록됩니다.
-                    동의서는 교회에서 보관해 주세요.
+                    서면·전화 모두 가능합니다. 본인이 아닌 사람의 차량번호를 대신 등록하는 것이라,
+                    누가 등록했고 동의를 언제·어떤 방법으로 받았는지가 함께 기록됩니다.
+                    서면으로 받으셨다면 동의서는 교회에서 보관해 주세요.
                 </span>
             </div>
 
@@ -347,16 +355,40 @@
                 {/if}
 
                 <!-- 3. 동의 -->
-                <div class="mb-4">
-                    <label for="ac" class="block text-xs font-bold text-gray-600 mb-1.5">3. 서면 동의서를 받은 날짜</label>
-                    <input id="ac" type="date" bind:value={addConsentOn} max={todayISO()}
-                        class="px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 text-sm font-medium" />
+                <div class="mb-4 flex flex-wrap gap-3">
+                    <div>
+                        <label for="acm" class="block text-xs font-bold text-gray-600 mb-1.5">3. 동의를 받은 방법</label>
+                        <select id="acm" bind:value={addConsentMethod}
+                            class="px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 text-sm font-medium bg-white">
+                            <option value="전화">전화</option>
+                            <option value="서면">서면 (동의서)</option>
+                            <option value="기타">기타</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="ac" class="block text-xs font-bold text-gray-600 mb-1.5">동의를 받은 날짜</label>
+                        <input id="ac" type="date" bind:value={addConsentOn} max={todayISO()}
+                            class="px-3 py-2.5 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 text-sm font-medium" />
+                    </div>
+                </div>
+
+                <!-- 전화로 받을 때 그냥 "등록해도 되죠?" 로 끝내면 동의로 인정받기 어렵다.
+                     개인정보 보호법 제15조 제2항이 알리도록 정한 네 가지를 그대로 읽어 줄 수 있게 적어 둔다. -->
+                <div class="mb-5 rounded-xl border border-gray-200 bg-gray-50 px-4 py-3">
+                    <p class="text-xs font-bold text-gray-600 mb-2">동의받을 때 이렇게 안내해 주세요</p>
+                    <p class="text-sm text-gray-700 leading-relaxed">
+                        “교회 주차 안내를 위해 <b>차량번호와 차종·색상 메모</b>를 등록하려고 합니다.
+                        이중주차 등으로 차를 빼야 할 때 차주를 확인해 연락하는 용도로만 쓰고,
+                        <b>주차 담당자와 관리자만</b> 볼 수 있습니다.
+                        <b>본인이 삭제하시거나 탈퇴하실 때까지</b> 보관합니다.
+                        <b>동의하지 않으셔도 괜찮고</b>, 다른 서비스 이용에는 아무 제한이 없습니다. 등록해 드릴까요?”
+                    </p>
                 </div>
 
                 <label class="flex items-start gap-2 mb-5 cursor-pointer">
                     <input type="checkbox" bind:checked={addConfirmed} class="mt-0.5" />
                     <span class="text-sm text-gray-700">
-                        본인에게 <b>서면 동의</b>를 받았으며, 위 내용이 정확함을 확인합니다.
+                        위 내용을 안내하고 본인에게 <b>동의</b>를 받았으며, 입력한 내용이 정확함을 확인합니다.
                     </span>
                 </label>
 
