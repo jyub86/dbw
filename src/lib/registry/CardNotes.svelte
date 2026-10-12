@@ -41,6 +41,18 @@
         }
     }
 
+    // 디모데 메모: 교역자(심방 권한)만. 열 때마다 접속기록에 남으므로 누를 때만 불러온다
+    type LegacyMemo = { id: number; source: string; body: string; created_at: string };
+    let legacy = $state<LegacyMemo[] | null>(null);
+    let legacyLoading = $state(false);
+    async function openLegacy() {
+        legacyLoading = true;
+        const r = await call<LegacyMemo[]>('registry_legacy_memos', { p_person_id: personId }, '디모데 메모를 불러오지 못했습니다.');
+        legacyLoading = false;
+        if (!r.ok) return notify(r.error, true);
+        legacy = r.data;
+    }
+
     const input = 'px-3 py-2 rounded-xl border-2 border-gray-200 focus:outline-none focus:border-primary-500 bg-white text-sm';
     const label = 'block text-xs font-bold text-gray-600 mb-1';
 </script>
@@ -72,6 +84,28 @@
         </div>
     {/if}
 </section>
+
+{#if me.can_pastoral}
+    <section class="mb-10">
+        <h3 class="text-base font-black text-gray-900 mb-1">디모데 메모 <span class="text-xs font-bold text-gray-400">교역자만</span></h3>
+        <p class="text-xs text-gray-400 mb-3">옛 디모데에 적혀 있던 메모입니다. 가족사가 섞여 있어 심방 권한이 있는 사람만 봅니다. 읽기만 할 수 있습니다.</p>
+        {#if legacy === null}
+            <button type="button" onclick={openLegacy} disabled={legacyLoading}
+                class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50 disabled:opacity-50">
+                {legacyLoading ? '불러오는 중…' : '디모데 메모 보기'}
+            </button>
+        {:else if legacy.length === 0}
+            <p class="text-sm text-gray-400">디모데 메모가 없습니다.</p>
+        {:else}
+            {#each legacy as m (m.id)}
+                <div class="rounded-xl border border-amber-100 bg-amber-50/40 px-4 py-3">
+                    <p class="text-sm text-gray-800 whitespace-pre-wrap">{m.body}</p>
+                    <p class="text-xs text-gray-400 mt-1.5">디모데에서 가져옴 · {fmtDateTime(m.created_at)}</p>
+                </div>
+            {/each}
+        {/if}
+    </section>
+{/if}
 
 <section>
     <h3 class="text-base font-black text-gray-900 mb-1">동의 기록</h3>

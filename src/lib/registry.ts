@@ -286,3 +286,68 @@ export const today = () => new Date().toLocaleDateString('sv-SE');
 
 export const fmtDateTime = (iso: string) =>
 	new Date(iso).toLocaleString('ko-KR', { dateStyle: 'short', timeStyle: 'short' });
+
+// ─── 디모데 가져오기 (설계 §12) ───
+
+export type ImportCandidate = {
+	person_id: string;
+	kind: 'strong' | 'name' | 'phone' | 'search';
+	name: string | null;
+	gender: string | null;
+	birth_date: string | null;
+	phone: string | null;
+	office: string | null;
+	has_account: boolean;
+	in_registry: boolean;
+	status: string | null;
+	group_name: string | null;
+};
+
+/** registry_import_list 한 행. data 는 정리본에서 만든 디모데 값(메모는 들어 있지 않다) */
+export type ImportRow = {
+	id: number;
+	src_id: string;
+	sheet: 'main' | 'deceased';
+	data: Record<string, any>;
+	has_memo: boolean;
+	candidates: ImportCandidate[];
+	suggestion: 'link' | 'new' | 'review';
+	decision: 'link' | 'new' | 'skip' | null;
+	person_id: string | null;
+	person_name: string | null;
+	applied_at: string | null;
+	result: { person_id: string; created: boolean; filled: string[]; diffs: { field: string; dimode: string | null; current: string | null }[] } | null;
+	total: number;
+};
+
+export type ImportSummary = {
+	total: number;
+	link: number;
+	review: number;
+	new: number;
+	decided: number;
+	skipped: number;
+	applied: number;
+	diffs: number;
+	uploaded_at: string | null;
+};
+
+/** 반영 결과의 채운 항목·차이 항목 이름 */
+export const IMPORT_FIELD_LABEL: Record<string, string> = {
+	created: '새 교적',
+	enrolled: '교적에 올림',
+	gender: '성별',
+	birth_date: '생년월일',
+	phone: '전화',
+	name: '이름',
+	registry: '직업·결혼·이전 교회 등',
+	registered_on: '등록일',
+	office: '직분',
+	office_started_on: '임직일',
+	faith: '세례·신급',
+	household: '세대 만듦',
+	household_member: '세대원',
+	address: '주소',
+	memo: '디모데 메모',
+	status: '재적 상태'
+};
