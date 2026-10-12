@@ -167,6 +167,12 @@
         <a href="/registry" class="px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 text-gray-600 hover:bg-gray-50">목록</a>
     </div>
 
+    {#if p.purged_on}
+        <div class="mb-5 rounded-2xl bg-gray-50 border border-gray-200 px-4 py-3 text-sm text-gray-600 break-keep">
+            {p.purged_on}에 인적사항을 파기했습니다(전출·별세·제적 후 5년, 개인정보처리방침). 이름·재적·신급·직분 기록만 남아 있습니다.
+        </div>
+    {/if}
+
     <div class="flex flex-wrap gap-1 mb-5 border-b border-gray-100">
         {#each TABS as t}
             <button type="button" onclick={() => { tab = t.key; notify(''); }}

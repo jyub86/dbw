@@ -15,7 +15,8 @@
         'registry.household_members': '세대원'
     };
     const OP: Record<string, string> = {
-        INSERT: '추가', UPDATE: '수정', DELETE: '삭제', MERGE: '가입 계정과 합침', UNLINK: '앱 탈퇴(연결 끊김)'
+        INSERT: '추가', UPDATE: '수정', DELETE: '삭제', MERGE: '가입 계정과 합침', UNLINK: '앱 탈퇴(연결 끊김)',
+        PURGE: '인적사항 파기(5년 경과)'
     };
     // 화면에 보이는 필드 이름
     const FIELD: Record<string, string> = {
@@ -24,7 +25,8 @@
         occupation: '직업', workplace: '직장', marital_status: '결혼', wedding_date: '결혼기념일', previous_church: '이전 교회',
         guide_person_id: '인도자', guide_name: '인도자', sms_opt_out: '문자 수신', faith_checked_on: '신급 확인일', note: '비고',
         updated_by: '수정자', relation: '관계', person_id: '사람', kind: '종류', event_date: '날짜', ended_on: '종료일',
-        started_on: '시작일', standing: '구분', revoked_on: '철회일', household_id: '세대'
+        started_on: '시작일', standing: '구분', revoked_on: '철회일', household_id: '세대',
+        email: '이메일', profile_picture: '사진', guardian_name: '법정대리인', purged_on: '파기일'
     };
     const fields = (f: string[] | null) => (f ?? []).filter((x) => x !== 'updated_by').map((x) => FIELD[x] ?? x).join(', ');
 </script>
@@ -51,7 +53,7 @@
                         <td class="px-3 py-2 text-gray-700">{h.actor ?? '시스템'}</td>
                         <td class="px-3 py-2 text-gray-700">{TABLE[h.table] ?? h.table}</td>
                         <td class="px-3 py-2 text-gray-700">{OP[h.op] ?? h.op}</td>
-                        <td class="px-3 py-2 text-gray-500">{h.op === 'UPDATE' ? fields(h.fields) : ''}</td>
+                        <td class="px-3 py-2 text-gray-500">{h.op === 'UPDATE' || h.op === 'PURGE' ? fields(h.fields) : ''}</td>
                     </tr>
                 {/each}
             </tbody>

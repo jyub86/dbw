@@ -203,6 +203,7 @@ export type Card = {
 		sms_opt_out: boolean;
 		faith_checked_on: string | null;
 		note: string | null;
+		purged_on: string | null; // 전출·별세·제적 5년 뒤 인적사항을 파기한 날
 		created_at: string;
 		updated_at: string;
 	};
