@@ -190,14 +190,33 @@
 				<div class="hidden xl:flex items-center">
 						{#if isLoggedIn}
 						<div class="relative profile-dropdown">
+							<!-- 좁은 화면의 메뉴 버튼과 같은 햄버거 모양을 쓴다. 카카오 계정 사진을
+							     없앤 뒤 원형 아바타만 남으니 화면 폭에 따라 버튼이 달라 보였다. -->
 							<button
+								type="button"
 								onclick={() => dropdownOpen = !dropdownOpen}
-								class="w-9 h-9 rounded-full overflow-hidden border-2 border-white/30 hover:border-white transition-colors flex items-center justify-center bg-gray-200 shrink-0"
+								class="inline-flex items-center justify-center p-2 rounded-full text-gray-900 hover:bg-gray-100 transition-colors focus:outline-none"
 							>
-								<!-- 카카오 계정 사진은 쓰지 않는다 — 웹에서 바꿀 방법이 없어 모두 기본 아이콘으로 통일한다 -->
-								<svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 24 24">
-									<path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
-								</svg>
+								<span class="sr-only">계정 메뉴</span>
+								<div
+									class="w-6 h-5 relative flex flex-col justify-between transform transition-all duration-300 {dropdownOpen
+										? 'rotate-180'
+										: ''}"
+								>
+									<span
+										class="w-full h-0.5 bg-gray-900 transform transition-all duration-300 {dropdownOpen
+											? 'rotate-45 translate-y-2.5'
+											: ''}"
+									></span>
+									<span
+										class="w-full h-0.5 bg-gray-900 transition-all duration-300 {dropdownOpen ? 'opacity-0' : ''}"
+									></span>
+									<span
+										class="w-full h-0.5 bg-gray-900 transform transition-all duration-300 {dropdownOpen
+											? '-rotate-45 -translate-y-2'
+											: ''}"
+									></span>
+								</div>
 							</button>
 							{#if dropdownOpen}
 								<div
