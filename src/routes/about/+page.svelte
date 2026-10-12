@@ -2,6 +2,7 @@
     import { fade, slide } from "svelte/transition";
     import { page } from "$app/stores";
     import type { PageData } from "./$types";
+    import ChurchBylaws from "$lib/components/ChurchBylaws.svelte";
 
     let { data }: { data: PageData } = $props();
 
@@ -12,6 +13,7 @@
         { name: "섬기는 분들", id: "people" },
         { name: "예배 안내", id: "worship" },
         { name: "오시는 길", id: "map" },
+        { name: "교회운영세칙", id: "bylaws" },
     ];
     let activeTab = $state("vision");
     let selectedPeopleFilter = $state("전체");
@@ -359,11 +361,11 @@
     </div>
 
     <!-- Sub Navigation - Desktop: Tab buttons -->
-    <div class="hidden md:flex border-b-2 border-gray-100 mb-20 justify-center">
+    <div class="hidden md:flex border-b-2 border-gray-100 mb-20 justify-start xl:justify-center overflow-x-auto">
         {#each subMenus as menu}
             <button
                 type="button"
-                class="whitespace-nowrap py-4 px-8 lg:px-12 border-b-4 font-bold text-lg lg:text-xl transition-all duration-300 {activeTab ===
+                class="whitespace-nowrap py-4 px-6 xl:px-10 border-b-4 font-bold text-lg lg:text-xl transition-all duration-300 {activeTab ===
                 menu.id
                     ? 'border-primary-600 text-primary-700'
                     : 'border-transparent text-gray-400 hover:text-gray-800 hover:border-gray-300'}"
@@ -1560,6 +1562,12 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        {/if}
+
+        {#if activeTab === "bylaws"}
+            <div class="animate-fade-in-up" in:fade={{ duration: 400 }}>
+                <ChurchBylaws />
             </div>
         {/if}
     </div>
