@@ -17,7 +17,6 @@
 		active: boolean;
 		created_at: string;
 		is_info_public: boolean;
-		privacy_consented_at: string | null;
 		roles: Embed<{ name: string | null; level: number }>;
 	};
 	const one = <T,>(v: Embed<T>): T | null => (Array.isArray(v) ? (v[0] ?? null) : (v ?? null));
@@ -69,7 +68,7 @@
 	}
 
 	const COLS =
-		'id, email, name, phone, profile_picture, gender, birth_date, office, member, active, created_at, is_info_public, privacy_consented_at, roles(name, level)';
+		'id, email, name, phone, profile_picture, gender, birth_date, office, member, active, created_at, is_info_public, roles(name, level)';
 
 	onMount(async () => {
 		const { data: { session } } = await supabaseBrowser.auth.getSession();
@@ -218,20 +217,9 @@
 					<dt class="w-32 shrink-0 font-bold text-gray-500">가입일</dt>
 					<dd class="text-gray-900">{fmtDay(me.created_at)}</dd>
 				</div>
-				<!-- 아래 '정보 공개 동의'(선택)와 다른 항목이다. 라벨을 '개인정보 동의'로만 두면
-				     같은 것으로 읽혀서, 체크박스는 켜져 있는데 여기는 비어 보이는 게 모순처럼 읽힌다.
-				     /profile/complete 와 같은 '수집·이용' 표현으로 맞춘다.
-				     이 동의는 회원가입 절차에서 받는다. privacy_consented_at 이 비어 있는 건
-				     동의를 안 했다는 뜻이 아니라 2026-06-28 전에는 시점을 따로 저장하지 않았다는 뜻이므로
-				     (계정 228개 중 213개) '기록 없음'이 아니라 가입일로 보여 준다. -->
-				<div class="flex px-4 py-3">
-					<dt class="w-32 shrink-0 font-bold text-gray-500">개인정보 수집·이용 동의</dt>
-					<dd class="text-gray-900">
-						{fmtDay(me.privacy_consented_at ?? me.created_at)} 동의
-						{#if !me.privacy_consented_at}<span class="text-gray-400">(가입 시)</span>{/if}
-						<a href="/privacy" class="ml-2 text-xs text-primary-700 underline">처리방침</a>
-					</dd>
-				</div>
+				<!-- 개인정보 수집·이용 동의(privacy_consented_at)는 일부러 보여 주지 않는다.
+				     가입 절차에서 받는 동의인데 2026-06-28 전에는 시점을 저장하지 않아 대부분 비어 있어서,
+				     무엇으로 적든 동의가 없었던 것처럼 읽힌다. 처리방침 링크는 화면 아래에 따로 있다. -->
 			</dl>
 		</div>
 
@@ -285,7 +273,6 @@
 						<p class="text-xs text-gray-400 mt-0.5">
 							게시판 글에 이름·직분이 표시되고, 소그룹 리더가 연락처를 볼 수 있습니다.
 							동의하셔야 게시판 글쓰기를 이용할 수 있어요.
-							<br />위 '개인정보 수집·이용 동의'와는 별개 항목입니다.
 						</p>
 						{#if turningPrivate}
 							<p class="text-xs font-bold text-amber-600 mt-1.5">
