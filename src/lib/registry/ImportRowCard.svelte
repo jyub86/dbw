@@ -11,8 +11,12 @@
     } = $props();
 
     const d = $derived(row.data);
+    // 요람(2026)과 이어진 행은 휴대폰·직분이 요람 값이고, 디모데 값은 *_dimode 에 있다
+    const y = $derived((row.data.yoram ?? null) as Record<string, any> | null);
+    const dmMobile = $derived(d.mobile_dimode ?? (y ? null : d.mobile));
+    const dmOffice = $derived(d.office_detail_dimode ?? (y ? d.office ?? null : d.office_detail ?? d.office));
     const KIND: Record<string, { text: string; style: string }> = {
-        strong: { text: '이름·생일/전화 일치', style: 'bg-primary-50 text-primary-800' },
+        strong: { text: '이름 + 생일·전화·목장 일치', style: 'bg-primary-50 text-primary-800' },
         name: { text: '이름만 같음', style: 'bg-amber-50 text-amber-700' },
         phone: { text: '전화만 같음', style: 'bg-amber-50 text-amber-700' },
         search: { text: '직접 찾음', style: 'bg-gray-100 text-gray-600' }
@@ -65,15 +69,25 @@
                 {#if row.has_memo}<span class="px-2 py-0.5 rounded-full text-xs bg-gray-100 text-gray-500">메모 있음 · 교역자만</span>{/if}
             </div>
             <dl class="grid grid-cols-[4.5rem_1fr] gap-x-2 gap-y-0.5 text-gray-600">
-                {#if d.mobile || d.home_phone}<dt class="text-gray-400">전화</dt><dd>{[d.mobile, d.home_phone].filter(Boolean).join(' · ')}</dd>{/if}
+                {#if dmMobile || d.home_phone}<dt class="text-gray-400">전화</dt><dd>{[dmMobile, d.home_phone].filter(Boolean).join(' · ')}</dd>{/if}
                 {#if d.status || d.kind}<dt class="text-gray-400">상태</dt><dd>{[d.status, d.kind, d.kind_detail].filter(Boolean).join(' · ')}</dd>{/if}
                 {#if d.district || d.zone}<dt class="text-gray-400">교구·구역</dt><dd>{[d.district, d.zone].filter(Boolean).join(' · ')}</dd>{/if}
-                {#if d.office || d.office_detail}<dt class="text-gray-400">직분</dt><dd>{d.office_detail ?? d.office}{d.office_started_on ? ` (${d.office_started_on})` : ''}</dd>{/if}
+                {#if dmOffice}<dt class="text-gray-400">직분</dt><dd>{dmOffice}{d.office_started_on ? ` (${d.office_started_on})` : ''}</dd>{/if}
                 {#if d.head_name}<dt class="text-gray-400">세대</dt><dd>세대주 {d.head_name}{d.relation ? ` · ${d.relation}` : ''}</dd>{/if}
                 {#if d.registered_on}<dt class="text-gray-400">등록일</dt><dd>{d.registered_on}</dd>{/if}
                 {#if d.baptism}<dt class="text-gray-400">세례</dt><dd>{d.baptism}{d.baptism_date ? ` (${d.baptism_date})` : ''}</dd>{/if}
                 {#if d.school}<dt class="text-gray-400">교회학교</dt><dd>{d.school}</dd>{/if}
             </dl>
+            {#if y}
+                <div class="mt-2 rounded-xl bg-primary-50/60 px-3 py-2 text-xs text-gray-700">
+                    <b class="text-primary-800">2026 요람</b>
+                    {[y.community, y.group ? `${y.group}${y.leader ? ' (인도자)' : ''}` : null, y.office].filter(Boolean).join(' · ')}
+                    {#if y.mobile}<span class="block">휴대폰 {y.mobile.replace(/^(\d{3})(\d{3,4})(\d{4})$/, '$1-$2-$3')}</span>{/if}
+                    {#if y.spouse || y.family}<span class="block">가족 {[y.spouse, y.family].filter(Boolean).join(' · ')}</span>{/if}
+                </div>
+            {:else if row.sheet === 'main'}
+                <p class="mt-2 text-xs text-gray-400">2026 요람에서 찾지 못했습니다.</p>
+            {/if}
         </div>
 
         <!-- 지금 사람 -->
@@ -121,6 +135,7 @@
                                     {c.gender ?? ''}
                                     <span class={differs(c.birth_date, d.birth_date) ? 'text-red-600 font-bold' : ''}>{c.birth_date ?? '생일 없음'}</span>
                                     · <span class={differs(digits(c.phone), digits(d.mobile)) ? 'text-red-600 font-bold' : ''}>{c.phone ?? '전화 없음'}</span>
+                                    {#if y?.group && c.group_name && c.group_name !== y.group}<span class="text-red-600 font-bold"> (요람 목장 {y.group})</span>{/if}
                                     {c.office ? ` · ${c.office}` : ''}{c.group_name ? ` · ${c.group_name}` : ''}
                                 </span>
                             </span>
