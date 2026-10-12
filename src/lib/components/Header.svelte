@@ -7,6 +7,7 @@
 	let scrolled = $state(false);
 	let isLoggedIn = $state(false);
 	let dropdownOpen = $state(false);
+	let openGroup = $state<string | null>(null);
 	let isAdmin = $state(false);
 	let canSeeAttendance = $state(false);
 	let canSeeEducation = $state(false);
@@ -18,22 +19,60 @@
 		await supabaseBrowser.auth.signOut();
 	}
 
-	const baseMenus = [
-		{ name: "교회 소개", href: "/about" },
-		{ name: "교회 영상", href: "/videos" },
-		{ name: "공동체", href: "/community" },
-		{ name: "다음 세대", href: "/next-gen" },
-		{ name: "교회 소식", href: "/news" },
-		{ name: "교회 일정", href: "/events" },
-		{ name: "커뮤니티", href: "/board" },
-	];
-	const menus = $derived([
-		...baseMenus,
+	type NavItem = { name: string; href: string };
+	// href 가 있으면 바로 가는 링크, items 가 있으면 드롭다운.
+	type NavEntry = { name: string; href?: string; items?: NavItem[] };
+
+	// 관리자는 상단에 10개(공개 7 + 업무 3)가 들어가 1280px 에서도 꽉 찼다.
+	// 성격별로 묶어 최상위를 4개로 줄인다. 업무 화면은 '관리' 하나로 모은다 —
+	// 전에는 출석부·교육부서·주차 관리는 네비에, 자료 내보내기·변경 로그는 계정
+	// 드롭다운에 있어서 같은 성격의 화면이 두 군데로 쪼개져 있었다.
+	const manageItems = $derived<NavItem[]>([
 		...(canSeeAttendance ? [{ name: "출석부", href: "/attendance" }] : []),
 		...(canSeeEducation ? [{ name: "교육부서", href: "/education" }] : []),
 		// '주차' 만 쓰면 이 앱에서 흔한 '주차(week)' 와 헷갈려 '주차 관리' 로 둔다.
 		...(canSeeParking ? [{ name: "주차 관리", href: "/parking" }] : []),
+		...(canSeeExport ? [{ name: "자료 내보내기", href: "/export" }] : []),
+		...(isAdmin ? [{ name: "변경 로그", href: "/logs" }] : []),
 	]);
+
+	const navEntries = $derived<NavEntry[]>([
+		{
+			name: "교회 안내",
+			items: [
+				{ name: "교회 소개", href: "/about" },
+				{ name: "공동체", href: "/community" },
+				{ name: "다음 세대", href: "/next-gen" },
+			],
+		},
+		{
+			name: "소식·미디어",
+			items: [
+				{ name: "교회 영상", href: "/videos" },
+				{ name: "교회 소식", href: "/news" },
+				{ name: "교회 일정", href: "/events" },
+			],
+		},
+		{ name: "커뮤니티", href: "/board" },
+		// 권한이 하나도 없으면 '관리' 자체를 띄우지 않는다
+		...(manageItems.length ? [{ name: "관리", items: manageItems }] : []),
+	]);
+
+	const isActive = (href: string) => $page.url.pathname.startsWith(href);
+	const entryActive = (e: NavEntry) =>
+		e.href ? isActive(e.href) : (e.items ?? []).some((i) => isActive(i.href));
+
+	// 모바일 오버레이는 등장 애니메이션 지연을 순번으로 준다 → 평평하게 펴서 번호를 매긴다.
+	const mobileRows = $derived(
+		navEntries.flatMap((e) =>
+			e.href
+				? [{ kind: "link" as const, name: e.name, href: e.href }]
+				: [
+						{ kind: "label" as const, name: e.name, href: "" },
+						...(e.items ?? []).map((i) => ({ kind: "link" as const, ...i })),
+					],
+		),
+	);
 
 	function toggleNav() {
 		navOpen = !navOpen;
@@ -133,8 +172,13 @@
 		});
 
 		const handleClickOutside = (e: MouseEvent) => {
-			if (dropdownOpen && !(e.target as Element).closest('.profile-dropdown')) {
+			const t = e.target as Element;
+			if (dropdownOpen && !t.closest('.profile-dropdown')) {
 				dropdownOpen = false;
+			}
+			// 터치·클릭으로 연 그룹 메뉴는 mouseleave 가 안 와서 안 닫힌다
+			if (openGroup && !t.closest('.nav-group')) {
+				openGroup = null;
 			}
 		};
 		window.addEventListener("click", handleClickOutside);
@@ -159,29 +203,74 @@
 			</div>
 
 			<!-- Desktop Nav (Center) -->
-			<nav class="hidden xl:flex xl:flex-1 justify-center space-x-6 xl:space-x-8">
-				{#each menus as menu}
-					<a
-						href={menu.href}
-						class="relative text-sm lg:text-base font-bold group py-2 whitespace-nowrap
-						{scrolled || $page.url.pathname !== '/'
-							? 'text-gray-700 hover:text-primary-600'
-							: 'text-white/90 hover:text-white'}
-						{$page.url.pathname.startsWith(menu.href) &&
-						(scrolled || $page.url.pathname !== '/')
-							? 'text-primary-600'
-							: ''}"
-					>
-						{menu.name}
-						<!-- Hover Underline -->
-						<span
-							class="absolute bottom-0 left-0 w-full h-[3px] bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center {$page.url.pathname.startsWith(
-								menu.href,
-							)
-								? 'scale-x-100'
-								: ''}"
-						></span>
-					</a>
+			<nav class="hidden xl:flex xl:flex-1 justify-center space-x-8 xl:space-x-10">
+				{#each navEntries as entry}
+					{@const active = entryActive(entry)}
+					{@const onDark = !scrolled && $page.url.pathname === '/'}
+					{#if entry.href}
+						<a
+							href={entry.href}
+							class="relative text-sm lg:text-base font-bold group py-2 whitespace-nowrap
+							{onDark ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-primary-600'}
+							{active && !onDark ? 'text-primary-600' : ''}"
+						>
+							{entry.name}
+							<!-- Hover Underline -->
+							<span
+								class="absolute bottom-0 left-0 w-full h-[3px] bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center {active
+									? 'scale-x-100'
+									: ''}"
+							></span>
+						</a>
+					{:else}
+						<!-- 마우스를 올리면 열린다. 패널이 이 div 의 자손이라 패널로 내려가도
+						     mouseleave 가 터지지 않는다(자손으로 이동할 때는 발생하지 않음). -->
+						<div
+							class="nav-group relative"
+							role="none"
+							onmouseenter={() => (openGroup = entry.name)}
+							onmouseleave={() => (openGroup = null)}
+						>
+							<button
+								type="button"
+								onclick={() => (openGroup = openGroup === entry.name ? null : entry.name)}
+								class="relative flex items-center gap-1 text-sm lg:text-base font-bold group py-2 whitespace-nowrap
+								{onDark ? 'text-white/90 hover:text-white' : 'text-gray-700 hover:text-primary-600'}
+								{active && !onDark ? 'text-primary-600' : ''}"
+							>
+								{entry.name}
+								<svg
+									class="w-3.5 h-3.5 transition-transform duration-200 {openGroup === entry.name ? 'rotate-180' : ''}"
+									fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"
+								>
+									<path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+								</svg>
+								<span
+									class="absolute bottom-0 left-0 w-full h-[3px] bg-primary-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center {active
+										? 'scale-x-100'
+										: ''}"
+								></span>
+							</button>
+							{#if openGroup === entry.name}
+								<!-- pt-3 는 버튼과 패널 사이를 잇는 다리 — 비워 두면 그 틈에서 메뉴가 닫힌다 -->
+								<div class="absolute left-1/2 -translate-x-1/2 top-full pt-3 z-50">
+									<div class="min-w-[10rem] bg-white rounded-2xl shadow-xl border border-gray-100 py-1.5">
+										{#each entry.items ?? [] as item}
+											<a
+												href={item.href}
+												onclick={() => (openGroup = null)}
+												class="block px-4 py-2.5 text-sm font-bold whitespace-nowrap hover:bg-gray-50 {isActive(item.href)
+													? 'text-primary-600'
+													: 'text-gray-700'}"
+											>
+												{item.name}
+											</a>
+										{/each}
+									</div>
+								</div>
+							{/if}
+						</div>
+					{/if}
 				{/each}
 			</nav>
 
@@ -225,24 +314,14 @@
 									class="absolute right-0 top-12 w-36 bg-white rounded-2xl shadow-xl border border-gray-100 py-1 z-50"
 									onmouseleave={() => dropdownOpen = false}
 								>
-									<!-- '내 정보'·'내 차량'(본인 등록)은 개인 설정이라 드롭다운에,
-									     '주차 관리'(담당자 업무 화면)는 메인 메뉴에 둔다. -->
+									<!-- 여기는 '내 것'만 둔다. 업무 화면(출석부·교육부서·주차 관리·
+									     자료 내보내기·변경 로그)은 전부 네비의 '관리' 로 모았다. -->
 									<a href="/profile" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
 										내 정보
 									</a>
 									<a href="/parking/my" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
 										내 차량
 									</a>
-									{#if canSeeExport}
-										<a href="/export" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
-											자료 내보내기
-										</a>
-									{/if}
-									{#if isAdmin}
-										<a href="/logs" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
-											변경 로그
-										</a>
-									{/if}
 									<button onclick={logout} class="w-full text-left px-4 py-2.5 text-sm font-medium text-red-500 hover:bg-red-50 rounded-b-2xl">
 										로그아웃
 									</button>
@@ -308,18 +387,33 @@
 			: 'opacity-0 invisible'}"
 	>
 	<div class="min-h-full flex flex-col justify-center px-8 pt-28 pb-12">
-		<nav class="flex flex-col space-y-8 text-center">
-			{#each menus as menu, i}
-				<a
-					href={menu.href}
-					onclick={toggleNav}
-					class="text-3xl sm:text-4xl font-black text-gray-900 hover:text-primary-600 transition-colors transform {navOpen
-						? 'translate-y-0 opacity-100'
-						: 'translate-y-8 opacity-0'}"
-					style="transition-delay: {i * 100 + 100}ms;"
-				>
-					{menu.name}
-				</a>
+		<!-- 데스크톱의 묶음을 그대로 따라간다 — 그룹 이름은 작은 라벨, 실제 이동은 그 아래 항목.
+		     라벨은 링크가 아니다(그룹 자체에는 갈 페이지가 없다). -->
+		<nav class="flex flex-col text-center">
+			{#each mobileRows as row, i}
+				{#if row.kind === 'label'}
+					<p
+						class="mt-8 first:mt-0 mb-3 text-xs font-bold tracking-widest text-gray-400 transform {navOpen
+							? 'translate-y-0 opacity-100'
+							: 'translate-y-8 opacity-0'}"
+						style="transition-delay: {i * 60 + 100}ms;"
+					>
+						{row.name}
+					</p>
+				{:else}
+					<a
+						href={row.href}
+						onclick={toggleNav}
+						class="py-2 text-2xl sm:text-3xl font-black transition-colors transform {isActive(row.href)
+							? 'text-primary-600'
+							: 'text-gray-900 hover:text-primary-600'} {navOpen
+							? 'translate-y-0 opacity-100'
+							: 'translate-y-8 opacity-0'}"
+						style="transition-delay: {i * 60 + 100}ms;"
+					>
+						{row.name}
+					</a>
+				{/if}
 			{/each}
 		</nav>
 		<div
@@ -343,24 +437,7 @@
 				>
 					내 차량
 				</a>
-				{#if canSeeExport}
-					<a
-						href="/export"
-						onclick={toggleNav}
-						class="inline-block px-10 py-3.5 mb-2 mr-2 rounded-full font-bold text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
-					>
-						자료 내보내기
-					</a>
-				{/if}
-				{#if isAdmin}
-					<a
-						href="/logs"
-						onclick={toggleNav}
-						class="inline-block px-10 py-3.5 mb-2 mr-2 rounded-full font-bold text-base border-2 border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors"
-					>
-						변경 로그
-					</a>
-				{/if}
+				<!-- 자료 내보내기·변경 로그는 위 '관리' 묶음으로 옮겼다 -->
 				<button
 					onclick={async () => { await logout(); toggleNav(); }}
 					class="inline-block px-10 py-3.5 rounded-full font-bold text-base border-2 border-red-200 text-red-500 hover:bg-red-50 transition-colors"
