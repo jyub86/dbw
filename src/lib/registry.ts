@@ -351,3 +351,47 @@ export const IMPORT_FIELD_LABEL: Record<string, string> = {
 	memo: '디모데 메모',
 	status: '재적 상태'
 };
+
+// ─── 내려받기 (설계 §7) ───
+
+/** registry_export 항목. key 는 DB 함수(20261012_registry_export.sql)의 허용 목록과 같다. 이름은 늘 들어간다 */
+export const EXPORT_COLUMNS = [
+	{ key: 'name', label: '이름', group: '기본' },
+	{ key: 'name_note', label: '이름 구분', group: '기본' },
+	{ key: 'gender', label: '성별', group: '기본' },
+	{ key: 'birth_date', label: '생년월일', group: '기본' },
+	{ key: 'birth_lunar', label: '음력', group: '기본' },
+	{ key: 'age', label: '나이', group: '기본' },
+	{ key: 'phone', label: '휴대폰', group: '연락처' },
+	{ key: 'home_phone', label: '집전화', group: '연락처' },
+	{ key: 'zip', label: '우편번호', group: '연락처' },
+	{ key: 'address', label: '주소', group: '연락처' },
+	{ key: 'office', label: '직분', group: '교회' },
+	{ key: 'status', label: '재적 상태', group: '교회' },
+	{ key: 'faith', label: '신급', group: '교회' },
+	{ key: 'community', label: '공동체', group: '교회' },
+	{ key: 'group', label: '목장', group: '교회' },
+	{ key: 'registered_on', label: '등록일', group: '교회' },
+	{ key: 'head', label: '세대주', group: '가족' },
+	{ key: 'relation', label: '세대주와 관계', group: '가족' },
+	{ key: 'marital', label: '결혼', group: '가족' },
+	{ key: 'wedding_date', label: '결혼일', group: '가족' },
+	{ key: 'occupation', label: '직업', group: '그 밖' },
+	{ key: 'workplace', label: '직장', group: '그 밖' },
+	{ key: 'previous_church', label: '이전 교회', group: '그 밖' },
+	{ key: 'guide', label: '인도자', group: '그 밖' }
+] as const;
+export type ExportKey = (typeof EXPORT_COLUMNS)[number]['key'];
+
+/**
+ * 용도별 기본 항목. 안전성 확보조치 기준(출력 시 용도 특정·항목 최소화)에 따라
+ * 용도를 먼저 고르면 그 용도에 필요한 항목만 미리 고른다. 담당자가 더하거나 뺄 수 있다.
+ */
+export const EXPORT_PURPOSES: { label: string; columns: ExportKey[] }[] = [
+	{ label: '연락처 명단', columns: ['phone', 'group'] },
+	{ label: '우편 발송', columns: ['zip', 'address'] },
+	{ label: '심방 명단', columns: ['age', 'phone', 'address', 'office', 'group'] },
+	{ label: '목장·공동체 편성', columns: ['gender', 'age', 'office', 'community', 'group', 'head', 'relation'] },
+	{ label: '교세 통계', columns: ['gender', 'age', 'office', 'status', 'faith'] },
+	{ label: '기타', columns: [] }
+];

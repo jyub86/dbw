@@ -2,6 +2,7 @@
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { supabaseBrowser } from '$lib/supabase-browser';
+    import ExportDialog from '$lib/registry/ExportDialog.svelte';
     import {
         STATUS_LABEL, STATUS_STYLE, FAITH_LABEL, errText, loadCodes, codesOf, age,
         type Code, type PersonRow, type RegistryMe
@@ -35,6 +36,7 @@
     let total = $state(0);
     let loading = $state(true);
     let errorMsg = $state('');
+    let exportOpen = $state(false);
 
     function filters() {
         const f: Record<string, unknown> = {};
@@ -156,10 +158,20 @@
 
 <div class="flex items-center justify-between mb-3">
     <p class="text-sm text-gray-500"><b class="text-gray-900">{total}</b>명</p>
-    {#if me.can_edit}
-        <a href="/registry/new" class="px-4 py-2 rounded-xl bg-gray-900 text-white font-bold text-sm hover:bg-gray-700">+ 새가족 등록</a>
-    {/if}
+    <div class="flex items-center gap-2">
+        {#if me.can_export}
+            <button type="button" onclick={() => (exportOpen = true)} disabled={total === 0 || loading}
+                class="px-4 py-2 rounded-xl border border-gray-200 bg-white font-bold text-sm text-gray-700 hover:bg-gray-50 disabled:opacity-40">내려받기</button>
+        {/if}
+        {#if me.can_edit}
+            <a href="/registry/new" class="px-4 py-2 rounded-xl bg-gray-900 text-white font-bold text-sm hover:bg-gray-700">+ 새가족 등록</a>
+        {/if}
+    </div>
 </div>
+
+{#if exportOpen}
+    <ExportDialog filters={filters()} {total} {codes} onclose={() => (exportOpen = false)} />
+{/if}
 
 {#if loading && rows.length === 0}
     <div class="py-16 text-center text-gray-400 text-sm">불러오는 중…</div>

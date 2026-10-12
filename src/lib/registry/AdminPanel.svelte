@@ -205,7 +205,12 @@
                     <tr class="border-t border-gray-50 align-top">
                         <td class="px-4 py-2 text-gray-500 whitespace-nowrap">{fmtDateTime(l.at)}</td>
                         <td class="px-3 py-2 text-gray-800">{l.actor_name ?? '-'}</td>
-                        <td class="px-3 py-2 text-gray-800">{ACTION[l.action] ?? l.action}</td>
+                        <td class="px-3 py-2 text-gray-800">
+                            {ACTION[l.action] ?? l.action}
+                            {#if l.action === 'export' && l.detail?.purpose}
+                                <span class="block text-xs text-amber-700">용도: {String(l.detail.purpose)}</span>
+                            {/if}
+                        </td>
                         <td class="px-3 py-2 text-gray-600">
                             {l.target_count}명{#if l.target_names?.length}<span class="text-xs text-gray-400"> · {l.target_names.slice(0, 5).join(', ')}{l.target_count > 5 ? ' 외' : ''}</span>{/if}
                         </td>
