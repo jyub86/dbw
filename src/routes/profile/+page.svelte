@@ -199,30 +199,40 @@
 			</div>
 			<dl class="divide-y divide-gray-100 text-sm">
 				<div class="flex px-4 py-3">
-					<dt class="w-28 shrink-0 font-bold text-gray-500">직분</dt>
+					<dt class="w-32 shrink-0 font-bold text-gray-500">직분</dt>
 					<dd class="text-gray-900">{me.office}</dd>
 				</div>
 				<div class="flex px-4 py-3">
-					<dt class="w-28 shrink-0 font-bold text-gray-500">교인 등록</dt>
+					<dt class="w-32 shrink-0 font-bold text-gray-500">교인 등록</dt>
 					<dd class="text-gray-900">{me.member ? '등록 교인' : '미등록'}</dd>
 				</div>
 				<div class="flex px-4 py-3">
-					<dt class="w-28 shrink-0 font-bold text-gray-500">권한</dt>
+					<dt class="w-32 shrink-0 font-bold text-gray-500">권한</dt>
 					<dd class="text-gray-900">{roleName}</dd>
 				</div>
 				<div class="flex px-4 py-3">
-					<dt class="w-28 shrink-0 font-bold text-gray-500">이메일</dt>
+					<dt class="w-32 shrink-0 font-bold text-gray-500">이메일</dt>
 					<dd class="text-gray-900 break-all">{me.email ?? '-'}</dd>
 				</div>
 				<div class="flex px-4 py-3">
-					<dt class="w-28 shrink-0 font-bold text-gray-500">가입일</dt>
+					<dt class="w-32 shrink-0 font-bold text-gray-500">가입일</dt>
 					<dd class="text-gray-900">{fmtDay(me.created_at)}</dd>
 				</div>
+				<!-- 아래 '정보 공개 동의'(선택)와 다른 항목이다. 라벨을 '개인정보 동의'로만 두면
+				     같은 것으로 읽혀서, 여기는 '기록 없음'인데 체크박스는 켜져 있는 게 모순처럼 보인다.
+				     /profile/complete 와 같은 '수집·이용' 표현으로 맞춘다. -->
 				<div class="flex px-4 py-3">
-					<dt class="w-28 shrink-0 font-bold text-gray-500">개인정보 동의</dt>
+					<dt class="w-32 shrink-0 font-bold text-gray-500">개인정보 수집·이용 동의</dt>
 					<dd class="text-gray-900">
-						{me.privacy_consented_at ? fmtDay(me.privacy_consented_at) : '기록 없음'}
+						{me.privacy_consented_at ? fmtDay(me.privacy_consented_at) + ' 동의' : '동의 시점 기록 없음'}
 						<a href="/privacy" class="ml-2 text-xs text-primary-700 underline">처리방침</a>
+						{#if !me.privacy_consented_at}
+							<!-- 동의를 안 했다는 뜻이 아니다 — 2026-06-28 부터 시점을 남기기 시작했다.
+							     그 전 가입자(대부분)가 '기록 없음'만 보면 불안하게 읽힌다. -->
+							<p class="text-xs text-gray-400 mt-0.5">
+								2026년 6월 이전에 가입하셔서 동의 시점이 따로 저장되지 않았습니다.
+							</p>
+						{/if}
 					</dd>
 				</div>
 			</dl>
@@ -278,6 +288,7 @@
 						<p class="text-xs text-gray-400 mt-0.5">
 							게시판 글에 이름·직분이 표시되고, 소그룹 리더가 연락처를 볼 수 있습니다.
 							동의하셔야 게시판 글쓰기를 이용할 수 있어요.
+							<br />위 '개인정보 수집·이용 동의'와는 별개 항목입니다.
 						</p>
 						{#if turningPrivate}
 							<p class="text-xs font-bold text-amber-600 mt-1.5">
