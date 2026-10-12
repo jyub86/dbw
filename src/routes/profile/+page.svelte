@@ -9,7 +9,6 @@
 		email: string | null;
 		name: string | null;
 		phone: string | null;
-		profile_picture: string | null;
 		gender: string | null;
 		birth_date: string | null;
 		office: string;
@@ -68,7 +67,7 @@
 	}
 
 	const COLS =
-		'id, email, name, phone, profile_picture, gender, birth_date, office, member, active, created_at, is_info_public, roles(name, level)';
+		'id, email, name, phone, gender, birth_date, office, member, active, created_at, is_info_public, roles(name, level)';
 
 	onMount(async () => {
 		const { data: { session } } = await supabaseBrowser.auth.getSession();
@@ -161,26 +160,14 @@
 			<a href="/profile/complete" class="inline-block mt-6 px-6 py-2.5 rounded-full bg-primary-900 text-white font-bold text-sm">프로필 입력하기</a>
 		</div>
 	{:else if me}
-		<!-- 프로필 요약 -->
-		<div class="flex items-center gap-4 mb-8">
-			<div class="w-16 h-16 rounded-full overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center">
-				{#if me.profile_picture}
-					<img src={me.profile_picture} alt="프로필" class="w-full h-full object-cover" />
-				{:else}
-					<span class="text-xl font-black text-gray-400">{(me.name ?? '?').slice(0, 1)}</span>
-				{/if}
-			</div>
-			<div class="min-w-0">
-				<div class="flex items-center gap-2 flex-wrap">
-					<span class="text-xl font-black text-gray-900">{me.name ?? '이름 없음'}</span>
-					<span class="text-xs font-bold text-primary-700 bg-primary-50 px-2 py-0.5 rounded">{me.office}</span>
-					{#if !me.active}
-						<span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">비활성</span>
-					{/if}
-				</div>
-				<!-- 사진은 카카오 계정에서 가져온다 — 여기서는 바꿀 수 없다 -->
-				<p class="text-xs text-gray-400 mt-1">프로필 사진은 카카오 계정 사진을 사용합니다.</p>
-			</div>
+		<!-- 프로필 요약. 사진은 일부러 띄우지 않는다 — 카카오 계정 사진이라
+		     웹에서 바꿀 방법이 없어서 보여 줘 봐야 '왜 못 바꾸냐'는 문의만 된다. -->
+		<div class="flex items-center gap-2 flex-wrap mb-8">
+			<span class="text-xl font-black text-gray-900">{me.name ?? '이름 없음'}</span>
+			<span class="text-xs font-bold text-primary-700 bg-primary-50 px-2 py-0.5 rounded">{me.office}</span>
+			{#if !me.active}
+				<span class="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-0.5 rounded">비활성</span>
+			{/if}
 		</div>
 
 		{#if msg}
