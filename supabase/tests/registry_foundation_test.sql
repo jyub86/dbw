@@ -92,12 +92,14 @@ begin
     into tok, who
     from public.custom_users u join public.roles r on r.id = u.role
    where r.level >= 100 and u.active
+     and exists (select 1 from auth.users a where a.id = u.auth_id)
    order by u.id limit 1;
   for rec in
     select x.id, x.auth_id, row_number() over (order by x.id) as rn
       from (select u.id, u.auth_id
               from public.custom_users u join public.roles r on r.id = u.role
              where r.level < 50 and u.active
+               and exists (select 1 from auth.users a where a.id = u.auth_id)  -- 교적 비밀번호 세션이 auth.users 를 참조한다
                and not exists (select 1 from registry.staff s where s.user_id = u.id)
              order by u.id limit 3) x
   loop
