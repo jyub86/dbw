@@ -28,8 +28,8 @@
 	// 성격별로 묶어 최상위를 4개로 줄인다. 업무 화면은 '관리' 하나로 모은다 —
 	// 전에는 출석부·교육부서·주차 관리는 네비에, 자료 내보내기·변경 로그는 계정
 	// 드롭다운에 있어서 같은 성격의 화면이 두 군데로 쪼개져 있었다.
+	// 출석부는 리더들이 매주 쓰는 화면이라 '관리' 안에 묻지 않고 최상위에 따로 둔다.
 	const manageItems = $derived<NavItem[]>([
-		...(canSeeAttendance ? [{ name: "출석부", href: "/attendance" }] : []),
 		...(canSeeEducation ? [{ name: "교육부서", href: "/education" }] : []),
 		// '주차' 만 쓰면 이 앱에서 흔한 '주차(week)' 와 헷갈려 '주차 관리' 로 둔다.
 		...(canSeeParking ? [{ name: "주차 관리", href: "/parking" }] : []),
@@ -56,6 +56,7 @@
 			],
 		},
 		{ name: "커뮤니티", href: "/board" },
+		...(canSeeAttendance ? [{ name: "출석부", href: "/attendance" }] : []),
 		// 권한이 하나도 없으면 '관리' 자체를 띄우지 않는다
 		...(manageItems.length ? [{ name: "관리", items: manageItems }] : []),
 	]);
@@ -321,7 +322,7 @@
 									class="absolute right-0 top-12 w-36 bg-white rounded-2xl shadow-xl border border-gray-100 py-1 z-50"
 									onmouseleave={() => dropdownOpen = false}
 								>
-									<!-- 여기는 '내 것'만 둔다. 업무 화면(출석부·교육부서·주차 관리·
+									<!-- 여기는 '내 것'만 둔다. 업무 화면(교육부서·주차 관리·
 									     자료 내보내기·변경 로그)은 전부 네비의 '관리' 로 모았다. -->
 									<a href="/profile" onclick={() => dropdownOpen = false} class="block px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-t-2xl">
 										내 정보

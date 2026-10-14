@@ -73,8 +73,7 @@
     }
 
 
-    const latestNews = $derived(data.latestNews);
-    const latestBoard = $derived(data.latestBoard);
+    const recent = $derived(data.recent);
 </script>
 
 <svelte:head>
@@ -312,96 +311,45 @@
     </div>
 </section>
 
-<!-- 4 & 5. 게시판 섹션 (교회 소식 & 일반 게시판) -->
+<!-- 4. 최근 글 (교회 소식 · 교육 자료 · 선교 소식 · 1401 MEDIA) -->
 <section class="py-12 md:py-12 bg-white">
     <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            <!-- 교회 소식 -->
-            <div>
-                <div
-                    class="flex justify-between items-center mb-8 border-b-2 border-gray-900 pb-4"
-                >
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">교회 소식</h2>
-                    <a
-                        href="/news"
-                        class="text-lg font-bold text-gray-500 hover:text-primary-600 transition-colors"
-                        >더보기 +</a
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-12">
+            {#each recent as section}
+                <div>
+                    <div
+                        class="flex justify-between items-center mb-4 border-b-2 border-gray-900 pb-4"
                     >
-                </div>
-                <ul class="divide-y divide-gray-100">
-                    {#each latestNews as news}
-                        <li>
-                            <a
-                                href={`/news/${news.id}`}
-                                class="flex items-center justify-between py-5 group"
-                            >
-                                <div
-                                    class="flex items-center gap-4 overflow-hidden"
-                                >
-                                    <span
-                                        class="shrink-0 px-3 py-1 bg-primary-50 text-primary-700 text-sm font-bold rounded-lg"
-                                        >{news.category}</span
-                                    >
-                                    <span
-                                        class="text-sm md:text-xl font-medium text-gray-800 truncate group-hover:text-primary-600 transition-colors"
-                                        >{news.title}</span
-                                    >
-                                </div>
-                                <span
-                                    class="shrink-0 text-xs md:text-base text-gray-400 font-medium ml-2 md:ml-4"
-                                    >{news.date}</span
-                                >
-                            </a>
-                        </li>
-                    {/each}
-                </ul>
-            </div>
-
-            <!-- 일반 게시판 -->
-            <div>
-                <div
-                    class="flex justify-between items-center mb-8 border-b-2 border-gray-900 pb-4"
-                >
-                    <h2 class="text-2xl md:text-3xl font-bold text-gray-900">
-                        일반 게시판
-                    </h2>
-                    <a
-                        href="/board"
-                        class="text-lg font-bold text-gray-500 hover:text-primary-600 transition-colors"
-                        >더보기 +</a
-                    >
-                </div>
-                <ul class="divide-y divide-gray-100">
-                    {#each latestBoard as post}
-                        <li>
-                            <a
-                                href={`/board/${post.id}`}
-                                class="flex items-center justify-between py-5 group"
-                            >
-                                <div
-                                    class="flex items-center gap-4 overflow-hidden"
+                        <h2 class="text-2xl md:text-3xl font-bold text-gray-900">{section.title}</h2>
+                        <a
+                            href={section.more}
+                            class="text-lg font-bold text-gray-500 hover:text-primary-600 transition-colors"
+                            >더보기 +</a
+                        >
+                    </div>
+                    <ul class="divide-y divide-gray-100">
+                        {#each section.posts as post}
+                            <li>
+                                <a
+                                    href={post.href}
+                                    class="flex items-center justify-between py-4 group"
                                 >
                                     <span
                                         class="text-sm md:text-xl font-medium text-gray-800 truncate group-hover:text-primary-600 transition-colors"
                                         >{post.title}</span
                                     >
-                                </div>
-                                <div
-                                    class="shrink-0 flex items-center gap-2 md:gap-4 ml-2 md:ml-4"
-                                >
-                                    <span class="hidden sm:block text-sm md:text-base text-gray-500"
-                                        >{post.author}</span
-                                    >
                                     <span
-                                        class="text-xs md:text-base text-gray-400 font-medium"
+                                        class="shrink-0 text-xs md:text-base text-gray-400 font-medium ml-2 md:ml-4"
                                         >{post.date}</span
                                     >
-                                </div>
-                            </a>
-                        </li>
-                    {/each}
-                </ul>
-            </div>
+                                </a>
+                            </li>
+                        {:else}
+                            <li class="py-4 text-sm md:text-base text-gray-400">아직 글이 없습니다.</li>
+                        {/each}
+                    </ul>
+                </div>
+            {/each}
         </div>
     </div>
 </section>
