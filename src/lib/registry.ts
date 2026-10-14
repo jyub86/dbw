@@ -4,7 +4,7 @@ import { supabaseBrowser } from '$lib/supabase-browser';
  * 교적(재적) 화면 공용.
  *
  * 교적 데이터는 API 로 바로 읽을 수 없다(registry 스키마 비노출). 모든 조회·수정은 public.registry_* 함수를 거치고,
- * 함수가 권한·2단계 인증을 확인한 뒤 접속기록을 남긴다. 설계: docs/church-admin/02-registry-design.md
+ * 함수가 권한·교적 비밀번호를 확인한 뒤 접속기록을 남긴다. 설계: docs/church-admin/02-registry-design.md
  */
 
 export type RegistryMe = {
@@ -13,8 +13,10 @@ export type RegistryMe = {
 	can_edit: boolean;
 	can_export: boolean;
 	can_pastoral: boolean;
-	mfa_required: boolean;
-	aal: 'aal1' | 'aal2';
+	password_required: boolean;
+	password_set: boolean; // 교적 비밀번호를 정했는지
+	locked_out: boolean; // 5번 틀려 잠겼는지 (관리자가 초기화해야 풀린다)
+	unlocked: boolean; // 이 로그인 세션이 비밀번호로 열려 있는지
 	idle_minutes: number;
 };
 
@@ -31,8 +33,8 @@ export async function loadRegistryMe(): Promise<{ hasSession: boolean; me: Regis
 
 type RpcError = { message?: string; hint?: string | null; code?: string } | null;
 
-/** DB 함수가 2단계 인증을 요구했는지 (registry.require_mfa 가 hint 로 알려 준다) */
-export const needsMfa = (e: RpcError) => e?.hint === 'mfa_required';
+/** DB 함수가 교적 비밀번호를 요구했는지 (registry.require_unlock 이 hint 로 알려 준다) */
+export const needsUnlock = (e: RpcError) => e?.hint === 'unlock_required';
 
 /** 화면에 보여 줄 오류 문구. DB 함수는 한국어 문구로 예외를 던진다. */
 export function errText(e: RpcError, fallback = '처리하지 못했습니다.'): string {
@@ -50,45 +52,36 @@ export async function call<T = unknown>(
 	fallback?: string
 ): Promise<{ ok: true; data: T } | { ok: false; error: string }> {
 	const { data, error } = await supabaseBrowser.rpc(fn, args);
-	if (error) return { ok: false, error: needsMfa(error) ? '2단계 인증이 풀렸습니다. 새로고침해 주세요.' : errText(error, fallback) };
+	if (error) return { ok: false, error: needsUnlock(error) ? '교적 화면이 잠겼습니다. 새로고침해 주세요.' : errText(error, fallback) };
 	return { ok: true, data: data as T };
 }
 
-// ─── 2단계 인증 (Supabase Auth TOTP) ───
+// ─── 교적 비밀번호 ───
 
-export type MfaStatus = { level: 'aal1' | 'aal2' | null; factorId: string | null };
+export type UnlockResult = { ok: true } | { ok: false; reason: 'not_set' | 'wrong' | 'locked'; left?: number };
 
-export async function mfaStatus(): Promise<MfaStatus> {
-	const { data: aal } = await supabaseBrowser.auth.mfa.getAuthenticatorAssuranceLevel();
-	const { data: factors } = await supabaseBrowser.auth.mfa.listFactors();
-	return {
-		level: (aal?.currentLevel as 'aal1' | 'aal2' | undefined) ?? null,
-		// listFactors().totp 에는 확인을 마친 인증 앱만 들어 있다
-		factorId: factors?.totp?.[0]?.id ?? null
-	};
+/** 처음 들어갈 때 비밀번호를 정한다. 정하면 이 세션이 바로 열린다. */
+export async function passwordSet(password: string): Promise<string | null> {
+	const { error } = await supabaseBrowser.rpc('registry_password_set', { p_password: password });
+	return error ? errText(error, '비밀번호를 정하지 못했습니다.') : null;
 }
 
-/** 인증 앱 등록을 시작한다. 등록을 마치지 않고 떠난 흔적이 있으면 먼저 지운다. */
-export async function mfaEnroll(): Promise<{ factorId: string; qr: string; secret: string } | { error: string }> {
-	const { data: factors } = await supabaseBrowser.auth.mfa.listFactors();
-	for (const f of factors?.all ?? []) {
-		if (f.status === 'unverified') await supabaseBrowser.auth.mfa.unenroll({ factorId: f.id });
-	}
-	const { data, error } = await supabaseBrowser.auth.mfa.enroll({
-		factorType: 'totp',
-		friendlyName: `교적 ${new Date().toISOString().slice(0, 10)}`
-	});
-	if (error || !data) return { error: error?.message ?? '인증 앱 등록을 시작하지 못했습니다.' };
-	// 버전에 따라 SVG 원문 또는 data URL 로 온다
-	const q = data.totp.qr_code;
-	const qr = q.startsWith('data:') ? q : `data:image/svg+xml;utf-8,${encodeURIComponent(q)}`;
-	return { factorId: data.id, qr, secret: data.totp.secret };
+/** 비밀번호로 이 세션을 연다. 틀린 횟수는 서버가 센다. */
+export async function unlock(password: string): Promise<UnlockResult | { ok: false; reason: 'error'; error: string }> {
+	const { data, error } = await supabaseBrowser.rpc('registry_unlock', { p_password: password });
+	if (error || !data) return { ok: false, reason: 'error', error: errText(error, '확인하지 못했습니다.') };
+	return data as UnlockResult;
 }
 
-/** 인증 앱의 6자리 코드로 확인. 성공하면 세션이 aal2 로 바뀐다. */
-export async function mfaVerify(factorId: string, code: string): Promise<string | null> {
-	const { error } = await supabaseBrowser.auth.mfa.challengeAndVerify({ factorId, code: code.trim() });
-	return error ? '코드가 맞지 않습니다. 인증 앱의 최신 6자리를 넣어 주세요.' : null;
+/** 화면을 쓰는 동안 서버 쪽 세션을 늘린다. 이미 닫혔으면 false */
+export async function touch(): Promise<boolean> {
+	const { data, error } = await supabaseBrowser.rpc('registry_touch');
+	return !error && data === true;
+}
+
+/** 화면을 잠글 때 서버 쪽 세션도 닫는다 */
+export async function lockSession(): Promise<void> {
+	await supabaseBrowser.rpc('registry_lock');
 }
 
 // ─── 라벨 ───

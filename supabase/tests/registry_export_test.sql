@@ -10,7 +10,7 @@ declare
     -- 권한
     ['교적 권한 없음 → 거절', 'outsider', 'aal2', $q$select count(*)::text from public.registry_export('{}', array['phone'], '연락처 명단')$q$, 'ERR:교적 권한이 없습니다', ''],
     ['열람만 → 거절', 'viewer', 'aal2', $q$select count(*)::text from public.registry_export('{}', array['phone'], '연락처 명단')$q$, 'ERR:이 작업을 할 권한이 없습니다', ''],
-    ['2단계 인증 전 → 거절', 'exporter', 'aal1', $q$select count(*)::text from public.registry_export('{}', array['phone'], '연락처 명단')$q$, 'ERR:2단계 인증이 필요합니다', ''],
+    ['교적 비밀번호 전 → 거절', 'exporter', 'aal1', $q$select count(*)::text from public.registry_export('{}', array['phone'], '연락처 명단')$q$, 'ERR:교적 비밀번호를 넣어 주세요', ''],
     ['anon 실행 권한 없음', 'pg', '', $q$select has_function_privilege('anon', 'public.registry_export(jsonb,text[],text)', 'execute')::text$q$, 'false', ''],
     ['헬퍼는 API 로 못 부름', 'pg', '', $q$select has_function_privilege('authenticated', 'registry.filter_people(jsonb)', 'execute')::text$q$, 'false', ''],
     -- 입력 확인
@@ -94,6 +94,11 @@ begin
   insert into registry.staff (user_id, can_export, note)
   values ((tok ->> ':viewer')::uuid, false, 'TEST'), ((tok ->> ':exporter')::uuid, true, 'TEST');
 
+  -- 교적 비밀번호(20261014_registry_password): 세션 칸이 aal2 면 비밀번호로 연 세션, aal1 이면 열지 않은 세션
+  insert into registry.unlocks (session_id, auth_id)
+  select md5(w.value || 'aal2')::uuid, w.value::uuid from jsonb_each_text(who) w
+   where exists (select 1 from auth.users a where a.id = w.value::uuid);
+
   foreach t slice 1 in array tests loop
     sql := t[4];
     expect := t[5];
@@ -106,7 +111,7 @@ begin
     got := null;
     begin
       perform set_config('request.jwt.claims',
-        json_build_object('sub', sub, 'role', 'authenticated', 'aal', coalesce(nullif(t[3], ''), 'aal2'))::text, true);
+        json_build_object('sub', sub, 'role', 'authenticated', 'session_id', md5(sub || coalesce(nullif(t[3], ''), 'aal2'))::uuid)::text, true);
       perform set_config('request.jwt.claim.sub', sub, true);
       if persona <> 'pg' then
         perform set_config('role', 'authenticated', true);

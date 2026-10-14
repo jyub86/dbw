@@ -92,6 +92,11 @@ begin
   values ((tok ->> ':editor')::uuid, true, 'TEST'), ((tok ->> ':admin')::uuid, true, 'TEST')
   on conflict (user_id) do update set can_edit = true;
 
+  -- 교적 비밀번호(20261014_registry_password): 세션 칸이 aal2 면 비밀번호로 연 세션, aal1 이면 열지 않은 세션
+  insert into registry.unlocks (session_id, auth_id)
+  select md5(w.value || 'aal2')::uuid, w.value::uuid from jsonb_each_text(who) w
+   where exists (select 1 from auth.users a where a.id = w.value::uuid);
+
   foreach t slice 1 in array tests loop
     sql := t[4];
     expect := t[5];
@@ -104,7 +109,7 @@ begin
     got := null;
     begin
       perform set_config('request.jwt.claims',
-        json_build_object('sub', sub, 'role', 'authenticated', 'aal', coalesce(nullif(t[3], ''), 'aal2'))::text, true);
+        json_build_object('sub', sub, 'role', 'authenticated', 'session_id', md5(sub || coalesce(nullif(t[3], ''), 'aal2'))::uuid)::text, true);
       perform set_config('request.jwt.claim.sub', sub, true);
       if persona <> 'pg' then
         perform set_config('role', 'authenticated', true);

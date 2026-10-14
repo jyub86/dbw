@@ -3,12 +3,14 @@
     import { supabaseBrowser } from '$lib/supabase-browser';
     import { call, fmtDateTime, today } from '$lib/registry';
 
-    type Staff = { user_id: string; name: string | null; office: string | null; can_edit: boolean; can_export: boolean; can_pastoral: boolean; note: string | null; granted_at: string; granted_by_name: string | null };
+    type Staff = { user_id: string; name: string | null; office: string | null; can_edit: boolean; can_export: boolean; can_pastoral: boolean; note: string | null; granted_at: string; granted_by_name: string | null; password: 'none' | 'set' | 'locked' };
     type PermLog = { id: number; at: string; area: string; op: string; subject_name: string | null; actor_name: string | null; old_value: Record<string, unknown> | null; new_value: Record<string, unknown> | null };
     type AccessLog = { id: number; at: string; actor_name: string | null; ip: string | null; user_agent: string | null; action: string; fn: string; target_count: number; target_names: string[] | null; detail: Record<string, unknown> | null };
     type Profile = { id: string; name: string | null; office: string | null; phone: string | null; active: boolean };
 
-    const ACTION: Record<string, string> = { search: '검색', view: '열람', create: '등록', update: '수정', delete: '삭제', export: '내려받기', print: '출력' };
+    const ACTION: Record<string, string> = { search: '검색', view: '열람', create: '등록', update: '수정', delete: '삭제', export: '내려받기', print: '출력', auth: '교적 비밀번호' };
+    const AUTH: Record<string, string> = { set: '정함', ok: '맞음', wrong: '틀림', locked: '5번 틀려 잠김', blocked: '잠긴 뒤 시도', reset: '초기화' };
+    const PASSWORD: Record<Staff['password'], string> = { none: '안 정함', set: '정함', locked: '잠김' };
     const OP: Record<string, string> = { grant: '부여', change: '변경', revoke: '해제' };
 
     let view = $state<'staff' | 'access' | 'perm'>('staff');
@@ -55,6 +57,18 @@
         addOpen = false;
         addQuery = '';
         addResults = [];
+    }
+
+    // 비밀번호 초기화는 한 번 더 눌러야 한다 (브라우저 확인 창을 쓰지 않는다)
+    let resetAsk = $state<string | null>(null);
+    async function resetPassword(s: Staff) {
+        if (resetAsk !== s.user_id) return (resetAsk = s.user_id);
+        resetAsk = null;
+        const r = await call('registry_password_reset', { p_user_id: s.user_id }, '초기화하지 못했습니다.');
+        if (!r.ok) return (errorMsg = r.error);
+        errorMsg = '';
+        msg = `${s.name}님의 교적 비밀번호를 초기화했습니다. 다음에 교적에 들어올 때 새로 정합니다.`;
+        await loadStaff();
     }
 
     async function removeStaff(s: Staff) {
@@ -142,7 +156,7 @@
     {/if}
 
     <div class="rounded-2xl border border-gray-200 overflow-x-auto">
-        <table class="w-full text-sm min-w-[40rem]">
+        <table class="w-full text-sm min-w-[48rem]">
             <thead class="bg-gray-50 text-xs text-gray-500">
                 <tr>
                     <th class="text-left font-bold px-4 py-2">담당자</th>
@@ -150,13 +164,14 @@
                     <th class="font-bold px-3 py-2">수정</th>
                     <th class="font-bold px-3 py-2">내려받기</th>
                     <th class="font-bold px-3 py-2">심방</th>
+                    <th class="text-left font-bold px-3 py-2">교적 비밀번호</th>
                     <th class="text-left font-bold px-3 py-2">부여</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 {#if staff.length === 0}
-                    <tr><td colspan="7" class="px-4 py-6 text-center text-gray-400">지정된 담당자가 없습니다.</td></tr>
+                    <tr><td colspan="8" class="px-4 py-6 text-center text-gray-400">지정된 담당자가 없습니다.</td></tr>
                 {/if}
                 {#each staff as s (s.user_id)}
                     <tr class="border-t border-gray-50">
@@ -168,6 +183,15 @@
                                     onchange={(e) => setStaff({ ...s, [key]: (e.currentTarget as HTMLInputElement).checked }, `${s.name}님의 권한을 바꿨습니다.`)} />
                             </td>
                         {/each}
+                        <td class="px-3 py-2.5 whitespace-nowrap">
+                            <span class="text-xs {s.password === 'locked' ? 'text-red-600 font-bold' : s.password === 'set' ? 'text-gray-700' : 'text-gray-400'}">{PASSWORD[s.password]}</span>
+                            {#if s.password !== 'none'}
+                                <button type="button" onclick={() => resetPassword(s)}
+                                    class="ml-1.5 px-2 py-1 rounded-lg text-xs font-bold border {resetAsk === s.user_id ? 'border-red-300 bg-red-50 text-red-600' : 'border-gray-200 text-gray-500 hover:bg-gray-50'}">
+                                    {resetAsk === s.user_id ? '초기화할까요?' : '초기화'}
+                                </button>
+                            {/if}
+                        </td>
                         <td class="px-3 py-2.5 text-xs text-gray-400">{fmtDateTime(s.granted_at)}{s.granted_by_name ? ` · ${s.granted_by_name}` : ''}</td>
                         <td class="px-3 py-2.5 text-right">
                             <button type="button" onclick={() => removeStaff(s)} class="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-red-200 text-red-500 hover:bg-red-50">해제</button>
@@ -177,7 +201,8 @@
             </tbody>
         </table>
     </div>
-    <p class="text-xs text-gray-400 mt-3">권장 구성: 교적 담당 간사는 열람·수정·내려받기, 교역자는 열람(+심방). 목장 리더에게는 주지 않습니다. 사이트 관리자도 자기에게 따로 권한을 주어야 교적을 볼 수 있습니다.</p>
+    <p class="text-xs text-gray-400 mt-3">권장 구성: 교적 담당 간사는 열람·수정·내려받기, 교역자는 열람(+심방). 목장 리더에게는 주지 않습니다. 사이트 관리자도 자기에게 따로 권한을 주어야 교적을 볼 수 있습니다.
+        교적 비밀번호는 각자 처음 들어갈 때 정하고, 5번 틀리면 잠깁니다. 잊었거나 잠기면 '초기화'를 누르면 다음에 들어올 때 새로 정합니다.</p>
 {:else if view === 'access'}
     <div class="flex flex-wrap items-end gap-2 mb-4">
         <div><label for="af" class="block text-xs font-bold text-gray-600 mb-1">부터</label><input id="af" type="date" bind:value={from} class="px-3 py-2 rounded-xl border-2 border-gray-200 bg-white text-sm" /></div>
@@ -207,6 +232,9 @@
                         <td class="px-3 py-2 text-gray-800">{l.actor_name ?? '-'}</td>
                         <td class="px-3 py-2 text-gray-800">
                             {ACTION[l.action] ?? l.action}
+                            {#if l.action === 'auth' && l.detail?.result}
+                                <span class="block text-xs {['wrong', 'locked', 'blocked'].includes(String(l.detail.result)) ? 'text-red-600' : 'text-gray-500'}">{AUTH[String(l.detail.result)] ?? String(l.detail.result)}</span>
+                            {/if}
                             {#if l.action === 'export' && l.detail?.purpose}
                                 <span class="block text-xs text-amber-700">용도: {String(l.detail.purpose)}</span>
                             {/if}

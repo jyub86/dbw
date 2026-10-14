@@ -24,7 +24,7 @@ declare
     -- 올리기 권한
     ['viewer: 올리기 거절', 'viewer', 'aal2', $q$select public.registry_import_load(:rows)::text$q$, 'ERR:이 작업을 할 권한이 없습니다', ''],
     ['editor(관리자 아님): 올리기 거절', 'editor', 'aal2', $q$select public.registry_import_load(:rows)::text$q$, 'ERR:사이트 관리자만', ''],
-    ['admin aal1: 올리기 → 2단계 인증 요구', 'admin', 'aal1', $q$select public.registry_import_load(:rows)::text$q$, 'ERR:2단계 인증이 필요합니다', ''],
+    ['admin aal1: 올리기 → 교적 비밀번호 요구', 'admin', 'aal1', $q$select public.registry_import_load(:rows)::text$q$, 'ERR:교적 비밀번호를 넣어 주세요', ''],
     ['admin: 형식이 틀린 파일 거절', 'admin', 'aal2', $q$select public.registry_import_load('[{"src_id":"X","data":"x"}]')::text$q$, 'ERR:파일 형식이 맞지 않습니다', ''],
     ['admin: 빈 파일 거절', 'admin', 'aal2', $q$select public.registry_import_load('[]')::text$q$, 'ERR:올릴 행이 없습니다', ''],
     ['admin: 올리기', 'admin', 'aal2', $q$select public.registry_import_load(:rows)::text$q$, '8', ''],
@@ -183,6 +183,11 @@ begin
          ((tok ->> ':admin')::uuid, true, false, 'TEST')
   on conflict (user_id) do update set can_edit = excluded.can_edit, can_pastoral = false;
 
+  -- 교적 비밀번호(20261014_registry_password): 세션 칸이 aal2 면 비밀번호로 연 세션, aal1 이면 열지 않은 세션
+  insert into registry.unlocks (session_id, auth_id)
+  select md5(w.value || 'aal2')::uuid, w.value::uuid from jsonb_each_text(who) w
+   where exists (select 1 from auth.users a where a.id = w.value::uuid);
+
   foreach t slice 1 in array tests loop
     sql := t[4];
     expect := t[5];
@@ -196,7 +201,7 @@ begin
 
     begin
       perform set_config('request.jwt.claims',
-        json_build_object('sub', sub, 'role', 'authenticated', 'aal', coalesce(nullif(t[3], ''), 'aal2'))::text, true);
+        json_build_object('sub', sub, 'role', 'authenticated', 'session_id', md5(sub || coalesce(nullif(t[3], ''), 'aal2'))::uuid)::text, true);
       perform set_config('request.jwt.claim.sub', sub, true);
       if persona <> 'pg' then
         perform set_config('role', 'authenticated', true);

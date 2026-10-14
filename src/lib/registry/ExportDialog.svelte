@@ -7,7 +7,7 @@
 
     /**
      * 교적 내려받기. 지금 목록의 조건 그대로, 용도와 항목을 고른 뒤 CSV 로 받는다.
-     * DB 함수(registry_export)가 내려받기 권한·2단계 인증을 확인하고 용도·항목·인원을 접속기록에 남긴다.
+     * DB 함수(registry_export)가 내려받기 권한·교적 비밀번호를 확인하고 용도·항목·인원을 접속기록에 남긴다.
      */
     let { filters, total, codes, onclose }: {
         filters: Record<string, unknown>;

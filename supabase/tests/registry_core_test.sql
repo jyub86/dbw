@@ -27,7 +27,7 @@ declare
     ['anon: 검색 불가', 'anon', '', $q$select count(*)::text from public.registry_search()$q$, 'ERR:permission denied', ''],
     ['outsider: 검색 거절', 'outsider', 'aal2', $q$select count(*)::text from public.registry_search()$q$, 'ERR:교적 권한이 없습니다', ''],
     ['admin: 교적 권한 없으면 카드 거절', 'admin', 'aal2', $q$select public.registry_card(':seeded')::text$q$, 'ERR:교적 권한이 없습니다', ''],
-    ['viewer aal1: 검색 → 2단계 인증 요구', 'viewer', 'aal1', $q$select count(*)::text from public.registry_search()$q$, 'ERR:2단계 인증이 필요합니다', ''],
+    ['viewer aal1: 검색 → 교적 비밀번호 요구', 'viewer', 'aal1', $q$select count(*)::text from public.registry_search()$q$, 'ERR:교적 비밀번호를 넣어 주세요', ''],
     ['viewer: 코드표', 'viewer', 'aal2', $q$select count(*)::text from public.registry_codes()$q$, '19', ''],
     ['viewer: 검색 (재적, 5명씩)', 'viewer', 'aal2', $q$select count(*) || '/' || max(total) from public.registry_search('{"status":["active"]}', 5, 0)$q$, '5/:exp_people', ''],
     ['viewer: 목장으로 검색', 'viewer', 'aal2', $q$select (count(*) > 0)::text from public.registry_search(jsonb_build_object('group_id', :group_id), 500, 0)$q$, 'true', ''],
@@ -248,6 +248,11 @@ begin
   insert into registry.staff (user_id, can_edit, can_export, note)
   values ((tok ->> ':editor')::uuid, true, true, 'TEST'), ((tok ->> ':viewer')::uuid, false, false, 'TEST');
 
+  -- 교적 비밀번호(20261014_registry_password): 세션 칸이 aal2 면 비밀번호로 연 세션, aal1 이면 열지 않은 세션
+  insert into registry.unlocks (session_id, auth_id)
+  select md5(w.value || 'aal2')::uuid, w.value::uuid from jsonb_each_text(who) w
+   where exists (select 1 from auth.users a where a.id = w.value::uuid);
+
   foreach t slice 1 in array tests loop
     sql := t[4];
     expect := t[5];
@@ -270,7 +275,7 @@ begin
         perform set_config('role', 'service_role', true);
       else
         perform set_config('request.jwt.claims',
-          json_build_object('sub', sub, 'role', 'authenticated', 'aal', coalesce(nullif(t[3], ''), 'aal2'))::text, true);
+          json_build_object('sub', sub, 'role', 'authenticated', 'session_id', md5(sub || coalesce(nullif(t[3], ''), 'aal2'))::uuid)::text, true);
         perform set_config('request.jwt.claim.sub', sub, true);
         if persona <> 'pg' then
           perform set_config('role', 'authenticated', true);
