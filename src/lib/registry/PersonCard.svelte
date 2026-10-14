@@ -160,7 +160,7 @@
             </div>
             <p class="text-sm text-gray-500 mt-1">
                 {p.gender ?? '성별 미상'}{a !== null ? ` · ${a}세` : ''}
-                {s.community_name ? ` · ${s.community_name} ${s.group_name}` : ' · 목장 없음'}
+                {s.community_name ? ` · ${s.community_name} ${s.group_name}` : ' · 소그룹 없음'}
                 {p.reg_no ? ` · 교번 ${p.reg_no}` : ''}
             </p>
         </div>
@@ -221,7 +221,7 @@
             {/if}
             {#if card.groups.length}
                 <div class="mb-6">
-                    <div class="text-xs font-bold text-gray-400 mb-1">목장 소속 (출석부)</div>
+                    <div class="text-xs font-bold text-gray-400 mb-1">소그룹 소속 (출석부)</div>
                     <div class="flex flex-wrap gap-1.5">
                         {#each card.groups as g}
                             <span class="px-2.5 py-1 rounded-lg text-xs {g.active ? 'bg-gray-100 text-gray-700' : 'bg-gray-50 text-gray-400 line-through'}">
@@ -229,7 +229,7 @@
                             </span>
                         {/each}
                     </div>
-                    <p class="text-xs text-gray-400 mt-1">목장 이동은 출석부의 명단 관리에서 합니다.</p>
+                    <p class="text-xs text-gray-400 mt-1">소그룹 이동은 출석부의 명단 관리에서 합니다.</p>
                 </div>
             {/if}
             {#if me.can_edit}
@@ -303,7 +303,7 @@
                             </div>
                         {/each}
                     </div>
-                    <p class="text-xs text-gray-400 mt-2">연결하면 이 교인의 교적·목장·출석 기록이 가입한 계정으로 옮겨지고, 이 미가입 프로필은 없어집니다.</p>
+                    <p class="text-xs text-gray-400 mt-2">연결하면 이 교인의 교적·소그룹·출석 기록이 가입한 계정으로 옮겨지고, 이 미가입 프로필은 없어집니다.</p>
                 {/if}
             </section>
         {/if}

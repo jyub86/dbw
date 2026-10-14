@@ -171,7 +171,7 @@
                     <div class="divide-y divide-gray-100 bg-white rounded-xl">
                         {#each found as r}
                             <div class="flex items-center justify-between px-3 py-2 text-sm">
-                                <span><b>{r.name}</b> <span class="text-xs text-gray-400">{r.office ?? ''} · {r.group_name ?? '목장 없음'} · {r.birth_date ?? ''}</span></span>
+                                <span><b>{r.name}</b> <span class="text-xs text-gray-400">{r.office ?? ''} · {r.group_name ?? '소그룹 없음'} · {r.birth_date ?? ''}</span></span>
                                 <button type="button" onclick={() => addMember(r.person_id)} class="px-3 py-1.5 rounded-lg text-xs font-bold bg-primary-900 text-white">추가</button>
                             </div>
                         {/each}

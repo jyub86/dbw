@@ -100,7 +100,7 @@
                     {#each similar as s}
                         <div class="flex flex-wrap items-center gap-x-3 gap-y-1 py-2 text-sm">
                             <b class="text-gray-900">{s.name}</b>
-                            <span class="text-xs text-gray-500">{s.office ?? ''} · {s.phone ?? '번호없음'} · {s.group_name ?? '목장 없음'}{s.has_account ? ' · 앱 가입' : ''}</span>
+                            <span class="text-xs text-gray-500">{s.office ?? ''} · {s.phone ?? '번호없음'} · {s.group_name ?? '소그룹 없음'}{s.has_account ? ' · 앱 가입' : ''}</span>
                             {#if s.in_registry}
                                 <a href={`/registry/${s.person_id}`} class="ml-auto px-3 py-1.5 rounded-lg text-xs font-bold border border-gray-200 bg-white text-gray-700">교적 보기</a>
                             {:else if me.can_edit}

@@ -364,7 +364,7 @@ export const EXPORT_COLUMNS = [
 	{ key: 'status', label: '재적 상태', group: '교회' },
 	{ key: 'faith', label: '신급', group: '교회' },
 	{ key: 'community', label: '공동체', group: '교회' },
-	{ key: 'group', label: '목장', group: '교회' },
+	{ key: 'group', label: '소그룹', group: '교회' },
 	{ key: 'registered_on', label: '등록일', group: '교회' },
 	{ key: 'head', label: '세대주', group: '가족' },
 	{ key: 'relation', label: '세대주와 관계', group: '가족' },
@@ -385,7 +385,7 @@ export const EXPORT_PURPOSES: { label: string; columns: ExportKey[] }[] = [
 	{ label: '연락처 명단', columns: ['phone', 'group'] },
 	{ label: '우편 발송', columns: ['zip', 'address'] },
 	{ label: '심방 명단', columns: ['age', 'phone', 'address', 'office', 'group'] },
-	{ label: '목장·공동체 편성', columns: ['gender', 'age', 'office', 'community', 'group', 'head', 'relation'] },
+	{ label: '소그룹·공동체 편성', columns: ['gender', 'age', 'office', 'community', 'group', 'head', 'relation'] },
 	{ label: '교세 통계', columns: ['gender', 'age', 'office', 'status', 'faith'] },
 	{ label: '기타', columns: [] }
 ];

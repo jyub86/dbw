@@ -105,7 +105,7 @@
             </select>
         </div>
         <div>
-            <label for="rg" class="block text-xs font-bold text-gray-600 mb-1.5">목장</label>
+            <label for="rg" class="block text-xs font-bold text-gray-600 mb-1.5">소그룹</label>
             <select id="rg" bind:value={groupId} onchange={() => search(true)}
                 class="px-3 py-2.5 rounded-xl border-2 border-gray-200 bg-white text-sm">
                 <option value="">전체</option>
@@ -185,7 +185,7 @@
                     <th class="text-left font-bold px-4 py-2.5">이름</th>
                     <th class="text-left font-bold px-3 py-2.5">직분</th>
                     <th class="text-left font-bold px-3 py-2.5">성별·나이</th>
-                    <th class="text-left font-bold px-3 py-2.5">공동체·목장</th>
+                    <th class="text-left font-bold px-3 py-2.5">공동체·소그룹</th>
                     <th class="text-left font-bold px-3 py-2.5">상태</th>
                     <th class="text-left font-bold px-3 py-2.5">신급</th>
                     <th class="text-left font-bold px-3 py-2.5">전화</th>

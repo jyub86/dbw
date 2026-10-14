@@ -16,7 +16,7 @@
     const dmMobile = $derived(d.mobile_dimode ?? (y ? null : d.mobile));
     const dmOffice = $derived(d.office_detail_dimode ?? (y ? d.office ?? null : d.office_detail ?? d.office));
     const KIND: Record<string, { text: string; style: string }> = {
-        strong: { text: '이름 + 생일·전화·목장 일치', style: 'bg-primary-50 text-primary-800' },
+        strong: { text: '이름 + 생일·전화·소그룹 일치', style: 'bg-primary-50 text-primary-800' },
         name: { text: '이름만 같음', style: 'bg-amber-50 text-amber-700' },
         phone: { text: '전화만 같음', style: 'bg-amber-50 text-amber-700' },
         search: { text: '직접 찾음', style: 'bg-gray-100 text-gray-600' }
@@ -135,7 +135,7 @@
                                     {c.gender ?? ''}
                                     <span class={differs(c.birth_date, d.birth_date) ? 'text-red-600 font-bold' : ''}>{c.birth_date ?? '생일 없음'}</span>
                                     · <span class={differs(digits(c.phone), digits(d.mobile)) ? 'text-red-600 font-bold' : ''}>{c.phone ?? '전화 없음'}</span>
-                                    {#if y?.group && c.group_name && c.group_name !== y.group}<span class="text-red-600 font-bold"> (요람 목장 {y.group})</span>{/if}
+                                    {#if y?.group && c.group_name && c.group_name !== y.group}<span class="text-red-600 font-bold"> (요람 소그룹 {y.group})</span>{/if}
                                     {c.office ? ` · ${c.office}` : ''}{c.group_name ? ` · ${c.group_name}` : ''}
                                 </span>
                             </span>

@@ -8,9 +8,9 @@
     type Conflict = { id: number; detected_at: string; account_id: string; account_name: string | null; profile_id: string; profile_name: string | null };
 
     const REASON: Record<string, { title: string; help: string }> = {
-        no_group: { title: '목장이 없는 교인', help: '교인으로 표시돼 있지만 어느 목장에도 없습니다. 교회에 계속 출석하는 분이면 교적에 올리세요.' },
-        left_group: { title: '목장 명단에서 빠진 교인', help: '목장 명단에서 제외된 분입니다. 교회를 떠났다면 그대로 두세요.' },
-        not_member: { title: '교인 인증 전 목장 구성원', help: '목장에는 있지만 앱의 교인 인증이 안 된 분입니다. 등록 교인이면 교적에 올리세요(교인 인증도 함께 켜집니다).' }
+        no_group: { title: '소그룹이 없는 교인', help: '교인으로 표시돼 있지만 어느 소그룹에도 없습니다. 교회에 계속 출석하는 분이면 교적에 올리세요.' },
+        left_group: { title: '소그룹 명단에서 빠진 교인', help: '소그룹 명단에서 제외된 분입니다. 교회를 떠났다면 그대로 두세요.' },
+        not_member: { title: '교인 인증 전 소그룹 구성원', help: '소그룹에는 있지만 앱의 교인 인증이 안 된 분입니다. 등록 교인이면 교적에 올리세요(교인 인증도 함께 켜집니다).' }
     };
 
     let rows = $state<Candidate[]>([]);
