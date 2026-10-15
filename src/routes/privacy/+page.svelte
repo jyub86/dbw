@@ -5,10 +5,10 @@
 <div class="w-full max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">개인정보처리방침</h1>
     <!-- 시행일자는 '14. 고지의 의무'(최소 7일 전 공지)에 따라 공고일 + 7일로 잡는다. -->
-    <p class="text-gray-500 mb-6">공고일자: 2026년 10월 13일 &nbsp;|&nbsp; 시행일자: 2026년 10월 20일</p>
+    <p class="text-gray-500 mb-6">공고일자: 2026년 10월 15일 &nbsp;|&nbsp; 시행일자: 2026년 10월 22일</p>
     <p class="text-gray-700 leading-relaxed mb-12 break-keep">
         부평동부교회(이하 '교회')는 홈페이지·앱(이하 '서비스')과 교회 교적(교인 명부)을 운영하면서 처리하는 개인정보를
-        이 방침에 따라 처리합니다. 2026년 10월 개정에서 교적에 관한 내용(1.2, 3, 4, 7, 9, 11)과 처리 위탁(6)을 더했습니다.
+        이 방침에 따라 처리합니다. 2026년 10월 개정에서 교적에 관한 내용(1.2, 2, 3, 4, 5, 7, 8, 9, 11)을 더하고, 처리 위탁과 국외 이전(6)을 새로 적었습니다.
     </p>
 
     <div class="prose prose-gray max-w-none space-y-10">
@@ -21,7 +21,7 @@
                 <li><strong>내국인 회원가입 필수항목</strong>: 직분, 출석교회, 아이디, 비밀번호, 이름, 생년월일, 성별, 전화번호, 이메일, 메일링 수신여부 (만 14세 미만 시 법정대리인 정보 포함)</li>
                 <li><strong>한국어 사용 외국인 회원가입 필수항목</strong>: 위 항목 + 거주지구분(국내/국외)</li>
                 <li><strong>한국어 사용불가 외국인 회원가입 필수항목</strong>: 직분, 아이디, 비밀번호, 이름, 생년월일, 성별, 전화번호, 국가, 이메일</li>
-                <li><strong>카카오 로그인 시</strong>: 카카오 계정 식별값, 카카오 계정에 등록된 이메일·이름(프로필)</li>
+                <li><strong>카카오·구글·애플 로그인 시</strong>: 그 계정의 식별값, 그 계정에 등록된 이메일·이름(프로필)</li>
                 <li><strong>자동생성 정보</strong>: IP address, 쿠키, 방문일시, 서비스 이용기록, 앱 알림을 받기 위한 기기 알림 토큰</li>
                 <li><strong>부가서비스 이용 시</strong>: 주소</li>
                 <li><strong>선택항목(주차 관리)</strong>: 차량번호, 차량 메모(차종·색상 등) — 등록하지 않아도 다른 서비스 이용에 제한이 없습니다.</li>
@@ -32,7 +32,7 @@
             <ul class="list-disc list-inside space-y-2 text-gray-700 leading-relaxed mb-4">
                 <li><strong>인적사항</strong>: 이름, 성별, 생년월일(양력·음력), 휴대폰 번호, 주소, 집 전화번호, 직업·직장, 결혼 여부·결혼기념일</li>
                 <li><strong>가족</strong>: 세대 구성과 세대주와의 관계, 교적이 없는 가족의 이름·출생연도</li>
-                <li><strong>신앙·교회 생활</strong>: 등록일과 재적 이력(등록·전입·전출·복적·보류·별세·제적), 신급(학습·세례·유아세례·입교)과 받은 날짜·교회·집례자, 직분과 임직·은퇴 이력, 이전 교회, 인도자, 공동체·목장 소속</li>
+                <li><strong>신앙·교회 생활</strong>: 등록일과 재적 이력(등록·전입·전출·복적·보류·별세·제적), 신급(학습·세례·유아세례·입교)과 받은 날짜·교회·집례자, 직분과 임직·은퇴 이력, 이전 교회, 인도자, 공동체·소그룹 소속</li>
                 <li><strong>메모</strong>: 교적 담당자가 적는 메모. 심방 등 목양에 관한 메모는 교역자만 봅니다.</li>
                 <li><strong>동의 기록</strong>: 동의한 항목·날짜·방법, 만 14세 미만은 법정대리인 이름</li>
             </ul>
@@ -54,7 +54,7 @@
                     외에는 조회할 수 없습니다.
                 </li>
                 <li>
-                    <strong>교적 관리</strong> — 교인 확인과 재적 관리, 심방·돌봄 등 목양, 공동체·목장 편성과 출석 관리,
+                    <strong>교적 관리</strong> — 교인 확인과 재적 관리, 심방·돌봄 등 목양, 공동체·소그룹 편성과 출석 관리,
                     교회 행사·소식 연락, 교인증명서·세례증명서 등 증명서 발급, 교단(노회·총회)에 내는 교세 통계
                 </li>
             </ul>
@@ -76,7 +76,7 @@
         <section>
             <h2 class="text-xl font-bold text-gray-900 mb-3">4. 교적을 볼 수 있는 사람</h2>
             <ul class="list-disc list-inside space-y-2 text-gray-700 leading-relaxed">
-                <li>교적은 교회가 지정한 교적 담당자(사무 담당자·교역자)만 볼 수 있습니다. 목장 리더와 일반 교인은 교적을 볼 수 없습니다.</li>
+                <li>교적은 교회가 지정한 교적 담당자(사무 담당자·교역자)만 볼 수 있습니다. 소그룹 리더와 일반 교인은 교적을 볼 수 없습니다.</li>
                 <li>교적을 고치거나 내려받는 일은 그 권한을 받은 담당자만 할 수 있습니다. 목양 메모는 교역자만 봅니다.</li>
                 <li>교적 담당자를 지정·변경·해제한 기록은 3년간 보관합니다.</li>
             </ul>
@@ -86,13 +86,13 @@
             <h2 class="text-xl font-bold text-gray-900 mb-3">5. 개인정보의 제3자 제공</h2>
             <ul class="list-disc list-inside space-y-2 text-gray-700 leading-relaxed">
                 <li>원칙적으로 이용자의 개인정보를 외부에 공개하지 않습니다. 단, 이용자가 사전에 동의한 경우 또는 법령에 따라 수사기관의 요청이 있는 경우에는 예외로 합니다.</li>
-                <li>교적은 외부에 제공하지 않습니다. 교단(노회·총회)에 보고할 때는 인원 수 등 통계만 냅니다.</li>
-                <li>교인증명서·세례증명서는 본인 또는 본인이 위임한 사람이 요청할 때만 발급합니다.</li>
+                <li>교적은 외부에 제공하지 않습니다. 교단(노회·총회)에는 인원 수 등 통계를 보고합니다. 장로 임직 청원처럼 교단 절차에 이름을 내야 할 때는 본인이 신청하거나 동의한 경우에만 냅니다.</li>
+                <li>교인증명서·세례증명서·이명증서는 본인 또는 본인이 위임한 사람이 요청할 때만 발급합니다.</li>
             </ul>
         </section>
 
         <section>
-            <h2 class="text-xl font-bold text-gray-900 mb-3">6. 개인정보 처리의 위탁</h2>
+            <h2 class="text-xl font-bold text-gray-900 mb-3">6. 개인정보 처리의 위탁과 국외 이전</h2>
             <p class="text-gray-700 leading-relaxed mb-3">교회는 서비스를 운영하기 위해 다음 업체의 시스템을 이용합니다.</p>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-gray-700 border border-gray-200 rounded-xl">
@@ -115,9 +115,14 @@
                             <td class="px-4 py-2">접속 정보(IP 등)만 거칩니다</td>
                         </tr>
                         <tr class="border-t border-gray-100">
-                            <td class="px-4 py-2">Google LLC (Firebase)</td>
-                            <td class="px-4 py-2">앱 알림 발송</td>
-                            <td class="px-4 py-2">기기 알림 토큰, 알림 내용</td>
+                            <td class="px-4 py-2">Google LLC</td>
+                            <td class="px-4 py-2">앱 알림 발송(Firebase), 구글 로그인(본인 확인)</td>
+                            <td class="px-4 py-2">기기 알림 토큰, 알림 내용. 구글 로그인은 쓸 때만</td>
+                        </tr>
+                        <tr class="border-t border-gray-100">
+                            <td class="px-4 py-2">Apple Inc.</td>
+                            <td class="px-4 py-2">애플 로그인(본인 확인)</td>
+                            <td class="px-4 py-2">애플 로그인을 쓸 때만</td>
                         </tr>
                         <tr class="border-t border-gray-100">
                             <td class="px-4 py-2">㈜카카오</td>
@@ -127,6 +132,42 @@
                     </tbody>
                 </table>
             </div>
+
+            <h3 class="text-base font-bold text-gray-800 mt-6 mb-2">국외 이전</h3>
+            <p class="text-gray-700 leading-relaxed mb-3 break-keep">
+                서비스와 교적의 정보는 대한민국(서울)의 서버에 저장합니다. 다만 아래 일을 하는 동안 일부 정보가 국외의 서버를 거칩니다
+                (개인정보 보호법 제28조의8). 교적의 정보는 서울의 서버에만 저장합니다.
+            </p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-gray-700 border border-gray-200 rounded-xl">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left font-bold px-4 py-2">받는 곳 (나라)</th>
+                            <th class="text-left font-bold px-4 py-2">항목</th>
+                            <th class="text-left font-bold px-4 py-2">언제·어떻게</th>
+                            <th class="text-left font-bold px-4 py-2">목적·보유기간</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t border-gray-100">
+                            <td class="px-4 py-2">Google LLC (미국)<br /><span class="text-xs text-gray-500">policies.google.com/privacy</span></td>
+                            <td class="px-4 py-2">기기 알림 토큰, 알림 내용</td>
+                            <td class="px-4 py-2">앱 알림을 보낼 때 네트워크로 전송</td>
+                            <td class="px-4 py-2">알림 발송. 교회는 탈퇴할 때 토큰을 지웁니다(업체 쪽 보관은 업체 기준)</td>
+                        </tr>
+                        <tr class="border-t border-gray-100">
+                            <td class="px-4 py-2">Cloudflare, Inc. (미국)<br /><span class="text-xs text-gray-500">cloudflare.com/privacypolicy</span></td>
+                            <td class="px-4 py-2">접속 정보(IP, 접속 기록)</td>
+                            <td class="px-4 py-2">홈페이지에 접속할 때마다 네트워크로 전송</td>
+                            <td class="px-4 py-2">홈페이지 전송·보안. 업체의 보관 기준에 따릅니다</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-gray-700 leading-relaxed mt-3 break-keep">
+                알림 토큰은 앱에서만 만들어집니다. 알림 정보의 국외 이전을 원하지 않으면 앱 대신 홈페이지를 쓰면 되고,
+                이 경우 앱 알림은 받을 수 없습니다. 홈페이지 접속 정보는 홈페이지를 쓰는 데 꼭 필요해서 따로 거부할 수 없습니다.
+            </p>
         </section>
 
         <section>
